@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.5 — 2026-10-19
+
+- Show the working status as the response's last line, Claude style: a pulsing dot, what runs now (the running tool's name and arguments), the step count, the elapsed time and the Esc hint.
+- The live work header now shows the answering model's logo and one status dot per step.
+
 ## 0.2.4 — 2026-10-19
 
 - Add a chat header with the active session title, new conversation and history controls.
