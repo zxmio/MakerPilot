@@ -133,7 +133,24 @@
       "yesterday": "昨日",
       "thisWeek": "今週",
       "older": "それ以前",
-      "search": "セッションを検索"
+      "search": "セッションを検索",
+      "status": {
+        "needsInput": "入力待ち",
+        "runningElsewhere": "別のペインで実行中",
+        "openElsewhere": "別のペインで開いています",
+        "running": "実行中",
+        "runningIn": "{tab}で実行中",
+        "current": "現在: {tab}",
+        "currentSession": "現在のセッション",
+        "openIn": "{tab}で開いています",
+        "tab": "タブ",
+        "tabNumber": "タブ {index}",
+        "currentTab": "現在のタブ",
+        "unread": "未読",
+        "archived": "アーカイブ済み",
+        "showActive": "セッションに戻る",
+        "archivedCount": "アーカイブ済み（{count}）"
+      }
     },
     "linkedContent": {
       "label": "リンクされたコンテンツ：",

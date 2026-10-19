@@ -133,7 +133,24 @@
       "yesterday": "Yesterday",
       "thisWeek": "This week",
       "older": "Older",
-      "search": "Search sessions"
+      "search": "Search sessions",
+      "status": {
+        "needsInput": "Needs input",
+        "runningElsewhere": "Running in another pane",
+        "openElsewhere": "Open in another pane",
+        "running": "Running",
+        "runningIn": "Running in {tab}",
+        "current": "Current {tab}",
+        "currentSession": "Current session",
+        "openIn": "Open in {tab}",
+        "tab": "tab",
+        "tabNumber": "tab {index}",
+        "currentTab": "current tab",
+        "unread": "Unread",
+        "archived": "Archived",
+        "showActive": "Back to sessions",
+        "archivedCount": "Archived ({count})"
+      }
     },
     "linkedContent": {
       "label": "Linked content:",

@@ -734,14 +734,14 @@ describe('SessionManagerSurface history dropdown', () => {
 
     const archiveControl = list.querySelector('.claudian-history-archive-control');
     expect(list.children[list.children.length - 1]).toBe(archiveControl);
-    expect(navLabel(archiveControl)).toBe('Archive');
+    expect(navLabel(archiveControl)).toBe('Archived');
     expect(archiveControl.querySelector('.claudian-session-nav-count')?.textContent).toBe('1');
     const stopPropagation = jest.fn();
     archiveControl.dispatchEvent({ type: 'click', stopPropagation });
 
     expect(stopPropagation).toHaveBeenCalledTimes(1);
     expect(navLabel(h.historyMenu.querySelector('.claudian-history-archive-control')))
-      .toBe('Sessions');
+      .toBe('Back to sessions');
     expect(renderedIds(h.historyMenu)).toEqual(['archived']);
   });
 
@@ -804,6 +804,51 @@ describe('SessionManagerSurface history dropdown', () => {
     expect(renderedIds(h.historyMenu).sort()).toEqual(['groceries', 'roadmap-review']);
   });
 
+  it('finds archived sessions from the menu search and restores one before opening it', async () => {
+    const h = createHarness({
+      conversations: [
+        conversation('roadmap-review', { title: 'Roadmap review' }),
+        conversation('roadmap-2025', { title: 'Roadmap 2025', isArchived: true }),
+        conversation('groceries', { title: 'Groceries', isArchived: true }),
+      ],
+      wide: false,
+    });
+    h.historyButton.click();
+    expect(renderedIds(h.historyMenu)).toEqual(['roadmap-review']);
+
+    typeSearch(h.historyMenu, 'roadmap');
+    expect(renderedIds(h.historyMenu)).toEqual(['roadmap-review', 'roadmap-2025']);
+    const dividers = h.historyMenu.querySelectorAll('.claudian-session-recency-divider-label')
+      .map((label: any) => label.textContent);
+    expect(dividers.at(-1)).toBe('Archived');
+
+    findItem(h.historyMenu, 'roadmap-2025').querySelector('.claudian-history-item-content')
+      .dispatchEvent({ type: 'click', stopPropagation: jest.fn() });
+    await new Promise(resolve => setImmediate(resolve));
+    const lifecycle = h.plugin.conversationLifecycle as { setArchived: jest.Mock };
+    expect(lifecycle.setArchived).toHaveBeenCalledWith('roadmap-2025', false);
+    expect(h.navigation.openConversation).toHaveBeenCalledWith('roadmap-2025', undefined);
+    const restoreOrder = lifecycle.setArchived.mock.invocationCallOrder[0];
+    expect(restoreOrder).toBeLessThan(h.navigation.openConversation.mock.invocationCallOrder[0]);
+  });
+
+  it('opens an archived session from the archive view by restoring it', async () => {
+    const h = createHarness({
+      conversations: [conversation('active'), conversation('archived', { isArchived: true })],
+      wide: false,
+    });
+    h.historyButton.click();
+    h.historyMenu.querySelector('.claudian-history-archive-control')
+      .dispatchEvent({ type: 'click', stopPropagation: jest.fn() });
+    expect(renderedIds(h.historyMenu)).toEqual(['archived']);
+
+    findItem(h.historyMenu, 'archived').querySelector('.claudian-history-item-content')
+      .dispatchEvent({ type: 'click', stopPropagation: jest.fn() });
+    await new Promise(resolve => setImmediate(resolve));
+    expect((h.plugin.conversationLifecycle as { setArchived: jest.Mock }).setArchived).toHaveBeenCalledWith('archived', false);
+    expect(h.navigation.openConversation).toHaveBeenCalledWith('archived', undefined);
+  });
+
   it('opens history entries through navigation and closes the dropdown', async () => {
     const h = createHarness({ conversations: [conversation('conversation-1')], wide: false });
     h.historyButton.click();
@@ -846,15 +891,17 @@ describe('SessionManagerSurface history dropdown', () => {
         preserveListState: true,
         sessionScope: 'archived',
         sessionActionMode: 'archived',
-        allowConversationSelection: false,
+        // Archived rows open from the menu by restoring them first.
+        allowConversationSelection: true,
       }),
     );
     expect(render.mock.calls.at(-1)?.[1]).not.toHaveProperty('onOpenConversationInNewTab');
     expect(h.historyMenu.querySelector('.claudian-session-nav-label')?.textContent)
-      .toBe('Sessions');
+      .toBe('Back to sessions');
     expect(renderedIds(h.historyMenu)).toEqual(['archived']);
+    // Archived rows stay openable; opening restores them first.
     expect(findItem(h.historyMenu, 'archived').hasClass('claudian-history-item--noninteractive'))
-      .toBe(true);
+      .toBe(false);
   });
 
   it('defers hidden history rendering and coalesces invalidations until the dropdown opens', () => {
@@ -974,7 +1021,7 @@ describe('SessionManagerSurface wide layout transitions', () => {
 
     expect(renderedIds(h.historyMenu)).toEqual(['archived']);
     expect(navLabel(h.historyMenu.querySelector('.claudian-history-archive-control')))
-      .toBe('Sessions');
+      .toBe('Back to sessions');
 
     h.historyMenu.querySelector('.claudian-history-archive-control').click();
     expect(renderedIds(h.historyMenu)).toEqual(['active']);

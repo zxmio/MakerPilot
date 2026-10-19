@@ -133,7 +133,24 @@
       "yesterday": "Вчера",
       "thisWeek": "На этой неделе",
       "older": "Ранее",
-      "search": "Поиск сеансов"
+      "search": "Поиск сеансов",
+      "status": {
+        "needsInput": "Ждёт ответа",
+        "runningElsewhere": "Выполняется в другой панели",
+        "openElsewhere": "Открыт в другой панели",
+        "running": "Выполняется",
+        "runningIn": "Выполняется: {tab}",
+        "current": "Текущий: {tab}",
+        "currentSession": "Текущий сеанс",
+        "openIn": "Открыт: {tab}",
+        "tab": "вкладка",
+        "tabNumber": "вкладка {index}",
+        "currentTab": "текущая вкладка",
+        "unread": "Не прочитано",
+        "archived": "Архив",
+        "showActive": "Назад к сеансам",
+        "archivedCount": "Архив ({count})"
+      }
     },
     "linkedContent": {
       "label": "Связанное содержимое:",

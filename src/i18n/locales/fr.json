@@ -133,7 +133,24 @@
       "yesterday": "Hier",
       "thisWeek": "Cette semaine",
       "older": "Plus ancien",
-      "search": "Rechercher des sessions"
+      "search": "Rechercher des sessions",
+      "status": {
+        "needsInput": "Réponse attendue",
+        "runningElsewhere": "En cours dans un autre volet",
+        "openElsewhere": "Ouverte dans un autre volet",
+        "running": "En cours",
+        "runningIn": "En cours dans {tab}",
+        "current": "Actuelle : {tab}",
+        "currentSession": "Session actuelle",
+        "openIn": "Ouverte dans {tab}",
+        "tab": "onglet",
+        "tabNumber": "onglet {index}",
+        "currentTab": "onglet actuel",
+        "unread": "Non lue",
+        "archived": "Archivées",
+        "showActive": "Retour aux sessions",
+        "archivedCount": "Archivées ({count})"
+      }
     },
     "linkedContent": {
       "label": "Contenu lié :",

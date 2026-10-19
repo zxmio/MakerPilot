@@ -52,6 +52,8 @@ type HistoryRenderOptions = SessionActionOptions & SessionStatusDisplay & Sessio
   /** Divides an unpinned flat list into recency groups. */
   /** `true` buckets by elapsed days; `'calendar'` by Today, Yesterday and This week. */
   groupByRecency?: boolean | 'calendar';
+  /** While searching active sessions, lists archived matches last. */
+  includeArchivedMatches?: boolean;
   sort?: SessionManagerSort;
   collapsedGroupKeys?: ReadonlySet<string>;
   onGroupCollapseChange?: (groupKey: string, collapsed: boolean) => void;
@@ -157,6 +159,7 @@ export class SessionBrowser {
       groupByRecency: options.groupByRecency
         ? { now: Date.now(), scheme: options.groupByRecency === 'calendar' ? 'calendar' : 'age' }
         : undefined,
+      includeArchivedMatches: options.includeArchivedMatches,
     });
     const { conversationsByLinkedContent, pinnedContentSections, sections } = model;
     const showSessionSections = options.showPinnedSection || options.showArchivedSection;
@@ -287,11 +290,15 @@ export class SessionBrowser {
           linkedContentConversations(section),
         );
       } else {
-        if (section.kind === 'recency') {
+        if (section.kind === 'recency' || section.kind === 'archived') {
           this.#renderRecencyDivider(sessionList, section, options);
         }
+        // Archived search matches keep archived actions (restore, delete) in the active list.
+        const rowOptions: HistoryRenderOptions = section.kind === 'archived'
+          ? { ...options, sessionActionMode: 'archived' }
+          : options;
         for (const conversation of visibleConversations) {
-          this.#renderHistoryConversationItem(sessionList, conversation, options);
+          this.#renderHistoryConversationItem(sessionList, conversation, rowOptions);
         }
       }
       renderedConversationCount += visibleConversations.length;
@@ -717,6 +724,8 @@ export class SessionBrowser {
   ): void {
     const divider = list.createDiv({ cls: 'claudian-session-recency-divider' });
     divider.createSpan({ cls: 'claudian-session-recency-divider-label', text: section.label });
+    // Archived matches are a search result, not a recency group with bulk actions.
+    if (section.kind === 'archived') return;
     const buildMenu = this.actions.groupMenu(
       { conversations: section.conversations },
       options,

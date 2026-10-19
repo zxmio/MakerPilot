@@ -133,7 +133,24 @@
       "yesterday": "Gestern",
       "thisWeek": "Diese Woche",
       "older": "Älter",
-      "search": "Sitzungen durchsuchen"
+      "search": "Sitzungen durchsuchen",
+      "status": {
+        "needsInput": "Wartet auf Eingabe",
+        "runningElsewhere": "Läuft in anderem Bereich",
+        "openElsewhere": "In anderem Bereich geöffnet",
+        "running": "Läuft",
+        "runningIn": "Läuft in {tab}",
+        "current": "Aktuell: {tab}",
+        "currentSession": "Aktuelle Sitzung",
+        "openIn": "Geöffnet in {tab}",
+        "tab": "Tab",
+        "tabNumber": "Tab {index}",
+        "currentTab": "aktueller Tab",
+        "unread": "Ungelesen",
+        "archived": "Archiviert",
+        "showActive": "Zurück zu den Sitzungen",
+        "archivedCount": "Archiviert ({count})"
+      }
     },
     "linkedContent": {
       "label": "Verknüpfter Inhalt:",

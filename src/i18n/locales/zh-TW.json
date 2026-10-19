@@ -133,7 +133,24 @@
       "yesterday": "昨天",
       "thisWeek": "本週",
       "older": "更早",
-      "search": "搜尋對話"
+      "search": "搜尋對話",
+      "status": {
+        "needsInput": "等待你的回應",
+        "runningElsewhere": "在另一窗格執行中",
+        "openElsewhere": "已在另一窗格開啟",
+        "running": "執行中",
+        "runningIn": "執行中 · {tab}",
+        "current": "目前 · {tab}",
+        "currentSession": "目前對話",
+        "openIn": "已在{tab}開啟",
+        "tab": "分頁",
+        "tabNumber": "分頁 {index}",
+        "currentTab": "目前分頁",
+        "unread": "未讀",
+        "archived": "已封存",
+        "showActive": "返回對話",
+        "archivedCount": "已封存（{count}）"
+      }
     },
     "linkedContent": {
       "label": "關聯內容：",

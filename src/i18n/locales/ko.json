@@ -133,7 +133,24 @@
       "yesterday": "어제",
       "thisWeek": "이번 주",
       "older": "이전",
-      "search": "세션 검색"
+      "search": "세션 검색",
+      "status": {
+        "needsInput": "입력 대기",
+        "runningElsewhere": "다른 창에서 실행 중",
+        "openElsewhere": "다른 창에서 열림",
+        "running": "실행 중",
+        "runningIn": "{tab}에서 실행 중",
+        "current": "현재: {tab}",
+        "currentSession": "현재 세션",
+        "openIn": "{tab}에서 열림",
+        "tab": "탭",
+        "tabNumber": "탭 {index}",
+        "currentTab": "현재 탭",
+        "unread": "읽지 않음",
+        "archived": "보관됨",
+        "showActive": "세션으로 돌아가기",
+        "archivedCount": "보관됨 ({count})"
+      }
     },
     "linkedContent": {
       "label": "연결된 콘텐츠:",

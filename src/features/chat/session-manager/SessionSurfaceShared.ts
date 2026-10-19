@@ -1,6 +1,7 @@
 import type { SessionBrowser } from '@/features/chat/session-manager/SessionBrowser';
 import type { HistoryConversationStatus } from '@/features/chat/session-manager/SessionStatusPresentation';
 import { scheduleAnimationFrame } from '@/features/chat/utils/animationFrame';
+import { t } from '@/i18n/i18n';
 
 /** The session-opening policy the session manager presentations delegate to. */
 export interface SessionSurfaceNavigation {
@@ -55,7 +56,7 @@ export function archiveScopeOptions(isArchiveView: boolean) {
   return {
     sessionScope: isArchiveView ? 'archived' : 'active',
     sessionActionMode: isArchiveView ? 'archived' : 'active',
-    historyHeaderLabel: isArchiveView ? 'Archived' : 'Sessions',
+    historyHeaderLabel: isArchiveView ? t('chat.sessions.status.archived') : 'Sessions',
     allowConversationSelection: !isArchiveView,
   } as const;
 }

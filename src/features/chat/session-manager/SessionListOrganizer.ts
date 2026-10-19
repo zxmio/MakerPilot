@@ -6,7 +6,7 @@ import type {
 import { isProvisionalNotePath } from '@/features/chat/session-manager/ProvisionalNoteNames';
 import { t } from '@/i18n/i18n';
 
-export type SessionListSectionKind = 'list' | 'recency' | 'content' | 'ungrouped' | 'missing';
+export type SessionListSectionKind = 'list' | 'recency' | 'content' | 'ungrouped' | 'missing' | 'archived';
 
 export interface SessionListSection {
   key: string;
@@ -236,6 +236,8 @@ export interface SessionListModelOptions {
   contentIsNote?: (contentPath: string) => boolean;
   /** Divides an unpinned flat list into recency groups relative to `now`. */
   groupByRecency?: RecencyGrouping;
+  /** While searching active sessions, appends archived matches as their own last section. */
+  includeArchivedMatches?: boolean;
 }
 
 /** What a session list shows, derived from the conversation list without any DOM. */
@@ -259,6 +261,14 @@ function getSearchTerms(searchQuery: string | undefined): string[] {
   return (searchQuery ?? '').trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
 }
 
+/** Every term appears in the title or the linked note path, ignoring case. */
+function matchesSearch(conversation: ConversationMeta, searchTerms: readonly string[]): boolean {
+  const searchableText = [conversation.title, conversation.linkedContentPath ?? '']
+    .join('\n')
+    .toLocaleLowerCase();
+  return searchTerms.every(term => searchableText.includes(term));
+}
+
 /** Scopes, searches, partitions, and organizes sessions for one list render. */
 export function deriveSessionListModel(
   conversations: readonly ConversationMeta[],
@@ -273,12 +283,7 @@ export function deriveSessionListModel(
   const searchTerms = getSearchTerms(options.searchQuery);
   const filteredConversations = searchTerms.length === 0
     ? scopedConversations
-    : scopedConversations.filter((conversation) => {
-        const searchableText = [conversation.title, conversation.linkedContentPath ?? '']
-          .join('\n')
-          .toLocaleLowerCase();
-        return searchTerms.every(term => searchableText.includes(term));
-      });
+    : scopedConversations.filter(conversation => matchesSearch(conversation, searchTerms));
   const conversationsByLinkedContent = new Map<string, ConversationMeta[]>();
   for (const conversation of scopedConversations) {
     if (!conversation.linkedContentPath) continue;
@@ -324,7 +329,16 @@ export function deriveSessionListModel(
     contentExists: options.contentExists,
     contentIsNote: options.contentIsNote,
   }).filter(section => section.contentPath !== undefined);
-  const isEmpty = filteredConversations.length === 0 && pinnedContentSections.length === 0;
+  const archivedMatches = options.includeArchivedMatches && options.scope === 'active' && searchTerms.length > 0
+    ? organizeSessionList(conversations.filter(conversation => (
+        conversation.isArchived && matchesSearch(conversation, searchTerms)
+      )), { organization: 'list', sort, language })[0]?.conversations ?? []
+    : [];
+  const archivedSection: SessionListSection[] = archivedMatches.length > 0
+    ? [{ key: 'archived-matches', kind: 'archived', label: t('chat.sessions.status.archived'), conversations: archivedMatches }]
+    : [];
+  const isEmpty = filteredConversations.length === 0 && pinnedContentSections.length === 0
+    && archivedMatches.length === 0;
   if (isEmpty) {
     return {
       hasSearchTerms: searchTerms.length > 0,
@@ -343,14 +357,14 @@ export function deriveSessionListModel(
     sort,
     language,
   })[0]?.conversations ?? [];
-  const sections = organizeSessionList(sessionConversations, {
+  const sections = [...organizeSessionList(sessionConversations, {
     organization,
     sort,
     language,
     contentExists: options.contentExists,
     contentIsNote: options.contentIsNote,
     groupByRecency: options.groupByRecency,
-  });
+  }).filter(section => section.conversations.length > 0 || organization === 'linked-content'), ...archivedSection];
   const countExpanded = (groupSections: readonly SessionListSection[]): number => (
     groupSections.reduce((total, section) => (
       options.collapsedGroupKeys?.has(section.key) ? total : total + section.conversations.length
@@ -358,7 +372,7 @@ export function deriveSessionListModel(
   );
   const visibleSessionConversationTotal = organization === 'linked-content'
     ? countExpanded(sections)
-    : sessionConversations.length;
+    : sessionConversations.length + archivedMatches.length;
   return {
     hasSearchTerms: searchTerms.length > 0,
     isEmpty,

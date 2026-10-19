@@ -1100,3 +1100,12 @@ body.theme-dark .claudian-nav-dropup-menu {
 .claudian-session-sidebar .claudian-session-new-control:focus-visible {
   background: var(--background-modifier-hover);
 }
+
+/* The search box leads the active list; only the archive view names its list. */
+.claudian-history-menu:not(.claudian-history-menu--archived) > .claudian-history-header {
+  display: none;
+}
+
+.claudian-history-menu--archived > .claudian-history-header {
+  padding: 8px 14px 2px;
+}

@@ -121,8 +121,10 @@ export class HistoryDropdown {
   private renderList(container: HTMLElement, signal: AbortSignal): void {
     const { navigation, plugin, shared } = this.deps;
     const isArchiveView = shared.isArchiveView();
+    container.toggleClass('claudian-history-menu--archived', isArchiveView);
     shared.browser.renderHistoryDropdown(container, {
       onSelectConversation: (id) => this.openConversation(id),
+      includeArchivedMatches: !isArchiveView,
       // Archived sessions cannot be opened, so only active rows offer a new tab.
       ...(isArchiveView
         ? {}
@@ -145,6 +147,8 @@ export class HistoryDropdown {
         reveal: () => container.addClass('visible'),
       }),
       ...archiveScopeOptions(isArchiveView),
+      // Archived sessions open here too: opening restores them first.
+      allowConversationSelection: true,
       onAssignConversationToDevice: async (id: string) => {
         await plugin.assignConversationToCurrentDevice(id);
       },
@@ -160,7 +164,12 @@ export class HistoryDropdown {
     conversationId: string,
     options?: { preferNewTab: true; activate: boolean },
   ): Promise<void> {
-    await this.deps.navigation.openConversation(conversationId, options);
+    const { plugin, navigation } = this.deps;
+    // An archived session has no tabs; restoring it first keeps that true while it is open.
+    if (plugin.getConversationList().some(conversation => conversation.id === conversationId && conversation.isArchived)) {
+      await plugin.conversationLifecycle.setArchived(conversationId, false);
+    }
+    await navigation.openConversation(conversationId, options);
     this.close();
   }
 
@@ -170,13 +179,13 @@ export class HistoryDropdown {
 
     const { shared } = this.deps;
     const isArchiveView = shared.isArchiveView();
-    const label = isArchiveView ? 'Sessions' : 'Archive';
+    const label = isArchiveView ? t('chat.sessions.status.showActive') : t('chat.sessions.status.archived');
     const archivedCount = isArchiveView ? 0
       : this.deps.plugin.getConversationList().filter(conversation => conversation.isArchived).length;
     const control = list.createDiv({ cls: 'claudian-history-archive-control' });
     control.setAttribute('role', 'button');
     control.setAttribute('tabindex', '0');
-    control.setAttribute('aria-label', archivedCount > 0 ? `${label} (${archivedCount})` : label);
+    control.setAttribute('aria-label', archivedCount > 0 ? t('chat.sessions.status.archivedCount', { count: archivedCount }) : label);
     const icon = control.createSpan({ cls: 'claudian-session-nav-icon' });
     setIcon(icon, isArchiveView ? 'arrow-left' : 'archive');
     control.createSpan({ cls: 'claudian-session-nav-label', text: label });

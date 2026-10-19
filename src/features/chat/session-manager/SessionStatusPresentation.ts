@@ -1,4 +1,5 @@
 import type { TabAttention } from '@/features/chat/state/types';
+import { t } from '@/i18n/i18n';
 
 export type HistoryConversationOpenState = 'closed' | 'open' | 'current';
 
@@ -90,9 +91,9 @@ export function sessionItemIcon(
 }
 
 function tabLabel(status: HistoryConversationStatus): string {
-  if (typeof status.tabIndex === 'number') return `tab ${status.tabIndex}`;
-  if (status.openState === 'current') return 'current tab';
-  return 'tab';
+  if (typeof status.tabIndex === 'number') return t('chat.sessions.status.tabNumber', { index: status.tabIndex });
+  if (status.openState === 'current') return t('chat.sessions.status.currentTab');
+  return t('chat.sessions.status.tab');
 }
 
 export function sessionStatusText(
@@ -104,34 +105,45 @@ export function sessionStatusText(
   const location = status.location ?? 'current-view';
 
   if (!showOpenStateLabels) return formatSessionDate(timestamp);
-  if (status.attention?.kind === 'action-required') return 'Needs input';
+  if (status.attention?.kind === 'action-required') return t('chat.sessions.status.needsInput');
 
   if (openState !== 'closed' && location === 'other-view') {
-    return isRunning ? 'Running in another pane' : 'Open in another pane';
+    return isRunning ? t('chat.sessions.status.runningElsewhere') : t('chat.sessions.status.openElsewhere');
   }
 
   if (isRunning) {
-    if (openState === 'closed') return 'Running';
-    return `Running in ${tabLabel(status)}`;
+    if (openState === 'closed') return t('chat.sessions.status.running');
+    return t('chat.sessions.status.runningIn', { tab: tabLabel(status) });
   }
 
   switch (openState) {
     case 'current':
       return typeof status.tabIndex === 'number'
-        ? `Current tab ${status.tabIndex}`
-        : 'Current session';
+        ? t('chat.sessions.status.current', { tab: tabLabel(status) })
+        : t('chat.sessions.status.currentSession');
     case 'open':
-      return `Open in ${tabLabel(status)}`;
+      return t('chat.sessions.status.openIn', { tab: tabLabel(status) });
     case 'closed':
-      return formatSessionDate(timestamp);
+      return isCompletedReview(status.attention ?? undefined)
+        ? t('chat.sessions.status.unread')
+        : formatSessionDate(timestamp);
   }
 }
 
-/** Today's sessions show their time; older sessions show their month and day. */
+const DAY_MS = 86_400_000;
+
+/**
+ * The menu groups sessions by day, so a row shows the time for today and yesterday,
+ * the weekday within the past week, and the month and day before that.
+ */
 export function formatSessionDate(timestamp: number, now: Date = new Date()): string {
   const date = new Date(timestamp);
-  if (date.toDateString() === now.toDateString()) {
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const since = startOfToday.getTime() - timestamp;
+  if (since <= DAY_MS) {
     return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
   }
+  if (since <= 6 * DAY_MS) return date.toLocaleDateString(undefined, { weekday: 'short' });
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
