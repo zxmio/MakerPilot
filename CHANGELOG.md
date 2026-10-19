@@ -1,8 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 — 2026-10-19
 
-- Double-click a conversation tab to close it while preserving history. Title/number display remains available in the context menu.
+- Double-click a numbered or titled conversation tab with the left mouse button to close it while preserving history.
+- Keep title/number display and renaming in the tab context menu.
+- Preserve the last blank tab and existing close behavior; closing a tab does not stop background generation.
+- Add DOM regression coverage for activation, close eligibility, and stale/non-left double clicks.
 
 ## 0.2.0 — 2026-10-19
 

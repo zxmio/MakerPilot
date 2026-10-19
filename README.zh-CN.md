@@ -4,7 +4,7 @@
 
 [English](README.md) · [下载最新版](https://github.com/zxmio/MakerPilot/releases/latest) · [更新记录](CHANGELOG.md) · [反馈问题](https://github.com/zxmio/MakerPilot/issues)
 
-MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24) 独立开发，以 MIT 协议开源。0.2.0 是首个公开版本，重点完善 Gemini 接入、模型发现和日常交互。
+MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24) 独立开发，以 MIT 协议开源。当前版本为 **0.2.1**，新增双击关闭对话标签。0.2.0 是首个公开版本，重点完善 Gemini 接入、模型发现和日常交互。
 
 ## 当前功能
 
@@ -27,7 +27,7 @@ MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.
 4. 同一仓库中先关闭 Claudian/iClaudian，避免继承样式重复加载造成冲突。
 5. 在 MakerPilot 设置里启用所需提供商，完成它自己的登录，刷新模型列表并勾选要显示的模型。
 
-也可以下载 `MakerPilot-0.2.0.zip`，把其中的 `makerpilot` 文件夹解压到 `.obsidian/plugins/`。不要出现 `makerpilot/makerpilot/` 的重复目录。
+也可以下载 `MakerPilot-0.2.1.zip`，把其中的 `makerpilot` 文件夹解压到 `.obsidian/plugins/`。不要出现 `makerpilot/makerpilot/` 的重复目录。
 
 ## 连接账号
 
