@@ -67,3 +67,20 @@
   font-family: var(--font-monospace);
   font-size: 12px;
 }
+
+/* In the live work header the header already says it is working: keep only the timer and Esc hint. */
+.claudian-work-header > .claudian-thinking {
+  display: inline-flex;
+  min-height: 0;
+  margin-inline-start: 8px;
+  font-size: inherit;
+}
+
+.claudian-work-header > .claudian-thinking::before,
+.claudian-work-header > .claudian-thinking > span:first-of-type {
+  display: none;
+}
+
+.claudian-work-header > .claudian-thinking > .claudian-thinking-hint::before {
+  content: '· ';
+}

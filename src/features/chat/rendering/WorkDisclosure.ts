@@ -62,6 +62,10 @@ export function getLiveWorkHistory(contentEl: HTMLElement): HTMLElement {
     setupDisclosureButton(header, history);
     history.hidden = false;
     header.setAttribute('aria-expanded', 'true');
+    // One running indicator per response: an already visible one moves into the header.
+    const indicator = (Array.from(contentEl.children) as HTMLElement[])
+      .find(child => child.classList.contains(INDICATOR_CLASS));
+    if (indicator) placeIndicatorInHeader(header, indicator);
   }
   const history = wrapper.querySelector<HTMLElement>(':scope > .claudian-work-history')!;
   for (let next = wrapper.nextElementSibling; next;) {
@@ -70,6 +74,17 @@ export function getLiveWorkHistory(contentEl: HTMLElement): HTMLElement {
     next = following;
   }
   return history;
+}
+
+/** The header of a streaming response's live work disclosure, where its running indicator belongs. */
+export function getLiveWorkHeader(contentEl: HTMLElement): HTMLElement | null {
+  return findLiveWork(contentEl)?.querySelector<HTMLElement>(':scope > .claudian-work-header') ?? null;
+}
+
+/** The header already says the response is working; the indicator adds its timer, hidden from the header's name. */
+export function placeIndicatorInHeader(header: HTMLElement, indicator: HTMLElement): void {
+  indicator.setAttribute('aria-hidden', 'true');
+  header.appendChild(indicator);
 }
 
 /** Recounts a streaming response's steps in its live header, if it has one. */
@@ -90,5 +105,10 @@ export function unwrapLiveWork(contentEl: HTMLElement): void {
   if (!wrapper) return;
   const history = wrapper.querySelector<HTMLElement>(':scope > .claudian-work-history');
   for (const child of Array.from(history?.children ?? [])) contentEl.insertBefore(child, wrapper);
+  const indicator = wrapper.querySelector<HTMLElement>(`.${INDICATOR_CLASS}`);
+  if (indicator) {
+    indicator.removeAttribute('aria-hidden');
+    contentEl.appendChild(indicator);
+  }
   wrapper.remove();
 }

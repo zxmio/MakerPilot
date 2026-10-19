@@ -512,3 +512,36 @@ it('keeps streaming steps under an expanded live work header, then folds it into
     stream.dispose(); subagents.clear(); renderer.dispose();
   }
 });
+
+it('shows one running indicator, inside the live work header once steps exist', async () => {
+  const messagesEl = document.body.createDiv();
+  const plugin = { app: {}, settings: { mediaFolder: '', showMessageTimestamps: false } } as any;
+  const renderer = new MessageRenderer(plugin, new Component(), messagesEl);
+  const state = new ChatState();
+  const subagents = new SubagentManager(() => undefined);
+  const stream = new StreamController({ plugin, state, renderer, subagentManager: subagents,
+    getMessagesEl: () => messagesEl, updateQueueIndicator: () => undefined, liveWorkDisclosure: true });
+  const response: ChatMessage = { id: 'indicator', role: 'assistant', timestamp: testDate().getTime(), content: '', contentBlocks: [] };
+  const settle = () => new Promise(resolve => setTimeout(resolve, 450));
+  try {
+    state.addMessage(response);
+    state.currentContentEl = renderer.addMessage(response).querySelector('.claudian-message-content');
+    // Before any step the indicator stands on its own line.
+    stream.thinkingIndicator.show();
+    await settle();
+    expect(messagesEl.querySelectorAll('.claudian-thinking')).toHaveLength(1);
+    expect(messagesEl.querySelector('.claudian-thinking')!.closest('.claudian-work')).toBeNull();
+
+    await stream.handleStreamChunk({ type: 'tool_use', id: 'read', name: 'Read', input: { file_path: 'notes.md' } }, response);
+    await stream.handleStreamChunk({ type: 'tool_result', id: 'read', content: 'Notes' }, response);
+    stream.thinkingIndicator.show();
+    await settle();
+
+    const indicators = messagesEl.querySelectorAll('.claudian-thinking');
+    expect(indicators).toHaveLength(1);
+    const header = within(messagesEl).getByRole('button', { name: 'Working…' });
+    expect(header.contains(indicators[0])).toBe(true);
+  } finally {
+    stream.dispose(); subagents.clear(); renderer.dispose();
+  }
+});
