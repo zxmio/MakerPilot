@@ -217,7 +217,7 @@ describe('Toolbar popover styles', () => {
     });
   });
 
-  it('shows fast mode on with neutral colours, not the provider brand', () => {
+  it('shares the effort palette for fast mode with a white thumb', () => {
     const toolbar = renderToolbar();
     const track = style(toolbar.querySelector('.claudian-toggle-switch.active')!);
     // jsdom does not style pseudo-elements, so read the knob's declaration from its rule.
@@ -227,6 +227,7 @@ describe('Toolbar popover styles', () => {
       .find(rule => rule.selectorText === '.claudian-toggle-switch.active::after')!;
     const surfaces = [track.background, track.backgroundColor, knob.style.background, knob.style.backgroundColor];
     expect(surfaces.join(' ')).not.toContain('claudian-brand');
-    expect(knob.style.background || knob.style.backgroundColor).toBe('var(--text-normal)');
+    expect(track.background || track.backgroundColor).toBe('var(--claudian-slider-fill)');
+    expect(knob.style.background || knob.style.backgroundColor).toBe('var(--claudian-slider-thumb)');
   });
 });

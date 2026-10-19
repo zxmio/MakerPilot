@@ -12,11 +12,9 @@
   margin-inline-end: 5px;
 }
 
-.claudian-toolbar-slider-group {
-  --claudian-slider-thumb-width: 15px;
-  --claudian-slider-height: 30px;
-  --claudian-slider-track-height: 18px;
-
+/* Effort and Fast mode share one palette in both themes. */
+.claudian-toolbar-slider-group,
+.claudian-toolbar-popover-switch-row {
   --claudian-slider-accent: #6677df;
   --claudian-slider-track: #e5e9fc;
   --claudian-slider-fill: #8997eb;
@@ -24,6 +22,12 @@
   --claudian-slider-tick: #8a97cf;
   --claudian-slider-tick-filled: #dce2ff;
   --claudian-slider-thumb-shadow: 0 2px 8px rgb(43 52 119 / 22%);
+}
+
+.claudian-toolbar-slider-group {
+  --claudian-slider-thumb-width: 15px;
+  --claudian-slider-height: 30px;
+  --claudian-slider-track-height: 18px;
 
   display: flex;
   flex-direction: column;
@@ -59,7 +63,8 @@
   line-height: 1.5;
 }
 
-.theme-dark .claudian-toolbar-slider-group {
+.theme-dark .claudian-toolbar-slider-group,
+.theme-dark .claudian-toolbar-popover-switch-row {
   --claudian-slider-accent: #a0adff;
   --claudian-slider-track: #353d68;
   --claudian-slider-fill: #7686d9;

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Match Fast mode to the Effort palette, with a white thumb and theme-aware switch and hover colors.
+
 - Stabilize model-menu, effort-label, and toolbar widths when switching reasoning levels; retain responsive sizing in narrow composers.
 - Reduce slider focus/hover decoration while keeping keyboard focus visible.
 

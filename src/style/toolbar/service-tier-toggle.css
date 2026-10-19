@@ -18,7 +18,8 @@
   width: 32px;
   height: 18px;
   border-radius: 9px;
-  background: var(--background-modifier-border);
+  background: var(--claudian-slider-track);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--claudian-slider-accent) 18%, transparent);
   transition: background 0.2s ease;
 }
 
@@ -30,16 +31,25 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--text-muted);
+  background: var(--claudian-slider-thumb);
+  box-shadow: 0 1px 3px rgb(43 52 119 / 22%);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
-/* On is neutral, like the reasoning slider's fill and thumb; brand colour only identifies providers. */
+/* Match the effort track's filled state while retaining the switch's position cue. */
 .claudian-toggle-switch.active {
-  background: color-mix(in srgb, var(--text-normal) 32%, var(--background-modifier-border));
+  background: var(--claudian-slider-fill);
 }
 
 .claudian-toggle-switch.active::after {
   transform: translateX(14px);
-  background: var(--text-normal);
+  background: var(--claudian-slider-thumb);
+}
+
+.claudian-toolbar-popover button.claudian-toolbar-popover-switch-row:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--claudian-slider-accent) 8%, transparent);
+}
+
+.claudian-toolbar-popover button.claudian-toolbar-popover-switch-row:focus-visible {
+  outline-color: var(--claudian-slider-accent);
 }
