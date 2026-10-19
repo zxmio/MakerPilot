@@ -50,39 +50,6 @@ describe('TabBar', () => {
       expect(containerEl._children[0].getAttribute('data-provider')).toBeNull();
     });
 
-    it('should toggle between index and title labels on double click', () => {
-      const containerEl = createMockEl();
-      const callbacks = {
-        ...createMockCallbacks(),
-        onDisplayStateChanged: jest.fn(),
-      };
-      const tabBar = new TabBar(containerEl, callbacks);
-
-      tabBar.update([createTabBarItem({ id: 'tab-2', index: 5, title: 'My Conversation' })]);
-
-      const badge = containerEl._children[0];
-      const event = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
-
-      expect(badge.textContent).toBe('5');
-      badge.dispatchEvent('dblclick', event);
-
-      expect(badge.textContent).toBe('My Conversation');
-      expect(badge.hasClass('claudian-tab-badge-expanded')).toBe(true);
-      expect(badge.getAttribute('data-title-expanded')).toBe('true');
-      expect(event.preventDefault).toHaveBeenCalled();
-      expect(event.stopPropagation).toHaveBeenCalled();
-      expect(callbacks.onDisplayStateChanged).toHaveBeenCalledTimes(1);
-      expect(tabBar.getExpandedTitleTabIds()).toEqual(['tab-2']);
-
-      badge.dispatchEvent('dblclick', { preventDefault: jest.fn(), stopPropagation: jest.fn() });
-
-      expect(badge.textContent).toBe('5');
-      expect(badge.hasClass('claudian-tab-badge-expanded')).toBe(false);
-      expect(badge.getAttribute('data-title-expanded')).toBe('false');
-      expect(callbacks.onDisplayStateChanged).toHaveBeenCalledTimes(2);
-      expect(tabBar.getExpandedTitleTabIds()).toEqual([]);
-    });
-
     it('should render restored expanded title state', () => {
       const containerEl = createMockEl();
       const callbacks = createMockCallbacks();
@@ -102,11 +69,8 @@ describe('TabBar', () => {
       const tabBar = new TabBar(containerEl, callbacks);
       const title = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
+      tabBar.setExpandedTitleTabIds(['tab-1']);
       tabBar.update([createTabBarItem({ title })]);
-      containerEl._children[0].dispatchEvent('dblclick', {
-        preventDefault: jest.fn(),
-        stopPropagation: jest.fn(),
-      });
 
       expect(containerEl._children[0].textContent).toBe('ABCDEFGHIJKLMNOPQRSTUVWXYZ012...');
     });
@@ -116,11 +80,8 @@ describe('TabBar', () => {
       const callbacks = createMockCallbacks();
       const tabBar = new TabBar(containerEl, callbacks);
 
+      tabBar.setExpandedTitleTabIds(['tab-1']);
       tabBar.update([createTabBarItem({ id: 'tab-1', index: 1, title: 'First Title' })]);
-      containerEl._children[0].dispatchEvent('dblclick', {
-        preventDefault: jest.fn(),
-        stopPropagation: jest.fn(),
-      });
 
       tabBar.update([createTabBarItem({ id: 'tab-1', index: 1, title: 'Renamed Title' })]);
 

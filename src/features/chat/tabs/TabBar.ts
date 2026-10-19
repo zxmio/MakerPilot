@@ -15,7 +15,7 @@ export interface TabBarCallbacks {
   /** Called when a tab badge is clicked. */
   onTabClick: (tabId: TabId) => void;
 
-  /** Called when a tab is closed from its menu or by middle click. */
+  /** Called when a tab is closed from its menu, by double click, or by middle click. */
   onTabClose: (tabId: TabId) => void;
 
   /** Called when the user renames a tab (a normalized label) or resets its name (null). */
@@ -204,9 +204,10 @@ export class TabBar {
     });
 
     badgeEl.addEventListener('dblclick', (e) => {
+      if (e.button !== 0 || !this.#findItem(tabId)?.canClose) return;
       e.preventDefault();
       e.stopPropagation();
-      this.#toggleBadgeTitle(tabId);
+      this.callbacks.onTabClose(tabId);
     });
 
     badgeEl.addEventListener('contextmenu', (e) => {
@@ -319,7 +320,7 @@ export class TabBar {
       else labelled.label = label;
       this.items[itemIndex] = labelled;
     }
-    // Reveal a newly saved name; double click still returns the badge to its number.
+    // Reveal a newly saved name; the context menu can return the badge to its number.
     const revealsLabel = changed && label !== null && !this.expandedTitleTabIds.has(editor.tabId);
     if (revealsLabel) this.expandedTitleTabIds.add(editor.tabId);
     if (holdSlot && item) {

@@ -55,6 +55,8 @@ MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.
 
 ## 日常使用
 
+**关闭对话标签**：鼠标左键双击输入框上方的编号或标题标签即可关闭，历史记录仍保留。最后一个空白标签会保留。显示标题、显示编号和重命名可在标签右键菜单中操作。
+
 **选择模型与努力程度**：点击输入框底部的模型按钮，在菜单中选模型，再拖动 Effort。各模型档位可能不同；Gemini 的 Low/Medium/High 会映射到 CLI 实际提供的对应变体。
 
 **图片**：粘贴或拖入 PNG、JPEG、GIF、WebP。Gemini 会将图片保存为校验过的本地附件，再通过 CLI 原生文件工具读取。图片不是以 API 图片消息块发送。

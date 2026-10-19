@@ -14,6 +14,8 @@ For Gemini, run `agy` to sign in and `agy models` to verify access. MakerPilot r
 
 ## Conversations and attachments
 
+Double-click a numbered or titled tab with the left mouse button to close it. Conversation history is retained, and the last blank tab stays open. Use the tab context menu to rename it or switch between its title and number.
+
 Open MakerPilot, choose a model, and enter your prompt. Paste or drag PNG, JPEG, GIF, or WebP images into the composer. Gemini stores validated, hashed attachment files locally and passes them to the CLI's native file-reading tool. Reopened chats and forks restore these references with integrity checks.
 
 Use rewind beside a user message to restore earlier conversational context. Use fork beside a response to continue from that checkpoint in an independent conversation. Gemini implements these operations by replaying the chosen visible history into a fresh native session. It does not undo edits on disk or reproduce hidden reasoning.

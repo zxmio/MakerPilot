@@ -90,6 +90,42 @@ describe('TabBar tab labels', () => {
     expect(menuTitles(openMenu(pinned))).toEqual(['Rename tab…', 'Show title']);
   });
 
+  it.each([false, true])('closes the double-clicked tab once after activation (active=%s)', (isActive) => {
+    const { callbacks, tabBar, ui } = setup([item({ isActive }), item({ id: 'tab-2', index: 2, title: 'Second session' })]);
+    const badge = ui.getByRole('button', { name: `Refactor ACP session restore, ${isActive ? 'active' : 'idle'}` });
+    callbacks.onTabClick.mockImplementation(() => {
+      tabBar.update([item({ isActive: true }), item({ id: 'tab-2', index: 2, title: 'Second session' })]);
+    });
+
+    fireEvent.click(badge, { detail: 1 });
+    expect(callbacks.onTabClose).not.toHaveBeenCalled();
+    fireEvent.click(badge, { detail: 2 });
+    fireEvent.dblClick(badge, { button: 0 });
+
+    expect(callbacks.onTabClose).toHaveBeenCalledTimes(1);
+    expect(callbacks.onTabClose).toHaveBeenCalledWith('tab-1');
+    expect(callbacks.onDisplayStateChanged).not.toHaveBeenCalled();
+    expect(badge.textContent).toBe('1');
+  });
+
+  it('respects current close eligibility and ignores non-left and stale double clicks', () => {
+    const { callbacks, tabBar, ui } = setup([item({ canClose: false })]);
+    const badge = ui.getByRole('button', { name: /^Refactor/ });
+    fireEvent.dblClick(badge);
+    expect(callbacks.onTabClose).not.toHaveBeenCalled();
+
+    tabBar.update([item()]);
+    fireEvent.dblClick(badge, { button: 1 });
+    fireEvent.dblClick(badge, { button: 2 });
+    expect(callbacks.onTabClose).not.toHaveBeenCalled();
+    fireEvent.dblClick(badge, { button: 0 });
+    expect(callbacks.onTabClose).toHaveBeenCalledTimes(1);
+
+    tabBar.update([]);
+    fireEvent.dblClick(badge);
+    expect(callbacks.onTabClose).toHaveBeenCalledTimes(1);
+  });
+
   it('closes closeable tabs on middle click only', () => {
     const { callbacks, ui } = setup([
       item(),
@@ -303,7 +339,7 @@ describe('TabBar tab labels', () => {
     }
   });
 
-  it('toggles between number and expanded name from the menu or double click', () => {
+  it('toggles between number and expanded name from the menu', () => {
     const { callbacks, tabBar, ui } = setup();
 
     chooseMenuItem(openMenu(ui.getByRole('button', { name: /^Refactor/ })), 'Show title');
@@ -318,10 +354,10 @@ describe('TabBar tab labels', () => {
     tabBar.update([item({ label: 'ACP' }), item({ id: 'tab-2', index: 2, title: 'Second session' })]);
     const labelled = ui.getByRole('button', { name: /^ACP/ });
     expect(labelled.textContent).toBe('1');
-    fireEvent.dblClick(labelled);
+    chooseMenuItem(openMenu(labelled), 'Show name');
     expect(labelled.textContent).toBe('ACP');
     expect(tabBar.getExpandedTitleTabIds()).toEqual(['tab-1']);
-    fireEvent.dblClick(labelled);
+    chooseMenuItem(openMenu(labelled), 'Show number');
     expect(labelled.textContent).toBe('1');
   });
 

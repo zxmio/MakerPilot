@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Double-click a conversation tab to close it while preserving history. Title/number display remains available in the context menu.
+
 ## 0.2.0 — 2026-10-19
 
 First public MakerPilot release, based on Claudian 2.3.24.
