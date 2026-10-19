@@ -6,7 +6,9 @@
 
 MakerPilot is an independent, MIT-licensed fork of [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24). It keeps the upstream workspace and provider architecture, adds a Gemini integration using the official Antigravity CLI's existing Google login, and refines everyday model selection.
 
-## What's included in 0.2.2
+## What's included in 0.2.3
+
+- Compact, icon-free history rows with right-aligned dates and no rounded hover surfaces.
 
 - Double-click a conversation tab to close it without deleting its history; use its context menu to switch between title and number.
 - Claude Code, Codex, and Gemini in one model picker. Models come from your installed provider runtime and account; there is no fixed MakerPilot model list.

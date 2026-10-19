@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.3 — 2026-10-19
+
+- Compact the history menu into 30px rows with titles on the left and dates on the right.
+- Remove decorative session/archive icons and row separators.
+- Remove rounded row hover surfaces while preserving selected-session and keyboard-focus indicators.
+- Keep session actions available on hover and keyboard focus.
+
 ## 0.2.2 — 2026-10-19
 
 - Match Fast mode to the Effort palette, with a white thumb and theme-aware switch and hover colors.

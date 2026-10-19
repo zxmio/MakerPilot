@@ -911,3 +911,118 @@ body.theme-dark .claudian-nav-dropup-menu {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
+
+/* Compact history menu: quiet rows with a clear title / status hierarchy. */
+.claudian-history-menu {
+  border-radius: 10px;
+  box-shadow: var(--shadow-s);
+}
+
+.claudian-history-menu .claudian-history-header {
+  padding: 10px 14px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-bottom: none;
+}
+
+.claudian-history-menu .claudian-history-list {
+  padding: 0 6px 6px;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
+.claudian-history-menu .claudian-history-item-icon,
+.claudian-history-menu .claudian-history-archive-control .claudian-session-nav-icon {
+  display: none;
+}
+
+.claudian-history-menu .claudian-history-archive-control {
+  position: relative;
+  padding: 5px 8px;
+  margin-bottom: 4px;
+  border-bottom: none;
+  border-radius: 0;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.claudian-history-menu .claudian-history-archive-control:hover,
+.claudian-history-menu .claudian-history-archive-control:focus-visible {
+  background: transparent;
+}
+
+.claudian-history-menu .claudian-history-item {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 30px;
+  padding: 4px 8px;
+  margin: 0;
+  gap: 6px;
+  border: none;
+  border-radius: 0;
+}
+
+.claudian-history-menu .claudian-history-item.active,
+.claudian-history-menu .claudian-history-item.open {
+  padding-inline-start: 8px;
+  box-shadow: inset 2px 0 var(--interactive-accent);
+}
+
+.claudian-history-menu .claudian-history-item-content {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.claudian-history-menu .claudian-history-item-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.claudian-history-menu .claudian-history-item-date {
+  flex: 0 1 auto;
+  max-width: 45%;
+  margin-top: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.claudian-history-menu .claudian-history-item.running .claudian-history-item-date {
+  color: var(--interactive-accent);
+}
+
+.claudian-history-menu .claudian-history-item-actions {
+  position: absolute;
+  inset-inline-end: 8px;
+  gap: 2px;
+  margin-inline-start: 0;
+  pointer-events: none;
+}
+
+.claudian-history-menu .claudian-history-item:hover .claudian-history-item-actions,
+.claudian-history-menu .claudian-history-item:focus-within .claudian-history-item-actions {
+  pointer-events: auto;
+  background-color: var(--background-secondary);
+}
+
+.claudian-history-menu .claudian-history-item:has(.claudian-action-btn):hover .claudian-history-item-date,
+.claudian-history-menu .claudian-history-item:has(.claudian-action-btn):focus-within .claudian-history-item-date {
+  visibility: hidden;
+}
+
+.claudian-history-menu .claudian-history-item:not(.active):not(.open):not(.claudian-history-item--selected):hover {
+  background: transparent;
+}
+
+.claudian-history-menu .claudian-history-archive-control:focus-visible,
+.claudian-history-menu .claudian-history-item-content:focus-visible {
+  outline: 1px solid var(--interactive-accent);
+  outline-offset: -1px;
+}

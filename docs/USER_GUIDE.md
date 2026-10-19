@@ -41,3 +41,7 @@ For Claudian migration, stop its active chats and disable it; copy `.claudian` t
 | Missing tool cards after reopening | Gemini currently persists dialogue, checkpoints, and image references rather than live tool-card UI. |
 
 Report issues at https://github.com/zxmio/MakerPilot/issues with the plugin, Obsidian, OS, and CLI versions plus reproduction steps. Remove credentials, private note contents, and personal paths from diagnostics before posting them.
+
+### 紧凑历史列表
+
+历史菜单以单行显示标题与日期，移除装饰图标和普通行悬停底色；当前会话仍保留选中提示。悬停或键盘聚焦时可使用会话操作。
