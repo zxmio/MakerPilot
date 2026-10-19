@@ -42,6 +42,12 @@ For Claudian migration, stop its active chats and disable it; copy `.claudian` t
 
 Report issues at https://github.com/zxmio/MakerPilot/issues with the plugin, Obsidian, OS, and CLI versions plus reproduction steps. Remove credentials, private note contents, and personal paths from diagnostics before posting them.
 
-### 紧凑历史列表
+### 历史列表
 
-历史菜单以单行显示标题与日期，移除装饰图标和普通行悬停底色；当前会话仍保留选中提示。悬停或键盘聚焦时可使用会话操作。
+历史菜单顶部有搜索框，搜索时也会列出匹配的归档对话（排在最后的「已归档」分组）。会话按今天、昨天、本周、更早分组，今天和昨天显示时间，本周显示星期，运行中和未读的会话直接标出，当前会话以强调色浅底标出。悬停或键盘聚焦时可重命名、置顶或归档；菜单底部的「已归档」入口显示数量，点进去可以浏览全部归档对话，点开任意一个会先恢复再打开。
+
+### 对话界面（0.2.4）
+
+面板顶部显示当前会话标题和新建、历史按钮。回答进行中，各步骤收在展开的「处理中…」标题下并显示步数；完成后折叠为「工作了 mm:ss · N 步」，连续多次同类工具调用合并为一行。最新回答下方可重新生成（Claude、Grok、Gemini 通过回退实现，Pi 通过分支实现），并显示回答所用的模型。
+
+输入框左下角的「+」可以上传文件（复制到库的附件文件夹，并把路径作为引用插入输入框）、添加图片或引用库中文件；右下角是发送/停止按钮。

@@ -4,7 +4,7 @@
 
 [English](README.md) · [下载最新版](https://github.com/zxmio/MakerPilot/releases/latest) · [更新记录](CHANGELOG.md) · [反馈问题](https://github.com/zxmio/MakerPilot/issues)
 
-MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24) 独立开发，以 MIT 协议开源。当前版本为 **0.2.3**，优化历史列表：紧凑单行、标题与日期左右对齐，移除装饰图标和圆角悬停效果。0.2.0 是首个公开版本，重点完善 Gemini 接入、模型发现和日常交互。
+MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24) 独立开发，以 MIT 协议开源。当前版本为 **0.2.4**，重做对话界面：顶部会话标题栏，运行中实时显示步骤和步数，同类工具调用合并，编辑卡片预览改动，支持重新生成并显示回答所用的模型；输入框新增发送/停止按钮和「+」菜单（上传文件到库并引用路径、添加图片、引用库中文件），关联笔记显示为框内标签；历史菜单支持搜索（含归档对话）、按日期分组和行内重命名、置顶，打开归档对话会自动恢复。0.2.0 是首个公开版本，重点完善 Gemini 接入、模型发现和日常交互。
 
 ## 当前功能
 
@@ -28,7 +28,7 @@ MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.
 4. 同一仓库中先关闭 Claudian/iClaudian，避免继承样式重复加载造成冲突。
 5. 在 MakerPilot 设置里启用所需提供商，完成它自己的登录，刷新模型列表并勾选要显示的模型。
 
-也可以下载 `MakerPilot-0.2.3.zip`，把其中的 `makerpilot` 文件夹解压到 `.obsidian/plugins/`。不要出现 `makerpilot/makerpilot/` 的重复目录。
+也可以下载 `MakerPilot-0.2.4.zip`，把其中的 `makerpilot` 文件夹解压到 `.obsidian/plugins/`。不要出现 `makerpilot/makerpilot/` 的重复目录。
 
 ## 连接账号
 

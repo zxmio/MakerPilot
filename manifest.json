@@ -1,7 +1,7 @@
 {
   "id": "makerpilot",
   "name": "MakerPilot",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "minAppVersion": "1.13.0",
   "description": "Your AI workspace with Claude, GPT, and Gemini. Based on Claudian.",
   "author": "MakerPilot contributors; original by Yishen Tu",

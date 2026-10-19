@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.4 — 2026-10-19
+
+- Add a chat header with the active session title, new conversation and history controls.
+- Show work while it streams: steps grow under an open "Working…" header with a step count, then fold into "Worked for mm:ss · N steps" with one status dot per step.
+- Fold consecutive successful calls of one tool into a single row, and name core tools in the interface language.
+- Preview the first changed lines of collapsed Write/Edit cards; add a task-list progress bar, a code block header with language and copy, and a spinner-style running indicator with a localized interrupt hint.
+- Add a send/stop button and a "+" attach menu to the composer: upload a file into the vault and reference its path, attach an image, or mention a vault file.
+- Show the linked note as a chip inside the input box, group the slash menu into commands and skills, and localize the queued-message strip.
+- Add Regenerate to the latest answer (rewind for Claude, Grok and Gemini; branching for Pi) and show the model that answered.
+- Rework the history menu: search that also finds archived sessions, Today/Yesterday/This week groups with times and weekdays, localized running and unread labels, inline rename and pin, and an archive count. Opening an archived session restores it.
+- Build auto-copy now targets the `makerpilot` plugin folder.
+
 ## 0.2.3 — 2026-10-19
 
 - Compact the history menu into 30px rows with titles on the left and dates on the right.
