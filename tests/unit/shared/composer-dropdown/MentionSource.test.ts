@@ -1,0 +1,110 @@
+import { testDate } from '@test/helpers/testClock';
+import type { TFile } from 'obsidian';
+
+import { MentionSource } from '@/shared/composer-dropdown/MentionSource';
+
+function file(path: string, mtime = 1): TFile {
+  const name = path.split('/').pop() ?? path;
+  return {
+    basename: name.replace(/\.[^.]+$/, ''),
+    extension: name.includes('.') ? name.split('.').pop() : '',
+    name,
+    path,
+    stat: { ctime: mtime, mtime, size: 10 },
+  } as TFile;
+}
+
+function source(
+  overrides: Record<string, unknown> = {},
+  options: ConstructorParameters<typeof MentionSource>[1] = {},
+) {
+  const value = new MentionSource({
+    getCachedVaultFiles: () => [file('notes/Alpha.md', 5)],
+    getCachedVaultFolders: () => [{ name: 'notes', path: 'notes' }],
+    ...overrides,
+  }, options);
+  return { source: value };
+}
+
+describe('MentionSource', () => {
+  it('formats only retained suggestions while preserving file and folder ranking', async () => {
+    const now = testDate().getTime();
+    const files = Array.from({ length: 250 }, (_, index) => file(`folder${index % 60}/Note ${index}.md`, now + index + 1));
+    const formatVaultFileMention = jest.fn((path: string) => `@${path} `);
+    const { source: value } = source({
+      getCachedVaultFiles: () => files,
+      getCachedVaultFolders: () => Array.from({ length: 60 }, (_, index) => ({ name: `folder${index}`, path: `folder${index}` })),
+    }, { formatVaultFileMention });
+    const items = await value.load(value.match('@', 1)!, new AbortController().signal);
+    expect(items).toHaveLength(150);
+    expect(items.slice(0, 2)).toEqual([
+      expect.objectContaining({ id: 'vault-file:folder9/Note 249.md', replacement: '@folder9/Note 249.md ' }),
+      expect.objectContaining({ id: 'vault-folder:folder9', replacement: '@folder9/ ' }),
+    ]);
+    expect(formatVaultFileMention).toHaveBeenCalledTimes(100);
+    files[0].stat.mtime = now + 1000;
+    const updated = await value.load(value.match('@', 1)!, new AbortController().signal);
+    expect(updated.slice(0, 2).map(item => item.id)).toEqual(['vault-file:folder0/Note 0.md', 'vault-folder:folder0']);
+  });
+
+  it('matches @ at a token boundary and preserves file names containing spaces', () => {
+    const { source: value } = source();
+    expect(value.match('Ask @Al', 7)).toEqual(expect.objectContaining({ query: 'Al' }));
+    expect(value.match('mail@example', 12)).toBeNull();
+    expect(value.match('@Alpha note', 11)).toEqual(expect.objectContaining({
+      query: 'Alpha note',
+    }));
+    const completed = '@[A \\] B](claudian-session:conv-1-a) summarize this';
+    expect(value.match(completed, completed.length)).toBeNull();
+    expect(value.match(`${completed} @Al`, completed.length + 4)).toEqual(expect.objectContaining({ query: 'Al' }));
+    value.destroy();
+  });
+
+  it('lists and selects Vault files and folders', async () => {
+    const { source: value } = source();
+    const match = value.match('@alp', 4)!;
+    const items = await value.load(match, new AbortController().signal);
+    const fileItem = items.find(item => item.kind === 'value' && item.label === 'notes/Alpha.md');
+    expect(fileItem).toEqual(expect.objectContaining({ replacement: '@notes/Alpha.md ' }));
+    const action = value.select(fileItem as Extract<typeof fileItem, { kind: 'value' }>, match);
+    expect(action).toEqual(expect.objectContaining({ kind: 'replace', text: '@notes/Alpha.md ' }));
+
+    const rootItems = await value.load(value.match('@notes', 6)!, new AbortController().signal);
+    expect(rootItems).toEqual(expect.arrayContaining([
+      expect.objectContaining({ label: '@notes/' }),
+    ]));
+    value.destroy();
+  });
+
+  it('resolves files inside a Vault Agents folder', async () => {
+    const { source: value } = source({
+      getCachedVaultFiles: () => [file('Agents/reviewer.md')],
+      getCachedVaultFolders: () => [{ name: 'Agents', path: 'Agents' }],
+    });
+    const match = value.match('@Agents/rev', 11)!;
+    const [item] = await value.load(match, new AbortController().signal);
+    expect(item).toEqual(expect.objectContaining({
+      kind: 'value', replacement: '@Agents/reviewer.md ',
+    }));
+    value.destroy();
+  });
+});
+
+it('mixes opt-in sessions with files by prefix then recency, including the empty query', async () => {
+  const now = testDate().getTime();
+  const { source: value } = source({
+    getCachedVaultFolders: () => [],
+    getCachedVaultFiles: () => [file('Alpha.md', now)],
+  }, {
+    getSessionItems: () => [
+      { id: 'session:1', kind: 'value', label: 'Alpha review', replacement: 'token ', mtime: now - 1 },
+      { id: 'session:2', kind: 'value', label: 'Review Alpha', replacement: 'token2 ', mtime: now + 1 },
+    ],
+  });
+  const signal = new AbortController().signal;
+  expect((await value.load(value.match('@', 1)!, signal)).map(item => item.id))
+    .toEqual(['session:2', 'vault-file:Alpha.md', 'session:1']);
+  expect((await value.load(value.match('@Alpha', 6)!, signal)).map(item => item.id))
+    .toEqual(['vault-file:Alpha.md', 'session:1', 'session:2']);
+  expect(await value.load(value.match('@missing', 8)!, signal)).toEqual([]);
+});
