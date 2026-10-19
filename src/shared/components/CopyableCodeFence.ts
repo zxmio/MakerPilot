@@ -41,8 +41,11 @@ export function enhanceRenderedCodeFence(pre: HTMLPreElement): HTMLElement {
     wrapper.classList.add('has-language');
     const copyLabel = t('chat.codeBlock.copyAriaLabel', { language });
     const copied = t('chat.codeBlock.copied');
+    // A header bar above the code holds the language, which is also the copy control.
+    const header = createDiv({ cls: 'claudian-code-header' });
+    wrapper.insertBefore(header, pre);
     // The accessible name keeps the visible language (label-in-name); the status announces feedback.
-    const label = wrapper.createEl('button', {
+    const label = header.createEl('button', {
       cls: 'claudian-code-lang-label',
       text: language,
       attr: { type: 'button', 'aria-label': copyLabel },

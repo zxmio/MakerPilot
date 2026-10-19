@@ -116,6 +116,32 @@ describe('SlashCommandSource', () => {
     source.destroy();
   });
 
+  it('groups commands before skills under headers only when both kinds are offered', () => {
+    const command = { ...ENTRY, displayPrefix: '/', id: 'provider:command:zeta', insertPrefix: '/', kind: 'command' as const, name: 'zeta' };
+    const skill = { ...ENTRY, displayPrefix: '/', id: 'provider:skill:alpha', insertPrefix: '/', name: 'alpha' };
+    const both = new SlashCommandSource({
+      includeBuiltIns: false,
+      providerDiscovery: discovery({ status: 'ready', items: [skill, command] }),
+    });
+    const skillsOnly = new SlashCommandSource({
+      includeBuiltIns: false,
+      providerDiscovery: discovery({ status: 'ready', items: [skill] }),
+    });
+    try {
+      // Alphabetical order alone would put the skill first.
+      expect(both.load(match('/'), new AbortController().signal).map(item => [item.kind, item.label])).toEqual([
+        ['header', 'Commands'],
+        ['value', '/zeta'],
+        ['header', 'Skills'],
+        ['value', '/alpha'],
+      ]);
+      expect(skillsOnly.load(match('/'), new AbortController().signal).map(item => item.kind)).toEqual(['value']);
+    } finally {
+      both.destroy();
+      skillsOnly.destroy();
+    }
+  });
+
   it('offers built-ins only for a leading slash and lets built-in names and aliases win collisions', async () => {
     const newEntry = { ...ENTRY, displayPrefix: '/', id: 'provider:new', insertPrefix: '/', name: 'new' };
     const clearEntry = { ...ENTRY, displayPrefix: '/', id: 'provider:clear', insertPrefix: '/', name: 'clear' };

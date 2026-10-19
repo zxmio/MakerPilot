@@ -50,7 +50,8 @@ type HistoryRenderOptions = SessionActionOptions & SessionStatusDisplay & Sessio
   showMetadataPopover?: boolean;
   organization?: SessionManagerOrganization;
   /** Divides an unpinned flat list into recency groups. */
-  groupByRecency?: boolean;
+  /** `true` buckets by elapsed days; `'calendar'` by Today, Yesterday and This week. */
+  groupByRecency?: boolean | 'calendar';
   sort?: SessionManagerSort;
   collapsedGroupKeys?: ReadonlySet<string>;
   onGroupCollapseChange?: (groupKey: string, collapsed: boolean) => void;
@@ -153,7 +154,9 @@ export class SessionBrowser {
       collapsedGroupKeys: options.collapsedGroupKeys,
       contentExists: options.contentExists,
       contentIsNote: options.contentIsNote,
-      groupByRecency: options.groupByRecency ? { now: Date.now() } : undefined,
+      groupByRecency: options.groupByRecency
+        ? { now: Date.now(), scheme: options.groupByRecency === 'calendar' ? 'calendar' : 'age' }
+        : undefined,
     });
     const { conversationsByLinkedContent, pinnedContentSections, sections } = model;
     const showSessionSections = options.showPinnedSection || options.showArchivedSection;

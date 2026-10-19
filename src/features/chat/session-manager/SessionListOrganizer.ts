@@ -4,6 +4,7 @@ import type {
   SessionManagerSort,
 } from '@/core/types';
 import { isProvisionalNotePath } from '@/features/chat/session-manager/ProvisionalNoteNames';
+import { t } from '@/i18n/i18n';
 
 export type SessionListSectionKind = 'list' | 'recency' | 'content' | 'ungrouped' | 'missing';
 
@@ -23,7 +24,13 @@ interface OrganizeSessionListOptions {
   contentExists?: (contentPath: string) => boolean;
   contentIsNote?: (contentPath: string) => boolean;
   /** Splits the flat list into recency groups relative to `now`. */
-  groupByRecency?: { now: number };
+  groupByRecency?: RecencyGrouping;
+}
+
+/** `age` buckets by elapsed days; `calendar` by local calendar day (Today, Yesterday, This week). */
+export interface RecencyGrouping {
+  readonly now: number;
+  readonly scheme?: 'age' | 'calendar';
 }
 
 const DAY_MS = 86_400_000;
@@ -49,6 +56,34 @@ function getLastActivityTimestamp(conversation: ConversationMeta): number {
 
 function getSortTimestamp(conversation: ConversationMeta, sort: SessionManagerSort): number {
   return sort === 'created' ? conversation.createdAt : getLastActivityTimestamp(conversation);
+}
+
+/** Buckets by local calendar day; each label is its upper bound's start. */
+function groupByCalendarDay(
+  sortedConversations: readonly ConversationMeta[],
+  sort: SessionManagerSort,
+  now: number,
+): SessionListSection[] {
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const today = startOfToday.getTime();
+  const groups = [
+    { key: 'calendar:today', label: t('chat.sessions.today'), since: today },
+    { key: 'calendar:yesterday', label: t('chat.sessions.yesterday'), since: today - DAY_MS },
+    { key: 'calendar:week', label: t('chat.sessions.thisWeek'), since: today - 6 * DAY_MS },
+    { key: 'calendar:older', label: t('chat.sessions.older'), since: -Infinity },
+  ];
+  const sections = groups.map(({ key, label }): SessionListSection => ({
+    key,
+    kind: 'recency',
+    label,
+    conversations: [],
+  }));
+  for (const conversation of sortedConversations) {
+    const timestamp = getSortTimestamp(conversation, sort);
+    sections[groups.findIndex(({ since }) => timestamp >= since)].conversations.push(conversation);
+  }
+  return sections.filter(section => section.conversations.length > 0);
 }
 
 function groupByRecency(
@@ -122,6 +157,9 @@ export function organizeSessionList(
     compareConversations(left, right, options.sort)
   ));
   if (options.organization === 'list') {
+    if (options.groupByRecency?.scheme === 'calendar') {
+      return groupByCalendarDay(sortedConversations, options.sort, options.groupByRecency.now);
+    }
     if (options.groupByRecency) {
       return groupByRecency(sortedConversations, options.sort, options.groupByRecency.now);
     }
@@ -197,7 +235,7 @@ export interface SessionListModelOptions {
   contentExists?: (contentPath: string) => boolean;
   contentIsNote?: (contentPath: string) => boolean;
   /** Divides an unpinned flat list into recency groups relative to `now`. */
-  groupByRecency?: { now: number };
+  groupByRecency?: RecencyGrouping;
 }
 
 /** What a session list shows, derived from the conversation list without any DOM. */

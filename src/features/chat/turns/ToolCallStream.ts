@@ -101,6 +101,8 @@ export interface ToolCallStreamDeps {
   getMessagesEl: () => HTMLElement | null;
   scrollToBottom: () => void;
   onQuestionToolChanged?: (tool: ToolCallInfo) => void;
+  /** Where a segment's step cards go; the segment's content element by default. */
+  getStepParent?: (contentEl: HTMLElement) => HTMLElement;
 }
 
 /**
@@ -285,7 +287,8 @@ export class ToolCallStream {
 
     const { toolCall, parentEl } = pending;
     if (!parentEl) return;
-    const { element, writeEditState } = renderToolCard(parentEl, toolCall, {
+    // The buffered parent is the segment the tool arrived in; its steps live in that segment's work disclosure.
+    const { element, writeEditState } = renderToolCard(this.deps.getStepParent?.(parentEl) ?? parentEl, toolCall, {
       mode: 'live', expandFileEditsByDefault: this.deps.plugin.settings.expandFileEditsByDefault === true,
     });
     state.toolCallElements.set(toolId, element);

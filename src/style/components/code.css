@@ -57,18 +57,34 @@ body.theme-light .claudian-message-content pre {
   box-shadow: none;
 }
 
+/* A fenced block with a language is a bordered card: a header bar over the code. */
+.claudian-code-wrapper.has-language {
+  overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+}
+
+.claudian-code-wrapper.has-language pre {
+  border-radius: 0;
+}
+
+.claudian-code-header {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: rgba(var(--mono-rgb-100), 0.03);
+}
+
 .claudian-code-wrapper .claudian-code-lang-label {
-  position: absolute;
-  top: 6px;
-  inset-inline-end: 6px;
-  padding: 2px 8px;
+  padding: 2px 6px;
   font-size: 12px;
   font-family: var(--font-monospace);
-  color: var(--text-faint);
-  background: var(--background-primary);
-  border-radius: 3px;
+  color: var(--text-muted);
+  background: transparent;
+  border-radius: 6px;
   cursor: pointer;
-  z-index: 2;
   transition: color 0.15s ease, background 0.15s ease;
 }
 

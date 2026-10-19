@@ -46,6 +46,8 @@ export interface SubagentStreamRouterDeps {
   tools: Pick<ToolCallStream, 'flush' | 'flushBefore' | 'detach' | 'remove'>;
   indicator: Pick<ThinkingIndicator, 'show'>;
   scrollToBottom: () => void;
+  /** Where a message's subagent cards go; its content element by default. */
+  getStepParent?: (contentEl: HTMLElement) => HTMLElement;
 }
 
 /**
@@ -229,10 +231,12 @@ export class SubagentStreamRouter {
     return resolveSubagentAdapter(this.deps.getProviderId(), toolName);
   }
 
+  /** Where a subagent card goes: the message's step parent (its live work disclosure, when streaming has one). */
   #getMessageContentEl(message: ChatMessage): HTMLElement | null {
-    return this.deps.getMessagesEl()?.querySelector<HTMLElement>(
+    const contentEl = this.deps.getMessagesEl()?.querySelector<HTMLElement>(
       `[data-message-id="${message.id}"] .claudian-message-content`,
     ) ?? this.deps.state.currentContentEl;
+    return contentEl ? this.deps.getStepParent?.(contentEl) ?? contentEl : null;
   }
 
   // ============================================

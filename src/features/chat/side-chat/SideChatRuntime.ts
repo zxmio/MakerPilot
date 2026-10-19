@@ -125,6 +125,7 @@ export class SideChatRuntime {
       state: this.state,
       subagentManager: this.#subagents,
       updateQueueIndicator: () => undefined,
+      liveWorkDisclosure: true,
     });
     this.#transcript = new SessionTranscript(this.state, this.#stream, this.#subagents);
     this.#responseStream = new ResponseStream({

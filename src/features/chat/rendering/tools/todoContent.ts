@@ -10,6 +10,12 @@ function getTodos(input: Record<string, unknown>): TodoItem[] | undefined {
   return todos as TodoItem[];
 }
 
+const TODO_STATUS_ICONS: Record<TodoItem['status'], string> = {
+  completed: 'circle-check',
+  in_progress: 'loader-circle',
+  pending: 'circle',
+};
+
 function countCompleted(todos: TodoItem[]): number {
   return todos.filter(t => t.status === 'completed').length;
 }
@@ -50,12 +56,23 @@ export function renderTodoWriteContent(container: HTMLElement, input: Record<str
     return;
   }
 
+  if (todos.length > 0) {
+    const completed = countCompleted(todos);
+    const progress = container.createDiv({ cls: 'claudian-todo-progress' });
+    progress.setAttribute('role', 'progressbar');
+    progress.setAttribute('aria-label', t('chat.tools.taskProgressLabel', { completed, total: todos.length }));
+    progress.setAttribute('aria-valuemin', '0');
+    progress.setAttribute('aria-valuemax', String(todos.length));
+    progress.setAttribute('aria-valuenow', String(completed));
+    progress.setCssProps({ '--claudian-todo-progress': `${(completed / todos.length) * 100}%` });
+  }
+
   for (const todo of todos) {
     const item = container.createDiv({ cls: `claudian-todo-item claudian-todo-${todo.status}` });
 
     const icon = item.createSpan({ cls: 'claudian-todo-status-icon' });
     icon.setAttribute('aria-hidden', 'true');
-    setIcon(icon, todo.status === 'completed' ? 'check' : 'dot');
+    setIcon(icon, TODO_STATUS_ICONS[todo.status]);
 
     const text = item.createSpan({ cls: 'claudian-todo-text' });
     text.setText(todo.status === 'in_progress' ? todo.activeForm : todo.content);

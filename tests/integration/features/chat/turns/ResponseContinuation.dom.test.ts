@@ -463,3 +463,52 @@ it('keeps a notification consumed by an automatic response outside an admitted r
     stream.dispose(); subagents.clear(); renderer.dispose();
   }
 });
+
+it('keeps streaming steps under an expanded live work header, then folds it into the completed disclosure', async () => {
+  const messagesEl = document.body.createDiv();
+  const plugin = { app: {}, settings: { mediaFolder: '', showMessageTimestamps: false } } as any;
+  const renderer = new MessageRenderer(plugin, new Component(), messagesEl);
+  const state = new ChatState();
+  const subagents = new SubagentManager(() => undefined);
+  const stream = new StreamController({ plugin, state, renderer, subagentManager: subagents,
+    getMessagesEl: () => messagesEl, updateQueueIndicator: () => undefined, liveWorkDisclosure: true });
+  const response: ChatMessage = { id: 'live', role: 'assistant', timestamp: testDate().getTime(), content: '', contentBlocks: [] };
+  try {
+    state.addMessage(response);
+    state.currentContentEl = renderer.addMessage(response).querySelector('.claudian-message-content');
+    await stream.handleStreamChunk({ type: 'tool_use', id: 'first', name: 'Read', input: { file_path: 'first.md' } }, response);
+    await stream.handleStreamChunk({ type: 'tool_result', id: 'first', content: 'First' }, response);
+    await stream.handleStreamChunk({ type: 'text', content: 'Checking the second file.' }, response);
+    await stream.handleStreamChunk({ type: 'tool_use', id: 'second', name: 'Read', input: { file_path: 'second.md' } }, response);
+    await stream.handleStreamChunk({ type: 'tool_result', id: 'second', content: 'Second' }, response);
+
+    // While streaming: one expanded header above every step and the text between them.
+    const live = within(messagesEl).getByRole('button', { name: 'Working…' });
+    expect(live.getAttribute('aria-expanded')).toBe('true');
+    expect(live.textContent).toContain('2 steps');
+    const liveHistory = document.getElementById(live.getAttribute('aria-controls')!)!;
+    for (const step of [
+      within(messagesEl).getByRole('button', { name: /Read.*first\.md/ }),
+      within(messagesEl).getByText('Checking the second file.'),
+      within(messagesEl).getByRole('button', { name: /Read.*second\.md/ }),
+    ]) {
+      expect(liveHistory.contains(step)).toBe(true);
+    }
+    expect((await axe(messagesEl)).violations).toEqual([]);
+
+    await stream.handleStreamChunk({ type: 'text', content: 'Final answer.' }, response);
+    await stream.finalizeCurrentTextBlock(response);
+    response.durationSeconds = 5;
+    renderer.finalizeResponse(response, state.messages);
+
+    expect(within(messagesEl).queryByRole('button', { name: 'Working…' })).toBeNull();
+    const done = within(messagesEl).getByRole('button', { name: 'Worked for 00:05' });
+    expect(done.getAttribute('aria-expanded')).toBe('false');
+    expect(messagesEl.querySelectorAll('.claudian-work')).toHaveLength(1);
+    const history = document.getElementById(done.getAttribute('aria-controls')!)!;
+    expect(history.contains(within(messagesEl).getByText('Checking the second file.'))).toBe(true);
+    expect(within(messagesEl).getByText('Final answer.').closest('[hidden]')).toBeNull();
+  } finally {
+    stream.dispose(); subagents.clear(); renderer.dispose();
+  }
+});

@@ -1,12 +1,14 @@
 import { setIcon } from 'obsidian';
 
 import type { ChatFeatureHost } from '@/features/chat/ChatFeatureHost';
+import { createSessionSearchField } from '@/features/chat/session-manager/SessionSearchField';
 import {
   archiveScopeOptions,
   beginInlineRenameNextFrame,
   type SessionSurfaceNavigation,
   type SessionSurfaceShared,
 } from '@/features/chat/session-manager/SessionSurfaceShared';
+import { t } from '@/i18n/i18n';
 
 export interface HistoryDropdownDeps {
   plugin: ChatFeatureHost;
@@ -22,6 +24,10 @@ export class HistoryDropdown {
   private menuEl: HTMLElement | null = null;
   private renderAbortController: AbortController | null = null;
   private dirty = true;
+  /** The menu's own filter; cleared whenever the menu closes. */
+  private searchQuery = '';
+  private isSearchComposing = false;
+  private searchInputEl: HTMLInputElement | null = null;
 
   constructor(private readonly deps: HistoryDropdownDeps) {}
 
@@ -70,6 +76,7 @@ export class HistoryDropdown {
   /** Hides the menu and abandons its in-flight render. */
   close(): void {
     this.menuEl?.removeClass('visible');
+    this.searchQuery = '';
     this.cancelRendering();
   }
 
@@ -84,16 +91,31 @@ export class HistoryDropdown {
 
   private render(): void {
     const menuEl = this.menuEl;
-    if (!menuEl || !this.dirty) return;
+    if (!menuEl || !this.dirty || this.isSearchComposing) return;
+    const restoreSearchFocus = this.searchInputEl !== null
+      && this.searchInputEl.ownerDocument.activeElement === this.searchInputEl;
 
     this.cancelRendering();
     const abortController = new AbortController();
     this.renderAbortController = abortController;
 
     this.deps.shared.profileListRender(() => {
+      this.searchInputEl = null;
       this.renderList(menuEl, abortController.signal);
+      if (restoreSearchFocus) this.focusSearchInput();
       this.dirty = false;
     });
+  }
+
+  private updateSearchQuery(query: string): void {
+    this.searchQuery = query;
+    this.dirty = true;
+    this.render();
+    this.focusSearchInput();
+  }
+
+  private focusSearchInput(): void {
+    this.searchInputEl?.focus();
   }
 
   private renderList(container: HTMLElement, signal: AbortSignal): void {
@@ -113,7 +135,10 @@ export class HistoryDropdown {
       showOpenStateLabels: true,
       showOpenStateActions: !isArchiveView,
       preserveListState: true,
-      showInlinePinAction: false,
+      showInlinePinAction: true,
+      showAttentionState: !isArchiveView,
+      groupByRecency: 'calendar',
+      searchQuery: this.searchQuery || undefined,
       onRequestInlineRename: (request) => beginInlineRenameNextFrame(container, request, {
         isCurrent: () => !signal.aborted && this.menuEl === container,
         // Rename can start from a context menu after an outside click hid the menu.
@@ -123,7 +148,10 @@ export class HistoryDropdown {
       onAssignConversationToDevice: async (id: string) => {
         await plugin.assignConversationToCurrentDevice(id);
       },
-      onBeforeRestoreListState: (target: HTMLElement) => this.buildArchiveNavigation(target),
+      onBeforeRestoreListState: (target: HTMLElement) => {
+        this.buildSearchField(target);
+        this.buildArchiveNavigation(target);
+      },
       signal,
     });
   }
@@ -143,13 +171,16 @@ export class HistoryDropdown {
     const { shared } = this.deps;
     const isArchiveView = shared.isArchiveView();
     const label = isArchiveView ? 'Sessions' : 'Archive';
+    const archivedCount = isArchiveView ? 0
+      : this.deps.plugin.getConversationList().filter(conversation => conversation.isArchived).length;
     const control = list.createDiv({ cls: 'claudian-history-archive-control' });
     control.setAttribute('role', 'button');
     control.setAttribute('tabindex', '0');
-    control.setAttribute('aria-label', label);
+    control.setAttribute('aria-label', archivedCount > 0 ? `${label} (${archivedCount})` : label);
     const icon = control.createSpan({ cls: 'claudian-session-nav-icon' });
     setIcon(icon, isArchiveView ? 'arrow-left' : 'archive');
     control.createSpan({ cls: 'claudian-session-nav-label', text: label });
+    if (archivedCount > 0) control.createSpan({ cls: 'claudian-session-nav-count', text: String(archivedCount) });
     const toggleArchiveView = (): void => shared.setArchiveView(!shared.isArchiveView());
     control.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -161,7 +192,25 @@ export class HistoryDropdown {
       event.stopPropagation();
       toggleArchiveView();
     });
-    list.insertBefore(control, list.firstChild);
+    // The way out of the list sits after it, below the sessions themselves.
+    list.appendChild(control);
+  }
+
+  private buildSearchField(container: HTMLElement): void {
+    const { fieldEl, inputEl } = createSessionSearchField(container, {
+      label: t('chat.sessions.search'),
+      value: this.searchQuery,
+      onQuery: query => this.updateSearchQuery(query),
+      onEscape: () => {
+        if (this.searchQuery) this.updateSearchQuery('');
+        else this.close();
+      },
+      onCompositionChange: (composing) => {
+        this.isSearchComposing = composing;
+      },
+    });
+    container.insertBefore(fieldEl, container.firstChild);
+    this.searchInputEl = inputEl;
   }
 
   private cancelRendering(): void {

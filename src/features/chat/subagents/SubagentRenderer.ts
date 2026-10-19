@@ -12,6 +12,7 @@ import {
   renderExpandedContent,
 } from '@/features/chat/rendering/tools/toolPresentation';
 import { setToolStatus } from '@/features/chat/rendering/tools/toolStatus';
+import { t } from '@/i18n/i18n';
 import { formatDurationMmSs } from '@/utils/date';
 
 interface SubagentToolView {
@@ -88,7 +89,7 @@ function renderSubagentToolContent(contentEl: HTMLElement, toolCall: ToolCallInf
 
   if (!toolCall.result && toolCall.status === 'running') {
     const emptyEl = contentEl.createDiv({ cls: 'claudian-subagent-tool-empty' });
-    emptyEl.setText('Running...');
+    emptyEl.setText(t('chat.tools.running'));
     return;
   }
 
@@ -144,16 +145,16 @@ function createSubagentToolView(parentEl: HTMLElement, toolCall: ToolCallInfo): 
 type SubagentProgressView = Pick<SubagentState, 'wrapperEl' | 'headerEl' | 'progressEl' | 'progress'>;
 
 function formatTokenCount(tokens: number): string {
-  if (tokens < 1000) return `${tokens} tokens`;
+  if (tokens < 1000) return t('chat.subagent.tokens', { count: String(tokens) });
   const thousands = tokens / 1000;
   const value = thousands >= 100 ? String(Math.round(thousands)) : thousands.toFixed(1).replace(/\.0$/, '');
-  return `${value}k tokens`;
+  return t('chat.subagent.tokens', { count: `${value}k` });
 }
 
 function formatProgressMeta(progress: SubagentProgress): string {
   const parts: string[] = [];
   if (progress.toolUses !== undefined) {
-    parts.push(`${progress.toolUses} ${progress.toolUses === 1 ? 'tool use' : 'tool uses'}`);
+    parts.push(progress.toolUses === 1 ? t('chat.subagent.toolUse') : t('chat.subagent.toolUses', { count: String(progress.toolUses) }));
   }
   if (progress.totalTokens) parts.push(formatTokenCount(progress.totalTokens));
   if (progress.durationMs) parts.push(formatDurationMmSs(Math.round(progress.durationMs / 1000)));
@@ -170,7 +171,7 @@ export function updateSubagentProgress(state: SubagentProgressView, update: Suba
   state.progress = progress;
 
   const activity = progress.summary
-    ?? (progress.lastToolName ? `Last tool: ${progress.lastToolName}` : '');
+    ?? (progress.lastToolName ? t('chat.subagent.lastTool', { name: progress.lastToolName }) : '');
   const meta = formatProgressMeta(progress);
   if (!activity && !meta) return;
 
@@ -198,7 +199,7 @@ function ensureResultSection(state: SubagentState): SubagentSection {
     return { wrapperEl: state.resultSectionEl, bodyEl: state.resultBodyEl };
   }
 
-  const section = createSection(state.contentEl, 'Result', 'claudian-subagent-result-body');
+  const section = createSection(state.contentEl, t('chat.subagent.result'), 'claudian-subagent-result-body');
   section.wrapperEl.addClass('claudian-subagent-section-result');
   // Earlier runs stay below the current run's result.
   const history = state.contentEl.querySelector(':scope > .claudian-subagent-history');
@@ -239,7 +240,7 @@ function createSubagentView(
 
   const contentEl = wrapperEl.createDiv({ cls: 'claudian-subagent-content' });
 
-  const promptSection = createSection(contentEl, 'Prompt', 'claudian-subagent-prompt-body');
+  const promptSection = createSection(contentEl, t('chat.subagent.prompt'), 'claudian-subagent-prompt-body');
   promptSection.wrapperEl.addClass('claudian-subagent-section-prompt');
   setPromptText(promptSection.bodyEl, prompt);
 

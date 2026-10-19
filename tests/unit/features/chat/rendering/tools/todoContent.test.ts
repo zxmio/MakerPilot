@@ -24,16 +24,20 @@ describe('todoContent', () => {
 
       renderTodoWriteContent(container as unknown as HTMLElement, { todos });
 
-      expect(container._children.length).toBe(3);
+      // A progress bar leads the list: one of three tasks completed.
+      const progress = container._children[0];
+      expect(progress.getAttribute('role')).toBe('progressbar');
+      expect([progress.getAttribute('aria-valuenow'), progress.getAttribute('aria-valuemax')]).toEqual(['1', '3']);
+      expect(container._children.length).toBe(4);
       expect(setIcon).toHaveBeenCalledTimes(3);
 
       const expected = [
-        { status: 'completed', icon: 'check', text: 'Task 1' },
-        { status: 'in_progress', icon: 'dot', text: 'Doing Task 2' },
-        { status: 'pending', icon: 'dot', text: 'Task 3' },
+        { status: 'completed', icon: 'circle-check', text: 'Task 1' },
+        { status: 'in_progress', icon: 'loader-circle', text: 'Doing Task 2' },
+        { status: 'pending', icon: 'circle', text: 'Task 3' },
       ];
       expected.forEach(({ status, icon, text }, index) => {
-        const item = container._children[index];
+        const item = container._children[index + 1];
         expect(item.hasClass(`claudian-todo-${status}`)).toBe(true);
         expect(setIcon).toHaveBeenNthCalledWith(index + 1, item._children[0], icon);
         expect(item._children[1].textContent).toBe(text);
@@ -48,8 +52,8 @@ describe('todoContent', () => {
         todos: [{ status: 'completed', content: 'New', activeForm: 'New' }],
       });
 
-      // Should have exactly 1 child (old cleared, new added)
-      expect(container._children.length).toBe(1);
+      // Old content cleared; the progress bar and the one task remain.
+      expect(container._children.length).toBe(2);
     });
 
     it('should handle empty todos array', () => {
@@ -64,7 +68,7 @@ describe('todoContent', () => {
         todos: [{ status: 'completed', content: 'Task', activeForm: 'Task' }],
       });
 
-      const item = container._children[0];
+      const item = container._children[1];
       const icon = item._children[0];
       expect(icon.getAttribute('aria-hidden')).toBe('true');
     });

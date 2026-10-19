@@ -13,9 +13,9 @@ export interface ComposerInfoItem {
 }
 
 /**
- * Owns the borderless row under the input box. The toolbar holds what the user can
- * change; this row shows conversation facts. It keeps its height while empty so the
- * composer does not shift as linked content comes and goes.
+ * Owns the conversation-facts row inside the input box, above the editor: the linked
+ * note shown as a chip. The toolbar holds what the user can change. The row collapses
+ * while it has nothing to show.
  */
 export class ComposerInfoRow {
   private readonly linkedSlotEl: HTMLElement;

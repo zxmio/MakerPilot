@@ -144,6 +144,8 @@ export interface ChatMessage {
   treeBranches?: readonly string[];
   /** Provider-native assistant message identifier used for rewind/fork checkpoints. */
   assistantMessageId?: string;
+  /** Model that produced an assistant message, as the provider names it; absent when unknown. */
+  model?: string;
   /** Sender of a user message delivered from another Claudian session; set live and on history replay. */
   sessionMessage?: SessionMessageSender;
 }

@@ -4,6 +4,7 @@ import type { ChatRewindMode } from '@/core/execution';
 import type { ProviderCapabilities } from '@/core/providers/types';
 import type { ChatMessage } from '@/core/types';
 import type { ChatFeatureHost } from '@/features/chat/ChatFeatureHost';
+import { canRegenerate } from '@/features/chat/conversation/regenerate';
 import { findRewindContext } from '@/features/chat/conversation/rewind';
 import { getResponseElementKind } from '@/features/chat/rendering/ResponseLayout';
 import { formatConversationDirectoryTitle } from '@/features/chat/utils/conversationDirectoryTitle';
@@ -17,6 +18,10 @@ export interface MessageActionCallbacks {
     navigate(messageId: string, branchMessageId?: string): Promise<void>;
     isBusy(): boolean;
   };
+  /** Asks again for the latest answer. */
+  regenerate?: (messageId: string) => Promise<void>;
+  /** The display name of a model id; null when the provider no longer lists it. */
+  getModelLabel?: (model: string) => string | null;
 }
 
 function runAction(action: () => Promise<void>): void {
@@ -57,6 +62,11 @@ export class MessageActions {
     if (this.getCapabilities().forkMode === 'full-session') {
       this.messagesEl.querySelectorAll('.claudian-message-fork-btn').forEach(button => button.remove());
     }
+  }
+
+  /** Regenerate applies only to the latest answer; a new message retires it. */
+  retireRegenerate(): void {
+    this.messagesEl.querySelectorAll('.claudian-message-regenerate-btn').forEach(button => button.remove());
   }
 
   /**
@@ -109,6 +119,10 @@ export class MessageActions {
       && (this.getCapabilities().forkMode !== 'full-session' || messages.at(-1)?.id === msg.id)) {
       this.#addForkButton(msgEl, msg.id);
     }
+    if (this.callbacks.regenerate && msg.role === 'assistant' && !msg.isInterrupt && msg.assistantMessageId
+      && messages.at(-1)?.id === msg.id && canRegenerate(this.getCapabilities())) {
+      this.#addRegenerateButton(toolbar, msg.id);
+    }
     const stats = msg.turnStats;
     if (msg.role === 'assistant' && !msg.isInterrupt && stats && this.getCapabilities().supportsResponseThroughput) {
       const rate = (stats.outputTokens / (stats.durationMs / 1000)).toFixed(1);
@@ -118,7 +132,24 @@ export class MessageActions {
         attr: { 'aria-label': `${stats.outputTokens.toLocaleString()} tokens · ${formatTurnDuration(stats.durationMs)}` },
       });
     }
+    if (msg.role === 'assistant' && msg.model) {
+      toolbar.createSpan({
+        cls: 'claudian-message-model', text: this.callbacks.getModelLabel?.(msg.model) ?? msg.model,
+      });
+    }
     this.appendTimestamp(msgEl, msg.role === 'user' ? msg.timestamp : msg.completedAt);
+  }
+
+  #addRegenerateButton(toolbar: HTMLElement, messageId: string): void {
+    const button = toolbar.createEl('button', {
+      cls: 'claudian-message-regenerate-btn',
+      attr: { type: 'button', 'aria-label': t('chat.regenerate.button') },
+    });
+    setIcon(button, 'refresh-cw');
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      runAction(() => this.callbacks.regenerate?.(messageId) ?? Promise.resolve());
+    });
   }
 
   appendTimestamp(msgEl: HTMLElement, timestampMs: number | undefined): void {

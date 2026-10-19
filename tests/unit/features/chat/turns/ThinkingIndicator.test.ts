@@ -4,6 +4,7 @@ import { createMockEl } from '@test/helpers/MockElement';
 import { ChatState } from '@/features/chat/state/ChatState';
 import { ThinkingIndicator } from '@/features/chat/turns/ThinkingIndicator';
 import { TurnCoordinator } from '@/features/chat/turns/TurnCoordinator';
+import { setLocale } from '@/i18n/i18n';
 
 const originalWindow = (globalThis as { window?: Window }).window;
 
@@ -324,6 +325,25 @@ describe('ThinkingIndicator', () => {
     jest.advanceTimersByTime(1000);
 
     expect(state.flavorTimerInterval).toBeNull();
+  });
+
+  it('shows a plain working label and a localized interrupt hint outside English', () => {
+    setLocale('zh-CN');
+    try {
+      jest.advanceTimersByTime(1);
+      state.responseStartTime = performance.now();
+      indicator.show();
+      jest.advanceTimersByTime(500);
+      const thinkingEl = state.thinkingEl!;
+      expect(thinkingEl.children[0].textContent).toBe('处理中…');
+      expect(state.waitingStatus).toBe('处理中…');
+      // Mock elements report disconnected until told otherwise; the next tick renders the hint.
+      Object.defineProperty(thinkingEl.children[1], 'isConnected', { value: true, configurable: true });
+      jest.advanceTimersByTime(1000);
+      expect(thinkingEl.children[1].textContent).toMatch(/^\S+ · Esc 中断$/);
+    } finally {
+      setLocale('en');
+    }
   });
 
   it('should clear pre-existing interval before creating new one', () => {

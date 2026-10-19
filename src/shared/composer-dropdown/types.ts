@@ -53,9 +53,17 @@ export interface ComposerDropdownStatusItem {
   readonly state: 'empty' | 'error' | 'loading';
 }
 
+/** Labels the value items that follow it; never selectable. */
+export interface ComposerDropdownHeaderItem {
+  readonly id: string;
+  readonly kind: 'header';
+  readonly label: string;
+}
+
 export type ComposerDropdownItem =
   | ComposerDropdownValueItem
-  | ComposerDropdownStatusItem;
+  | ComposerDropdownStatusItem
+  | ComposerDropdownHeaderItem;
 
 export type ComposerSelectionAction =
   | { readonly kind: 'none' }

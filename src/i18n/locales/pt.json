@@ -102,7 +102,20 @@
       "dropImage": "Solte uma imagem aqui",
       "moreContext": "Mostrar mais {count} itens de contexto",
       "showLess": "Mostrar menos",
-      "moreItems": "+{count} mais"
+      "moreItems": "+{count} mais",
+      "send": "Enviar mensagem",
+      "stop": "Parar",
+      "queued": "Na fila",
+      "steering": "Direcionando",
+      "steerNow": "Direcionar agora",
+      "editQueued": "Editar mensagem na fila",
+      "discardQueued": "Descartar mensagem na fila",
+      "attach": "Adicionar anexo",
+      "attachImage": "Adicionar imagem",
+      "mentionFile": "Mencionar um arquivo do cofre",
+      "uploadFile": "Enviar arquivo",
+      "uploaded": "Enviado para {paths}",
+      "uploadFailed": "Falha no envio: {error}"
     },
     "worked": "Trabalho realizado",
     "taskNotification": "Notificação de tarefa",
@@ -115,7 +128,12 @@
       "resume": "Retomar conversa",
       "loading": "Carregando conversa…",
       "current": "Sessão atual",
-      "loadFailed": "Não foi possível carregar a conversa"
+      "loadFailed": "Não foi possível carregar a conversa",
+      "today": "Hoje",
+      "yesterday": "Ontem",
+      "thisWeek": "Esta semana",
+      "older": "Mais antigas",
+      "search": "Pesquisar sessões"
     },
     "linkedContent": {
       "label": "Conteúdo vinculado:",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "padrão",
       "toolsPlaceholder": "ferramentas",
       "agentCount": "{count} agente",
-      "agentCountPlural": "{count} agentes"
+      "agentCountPlural": "{count} agentes",
+      "names": {
+        "read": "Ler",
+        "write": "Escrever",
+        "edit": "Editar",
+        "bash": "Executar",
+        "glob": "Buscar arquivos",
+        "grep": "Buscar conteúdo",
+        "ls": "Listar pasta",
+        "webSearch": "Pesquisar na web",
+        "webFetch": "Buscar página",
+        "skill": "Skill",
+        "toolSearch": "Buscar ferramentas"
+      },
+      "groupCount": "{count} vezes"
     },
     "citations": {
       "memoryUsed": "Memória utilizada",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "Pensando há {seconds}s…",
       "completed": "Pensou por {seconds}s",
-      "label": "Raciocínio"
+      "label": "Raciocínio",
+      "interruptHint": "{duration} · Esc para interromper"
     },
     "suggestions": {
       "loading": "Carregando…",
@@ -256,7 +289,9 @@
       "loadFailed": "Não foi possível carregar as sugestões",
       "retryHint": "Digite novamente para tentar de novo",
       "providerLoading": "Carregando comandos do provedor…",
-      "providerRetry": "Tentar novamente a descoberta de comandos do provedor"
+      "providerRetry": "Tentar novamente a descoberta de comandos do provedor",
+      "groupCommands": "Comandos",
+      "groupSkills": "Skills"
     },
     "approval": {
       "title": "Permissão necessária",
@@ -353,6 +388,20 @@
       "nextMessage": "Próxima mensagem",
       "scrollToBottom": "Rolar até o fim",
       "emptyDirectory": "Não há prompts do usuário nesta conversa"
+    },
+    "workedStep": "1 etapa",
+    "workedSteps": "{count} etapas",
+    "subagent": {
+      "prompt": "Prompt",
+      "result": "Resultado",
+      "toolUse": "1 uso de ferramenta",
+      "toolUses": "{count} usos de ferramentas",
+      "tokens": "{count} tokens",
+      "lastTool": "Última ferramenta: {name}"
+    },
+    "regenerate": {
+      "button": "Gerar novamente",
+      "clearDraft": "Envie ou limpe primeiro o rascunho da caixa de entrada."
     }
   },
   "settings": {

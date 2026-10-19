@@ -69,11 +69,22 @@ describe('Composer input styles', () => {
     expect(style(hint).display).toBe('inline');
   });
 
-  it('keeps the input box unfilled, as before the redesign, and sizes toolbar labels from it', () => {
+  it('tints the input box against whatever surface hosts it and sizes toolbar labels from it', () => {
     const wrapper = style(renderComposer().querySelector('.claudian-input-wrapper')!);
-    expect(['', 'rgba(0, 0, 0, 0)', 'transparent']).toContain(wrapper.getPropertyValue('background-color'));
+    // A theme-relative tint stays visible where a form-field color matches a white or dark panel.
+    expect(wrapper.getPropertyValue('background-color')).toContain('--mono-rgb-100');
     // The box, not the shrink-wrapped toolbar, is the size container for narrow-width labels.
     expect(wrapper.getPropertyValue('container-type')).toBe('inline-size');
+  });
+
+  it('rings the focused input box in the active provider accent', () => {
+    renderComposer();
+    const rule = Array.from(document.head.querySelector('style')!.sheet!.cssRules)
+      .find((candidate): candidate is CSSStyleRule => (
+        candidate instanceof CSSStyleRule && candidate.selectorText === '.claudian-input-wrapper:focus-within'
+      ))!;
+    expect(rule.style.getPropertyValue('--claudian-input-wrapper-border-color')).toContain('--claudian-brand-rgb');
+    expect(rule.style.getPropertyValue('--claudian-input-wrapper-box-shadow')).toContain('--claudian-brand-rgb');
   });
 
   it('shows the queued-message strip only while visible, as a cap on the input box', () => {
@@ -118,9 +129,11 @@ describe('Composer input styles', () => {
     expect([popover.getPropertyValue('inset-inline-start'), popover.getPropertyValue('inset-inline-end')]).toEqual(['auto', '0']);
   });
 
-  it('keeps the info row borderless', () => {
+  it('keeps the info row borderless and collapses it while nothing is linked', () => {
     const composer = renderComposer();
     const row = composer.querySelector<HTMLElement>('.claudian-input-info-row')!;
+    expect(style(row).display).toBe('none');
+    row.querySelector('.claudian-input-info-linked')!.append(document.createElement('button'));
     expect(style(row).display).toBe('flex');
     expect(style(row).borderStyle).toBe('');
   });

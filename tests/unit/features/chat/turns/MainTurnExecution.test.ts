@@ -42,6 +42,9 @@ describe('MainTurnExecution', () => {
     expect(fixture.coordinator.execute).toHaveBeenCalledWith(expect.objectContaining({
       configuration: expect.objectContaining(toolbar),
     }), expect.any(AbortSignal));
+    // The answer names the same model the turn was submitted with.
+    expect(fixture.state.messages.filter(message => message.role === 'assistant').map(message => message.model))
+      .toEqual(['toolbar-model']);
   });
 
   it('submits first and continued turns through the coordinator', async () => {
@@ -345,6 +348,9 @@ describe('MainTurnExecution', () => {
     expect(assistants.at(-1)?.assistantMessageId).toBe('completed-checkpoint');
     expect(assistants[0].assistantMessageId).toBeUndefined();
     expect(assistants.at(-1)?.turnStats).toEqual({ outputTokens: 125, durationMs: 2500 });
+    // Every projection after a message boundary keeps the turn's model.
+    expect(new Set(assistants.map(message => message.model)).size).toBe(1);
+    expect(assistants[0].model).toBeDefined();
   });
 
   it('timestamps the final response at execution completion instead of streaming start', async () => {

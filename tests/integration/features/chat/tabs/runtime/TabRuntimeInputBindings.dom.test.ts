@@ -119,6 +119,39 @@ it('routes Escape through the selected main session for published jobs-only work
   expect(native.cancelCalls).toBe(1);
 });
 
+it('offers Stop in place of Send exactly while the selected destination has work to cancel', async () => {
+  await releaseResponse();
+  jest.useRealTimers();
+  await tab.executionCoordinator.bindConversation({ conversationId: 'conversation-1', providerId: 'claude' });
+  await tab.executionCoordinator.prepare();
+  const native = harness.backend.latest;
+  let working = false;
+  Object.assign(native, { hasBackgroundWork: () => working });
+  const toolbar = tab.dom.inputWrapper.querySelector<HTMLElement>('.claudian-input-toolbar')!;
+  expect(await axe(getByRole(toolbar, 'button', { name: 'Send message' }))).toHaveNoViolations();
+
+  working = true;
+  native.emitSessionEvent({ type: 'session_state_changed', snapshot: native.getSnapshot() });
+  fireEvent.click(getByRole(toolbar, 'button', { name: 'Stop' }));
+  expect(native.cancelCalls).toBe(1);
+
+  working = false;
+  native.emitSessionEvent({ type: 'session_state_changed', snapshot: native.getSnapshot() });
+  expect(getByRole(toolbar, 'button', { name: 'Send message' })).toBeTruthy();
+});
+
+it('sends the composer text from the Send button like Enter', async () => {
+  await releaseResponse();
+  jest.useRealTimers();
+  await tab.executionCoordinator.bindConversation({ conversationId: 'conversation-1', providerId: 'claude' });
+  await tab.executionCoordinator.prepare();
+  Object.assign(plugin, { getConversationById: async (id: string) => plugin.getConversationSync(id) });
+  tab.dom.inputEl.value = 'Hello from the button';
+  fireEvent.click(getByRole(tab.dom.inputWrapper, 'button', { name: 'Send message' }));
+  await waitFor(() => expect(harness.backend.sessions.flatMap(session => session.requests)).toHaveLength(1));
+  expect(tab.dom.inputEl.value).toBe('');
+});
+
 it('stops main background work with Escape without aborting a settling foreground turn', async () => {
   await releaseResponse();
   await tab.executionCoordinator.bindConversation({ conversationId: 'conversation-1', providerId: 'claude' });

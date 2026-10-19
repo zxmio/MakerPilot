@@ -102,7 +102,20 @@
       "dropImage": "Drop image here",
       "moreContext": "Show {count} more context items",
       "showLess": "Show less",
-      "moreItems": "+{count} more"
+      "moreItems": "+{count} more",
+      "send": "Send message",
+      "stop": "Stop",
+      "queued": "Queued",
+      "steering": "Steering",
+      "steerNow": "Steer Now",
+      "editQueued": "Edit queued message",
+      "discardQueued": "Discard queued message",
+      "attach": "Add attachment",
+      "attachImage": "Add image",
+      "mentionFile": "Mention a vault file",
+      "uploadFile": "Upload file",
+      "uploaded": "Uploaded to {paths}",
+      "uploadFailed": "Upload failed: {error}"
     },
     "worked": "Worked",
     "taskNotification": "Task notification",
@@ -115,7 +128,12 @@
       "resume": "Resume conversation",
       "loading": "Loading conversation…",
       "current": "Current session",
-      "loadFailed": "Failed to load conversation"
+      "loadFailed": "Failed to load conversation",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This week",
+      "older": "Older",
+      "search": "Search sessions"
     },
     "linkedContent": {
       "label": "Linked content:",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "pattern",
       "toolsPlaceholder": "tools",
       "agentCount": "{count} agent",
-      "agentCountPlural": "{count} agents"
+      "agentCountPlural": "{count} agents",
+      "names": {
+        "read": "Read",
+        "write": "Write",
+        "edit": "Edit",
+        "bash": "Bash",
+        "glob": "Glob",
+        "grep": "Grep",
+        "ls": "LS",
+        "webSearch": "WebSearch",
+        "webFetch": "WebFetch",
+        "skill": "Skill",
+        "toolSearch": "ToolSearch"
+      },
+      "groupCount": "{count} times"
     },
     "citations": {
       "memoryUsed": "Memory used",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "Thinking {seconds}s...",
       "completed": "Thought for {seconds}s",
-      "label": "Thought"
+      "label": "Thought",
+      "interruptHint": "{duration} · esc to interrupt"
     },
     "suggestions": {
       "loading": "Loading…",
@@ -256,7 +289,9 @@
       "loadFailed": "Could not load suggestions",
       "retryHint": "Type again to retry",
       "providerLoading": "Loading provider commands…",
-      "providerRetry": "Try provider command discovery again"
+      "providerRetry": "Try provider command discovery again",
+      "groupCommands": "Commands",
+      "groupSkills": "Skills"
     },
     "approval": {
       "title": "Permission required",
@@ -353,6 +388,20 @@
       "nextMessage": "Next message",
       "scrollToBottom": "Scroll to bottom",
       "emptyDirectory": "No user prompts in this conversation"
+    },
+    "workedStep": "1 step",
+    "workedSteps": "{count} steps",
+    "subagent": {
+      "prompt": "Prompt",
+      "result": "Result",
+      "toolUse": "1 tool use",
+      "toolUses": "{count} tool uses",
+      "tokens": "{count} tokens",
+      "lastTool": "Last tool: {name}"
+    },
+    "regenerate": {
+      "button": "Regenerate",
+      "clearDraft": "Send or clear the draft in the composer first."
     }
   },
   "settings": {

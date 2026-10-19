@@ -4,9 +4,9 @@ import { getToolIcon } from '@/core/tools/toolIcons';
 import type { ToolCallInfo, ToolDiffData } from '@/core/types';
 import type { DiffLine } from '@/core/types/diff';
 import { setupCollapsible } from '@/features/chat/rendering/collapsible';
-import { renderDiffContent, renderDiffStats } from '@/features/chat/rendering/tools/DiffRenderer';
+import { renderDiffContent, renderDiffPreview, renderDiffStats } from '@/features/chat/rendering/tools/DiffRenderer';
 import { fileNameOnly } from '@/features/chat/rendering/tools/toolContentPrimitives';
-import { getToolLabel } from '@/features/chat/rendering/tools/toolPresentation';
+import { getToolLabel, getToolName } from '@/features/chat/rendering/tools/toolPresentation';
 import { t } from '@/i18n/i18n';
 
 export interface WriteEditState {
@@ -17,6 +17,8 @@ export interface WriteEditState {
   summaryEl: HTMLElement;
   statsEl: HTMLElement;
   statusEl: HTMLElement;
+  /** First changed lines, shown only while collapsed. */
+  previewEl: HTMLElement;
   toolCall: ToolCallInfo;
   isExpanded: boolean;
   diffLines?: DiffLine[];
@@ -34,6 +36,7 @@ interface WriteEditElements {
   summaryEl: HTMLElement;
   statsEl: HTMLElement;
   statusEl: HTMLElement;
+  previewEl: HTMLElement;
   contentEl: HTMLElement;
   baseAriaLabel: string;
 }
@@ -51,12 +54,13 @@ function createWriteEditElements(parentEl: HTMLElement, toolCall: ToolCallInfo):
   setIcon(iconEl, getToolIcon(toolName));
 
   const nameEl = headerEl.createDiv({ cls: 'claudian-write-edit-name' });
-  nameEl.setText(toolName);
+  nameEl.setText(getToolName(toolName, toolCall.input));
   const summaryEl = headerEl.createDiv({ cls: 'claudian-write-edit-summary' });
   summaryEl.setText(fileNameOnly(filePath) || t('chat.tools.file'));
 
   const statsEl = headerEl.createDiv({ cls: 'claudian-write-edit-stats' });
   const statusEl = headerEl.createDiv({ cls: 'claudian-write-edit-status' });
+  const previewEl = wrapperEl.createDiv({ cls: 'claudian-write-edit-preview' });
   const contentEl = wrapperEl.createDiv({ cls: 'claudian-write-edit-content' });
 
   return {
@@ -66,6 +70,7 @@ function createWriteEditElements(parentEl: HTMLElement, toolCall: ToolCallInfo):
     summaryEl,
     statsEl,
     statusEl,
+    previewEl,
     contentEl,
     baseAriaLabel: getToolLabel(toolCall.name, toolCall.input),
   };
@@ -77,7 +82,7 @@ export function createWriteEditBlock(
   options: WriteEditRenderOptions = {}
 ): WriteEditState {
   const {
-    wrapperEl, headerEl, nameEl, summaryEl, statsEl, statusEl, contentEl, baseAriaLabel,
+    wrapperEl, headerEl, nameEl, summaryEl, statsEl, statusEl, previewEl, contentEl, baseAriaLabel,
   } = createWriteEditElements(parentEl, toolCall);
 
   statusEl.addClass('status-running');
@@ -97,6 +102,7 @@ export function createWriteEditBlock(
     summaryEl,
     statsEl,
     statusEl,
+    previewEl,
     toolCall,
     isExpanded: false,
   };
@@ -105,7 +111,10 @@ export function createWriteEditBlock(
   setupCollapsible(wrapperEl, headerEl, contentEl, state, {
     initiallyExpanded: options.initiallyExpanded ?? false,
     baseAriaLabel,
-    onToggle: expanded => { if (expanded) renderCurrentDiff(state); },
+    onToggle: expanded => {
+      if (expanded) renderCurrentDiff(state);
+      syncDiffPreview(state.previewEl, state.diffLines, expanded);
+    },
   });
 
   return state;
@@ -118,6 +127,7 @@ export function updateWriteEditWithDiff(state: WriteEditState, diffData: ToolDif
 
   // Update stats
   renderDiffStats(state.statsEl, stats);
+  syncDiffPreview(state.previewEl, diffLines, state.isExpanded);
 
   state.diffDirty = true;
   if (state.isExpanded) renderCurrentDiff(state);
@@ -171,7 +181,7 @@ export function renderStoredWriteEdit(
   options: WriteEditRenderOptions = {}
 ): HTMLElement {
   const isError = toolCall.status === 'error' || toolCall.status === 'blocked';
-  const { wrapperEl, headerEl, statsEl, statusEl, contentEl, baseAriaLabel } = createWriteEditElements(parentEl, toolCall);
+  const { wrapperEl, headerEl, statsEl, statusEl, previewEl, contentEl, baseAriaLabel } = createWriteEditElements(parentEl, toolCall);
   statusEl.setAttribute('aria-label', t(`chat.tools.status.${toolCall.status}`));
   if (isError) {
     wrapperEl.addClass('error');
@@ -206,11 +216,20 @@ export function renderStoredWriteEdit(
   const eager = toolCall.status === 'running';
   if (eager) renderContent();
 
+  const initiallyExpanded = options.initiallyExpanded ?? false;
   setupCollapsible(wrapperEl, headerEl, contentEl, { isExpanded: false }, {
-    initiallyExpanded: options.initiallyExpanded ?? false,
+    initiallyExpanded,
     onFirstExpand: eager ? undefined : renderContent,
+    onToggle: expanded => syncDiffPreview(previewEl, toolCall.diffData?.diffLines, expanded),
     baseAriaLabel,
   });
+  syncDiffPreview(previewEl, toolCall.diffData?.diffLines, initiallyExpanded);
 
   return wrapperEl;
+}
+
+/** The preview stands in for the diff only while the card is collapsed. */
+function syncDiffPreview(previewEl: HTMLElement, diffLines: DiffLine[] | undefined, expanded: boolean): void {
+  if (expanded || !diffLines) previewEl.empty();
+  else renderDiffPreview(previewEl, diffLines);
 }

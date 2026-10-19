@@ -296,8 +296,8 @@
   max-width: 100%;
   box-sizing: border-box;
   padding: 10px 14px;
-  background: rgb(0 0 0 / 30%);
-  border-radius: 8px;
+  background: rgba(var(--mono-rgb-100), 0.06);
+  border-radius: 14px;
   border-end-end-radius: 4px;
 }
 
@@ -311,7 +311,7 @@
 
 /* Text selection in user messages - visible highlight */
 .claudian-message-user ::selection {
-  background: rgb(255 255 255 / 35%);
+  background: var(--text-selection);
   color: inherit;
 }
 
@@ -321,6 +321,11 @@
   width: 100%;
   padding: 10px 14px;
   text-align: start;
+}
+
+/* Answer prose reads at a looser measure than the compact tool rows around it. */
+.claudian-message-assistant .claudian-text-block {
+  line-height: 1.65;
 }
 
 .claudian-message-content {
@@ -484,23 +489,30 @@ button.claudian-text-copy-btn.copied {
   margin-bottom: 10px;
 }
 
+/* The hover surface bleeds into the gutter so the label stays on the text edge. */
 button.claudian-work-header {
   display: inline-flex;
   align-items: center;
-  padding: 2px 0;
+  height: auto;
+  padding: 4px 8px;
+  margin-inline-start: -8px;
   border: 0;
+  border-radius: 6px;
   background: transparent;
   box-shadow: none;
   color: var(--text-muted);
   font: inherit;
+  font-size: var(--font-ui-small);
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 button.claudian-work-header:hover,
 button.claudian-work-header:focus-visible,
 button.claudian-work-header:active {
   border: 0;
-  background: transparent;
+  background: var(--background-modifier-hover);
   box-shadow: none;
   color: var(--text-normal);
 }
@@ -519,8 +531,8 @@ button.claudian-work-header:disabled {
 }
 
 .claudian-work-history {
-  margin-top: 8px;
-  padding-inline-start: 12px;
+  margin-top: 6px;
+  padding-inline-start: 14px;
   border-inline-start: 1px solid var(--background-modifier-border);
 }
 
@@ -535,8 +547,8 @@ button.claudian-work-header:disabled {
 .claudian-user-msg-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 2px;
+  margin-top: 6px;
   /* Keep the row in the message's hover area without shifting the conversation. */
   opacity: 0;
   pointer-events: none;
@@ -614,11 +626,12 @@ button.claudian-work-header:disabled {
 .claudian-user-msg-actions button {
   appearance: none;
   width: auto;
-  min-width: 0;
-  height: auto;
+  min-width: 26px;
+  height: 26px;
   min-height: 0;
-  padding: 0;
+  padding: 0 5px;
   border: 0;
+  border-radius: 6px;
   background: transparent;
   box-shadow: none;
   cursor: pointer;
@@ -627,20 +640,20 @@ button.claudian-work-header:disabled {
   justify-content: center;
   color: var(--text-muted);
   font: inherit;
-  transition: color 0.15s;
+  transition: color 0.15s, background 0.15s;
 }
 
 .claudian-user-msg-actions button svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .claudian-user-msg-actions button:hover,
 .claudian-user-msg-actions button:focus-visible,
 .claudian-user-msg-actions button:active {
-  padding: 0;
+  padding: 0 5px;
   border: 0;
-  background: transparent;
+  background: var(--background-modifier-hover);
   box-shadow: none;
   color: var(--text-normal);
 }
@@ -651,7 +664,7 @@ button.claudian-work-header:disabled {
 }
 
 .claudian-user-msg-actions button:disabled {
-  padding: 0;
+  padding: 0 5px;
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -818,4 +831,57 @@ button.claudian-session-link:focus-visible {
   margin-bottom: 4px;
   font-size: var(--font-ui-smaller);
   color: var(--text-muted);
+}
+
+/* "· N steps" and one dot per step beside the work disclosure's label. */
+.claudian-work-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: 8px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.claudian-work-summary::before {
+  content: '·';
+}
+
+.claudian-work-step-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.claudian-work-step-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-green);
+}
+
+.claudian-work-step-dot--error {
+  background: var(--color-red);
+}
+
+/* The model that wrote the answer, beside its actions. */
+.claudian-message-actions .claudian-message-model {
+  margin-inline-start: 6px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+/* A streaming response's work disclosure: open, with a spinner before its label. */
+.claudian-work--live > button.claudian-work-header::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  margin-inline-end: 8px;
+  border: 2px solid rgba(var(--claudian-brand-rgb), 0.25);
+  border-top-color: var(--claudian-brand);
+  border-radius: 50%;
+  animation: claudian-spin 0.9s linear infinite;
 }

@@ -1,9 +1,10 @@
 /* Collapsible response blocks share one layout: a clickable header row over
-   tree-branch content whose border aligns with the 16px header icon. */
+   tree-branch content whose border aligns with the 14px header icon. The header's
+   hover surface bleeds into the gutter so its icon stays on the text edge. */
 .claudian-thinking-block,
 .claudian-tool-call,
 .claudian-subagent-list {
-  margin: 8px 0;
+  margin: 2px 0;
 }
 
 .claudian-thinking-header,
@@ -13,16 +14,28 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 0;
+  min-height: 30px;
+  box-sizing: border-box;
+  padding: 3px 6px;
+  margin-inline: -6px;
+  border-radius: 6px;
   cursor: pointer;
   overflow: hidden;
+  transition: background 0.15s ease;
+}
+
+.claudian-thinking-header:hover,
+.claudian-tool-header:hover,
+.claudian-subagent-header:hover,
+.claudian-write-edit-header:hover {
+  background: var(--background-modifier-hover);
 }
 
 .claudian-thinking-content,
 .claudian-tool-content,
 .claudian-subagent-content {
-  padding: 4px 0;
-  padding-inline-start: 16px;
-  margin-inline-start: 7px;
+  padding: 4px 0 6px;
+  padding-inline-start: 14px;
+  margin-inline-start: 6px;
   border-inline-start: 1px solid var(--background-modifier-border);
 }

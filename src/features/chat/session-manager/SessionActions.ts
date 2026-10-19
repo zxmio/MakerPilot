@@ -158,6 +158,7 @@ export function resolveRowActions(
     if (mode === 'active') {
       // Rows waiting on the user or showing an error present only their badge.
       if (input.attention === null || isCompletedReview(input.attention)) {
+        actions.push(action('rename'));
         if (options.showInlinePinAction !== false) actions.push(pinAction);
         actions.push(archiveAction);
       }

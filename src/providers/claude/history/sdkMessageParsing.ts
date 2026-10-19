@@ -228,6 +228,8 @@ export function parseSDKMessageToChat(
     images,
     ...(sdkMsg.type === 'user' && sdkMsg.uuid && { userMessageId: sdkMsg.uuid }),
     ...(sdkMsg.type === 'assistant' && sdkMsg.uuid && { assistantMessageId: sdkMsg.uuid }),
+    ...(sdkMsg.type === 'assistant' && sdkMsg.message?.model && sdkMsg.message.model !== '<synthetic>'
+      && { model: sdkMsg.message.model }),
     ...(isInterrupt && { isInterrupt: true }),
     ...(isRebuiltContext && { isRebuiltContext: true }),
   };

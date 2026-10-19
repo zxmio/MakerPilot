@@ -258,6 +258,27 @@ describe('ComposerDropdownController', () => {
     expect(input.selectionStart).toBe(10);
   });
 
+  it('never selects a group header, so Enter applies the first item below it', async () => {
+    const input = createInput();
+    const controller = new ComposerDropdownController(
+      createMockEl(),
+      input,
+      [source('/', [
+        { id: 'commands', kind: 'header', label: 'Commands' },
+        { id: 'clear', kind: 'value', label: '/clear', replacement: '/clear ' },
+      ])],
+    );
+
+    input.value = '/';
+    input.selectionStart = input.selectionEnd = 1;
+    controller.handleInputChange();
+    await Promise.resolve();
+
+    controller.handleKeydown(key('ArrowUp'));
+    controller.handleKeydown(key('Enter'));
+    expect(input.value).toBe('/clear ');
+  });
+
   it('prefers the nearest trigger when an earlier mention also matches', async () => {
     const input = createInput();
     const mention = source('@', [

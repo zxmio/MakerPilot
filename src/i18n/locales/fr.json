@@ -102,7 +102,20 @@
       "dropImage": "Déposez une image ici",
       "moreContext": "Afficher {count} autres éléments de contexte",
       "showLess": "Afficher moins",
-      "moreItems": "+{count} de plus"
+      "moreItems": "+{count} de plus",
+      "send": "Envoyer le message",
+      "stop": "Arrêter",
+      "queued": "En attente",
+      "steering": "Orientation",
+      "steerNow": "Orienter maintenant",
+      "editQueued": "Modifier le message en attente",
+      "discardQueued": "Supprimer le message en attente",
+      "attach": "Ajouter une pièce jointe",
+      "attachImage": "Ajouter une image",
+      "mentionFile": "Mentionner un fichier du coffre",
+      "uploadFile": "Téléverser un fichier",
+      "uploaded": "Téléversé vers {paths}",
+      "uploadFailed": "Échec du téléversement : {error}"
     },
     "worked": "Travail effectué",
     "taskNotification": "Notification de tâche",
@@ -115,7 +128,12 @@
       "resume": "Reprendre la conversation",
       "loading": "Chargement de la conversation…",
       "current": "Session actuelle",
-      "loadFailed": "Impossible de charger la conversation"
+      "loadFailed": "Impossible de charger la conversation",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "thisWeek": "Cette semaine",
+      "older": "Plus ancien",
+      "search": "Rechercher des sessions"
     },
     "linkedContent": {
       "label": "Contenu lié :",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "motif",
       "toolsPlaceholder": "outils",
       "agentCount": "{count} agent",
-      "agentCountPlural": "{count} agents"
+      "agentCountPlural": "{count} agents",
+      "names": {
+        "read": "Lire",
+        "write": "Écrire",
+        "edit": "Modifier",
+        "bash": "Exécuter",
+        "glob": "Rechercher des fichiers",
+        "grep": "Rechercher du contenu",
+        "ls": "Lister le dossier",
+        "webSearch": "Recherche web",
+        "webFetch": "Récupérer la page",
+        "skill": "Skill",
+        "toolSearch": "Rechercher des outils"
+      },
+      "groupCount": "{count} fois"
     },
     "citations": {
       "memoryUsed": "Mémoire utilisée",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "Réflexion depuis {seconds}s…",
       "completed": "Réflexion pendant {seconds}s",
-      "label": "Réflexion"
+      "label": "Réflexion",
+      "interruptHint": "{duration} · Échap pour interrompre"
     },
     "suggestions": {
       "loading": "Chargement…",
@@ -256,7 +289,9 @@
       "loadFailed": "Impossible de charger les suggestions",
       "retryHint": "Saisissez à nouveau pour réessayer",
       "providerLoading": "Chargement des commandes du fournisseur…",
-      "providerRetry": "Réessayer la découverte des commandes du fournisseur"
+      "providerRetry": "Réessayer la découverte des commandes du fournisseur",
+      "groupCommands": "Commandes",
+      "groupSkills": "Skills"
     },
     "approval": {
       "title": "Autorisation requise",
@@ -353,6 +388,20 @@
       "nextMessage": "Message suivant",
       "scrollToBottom": "Défiler vers le bas",
       "emptyDirectory": "Aucun prompt utilisateur dans cette conversation"
+    },
+    "workedStep": "1 étape",
+    "workedSteps": "{count} étapes",
+    "subagent": {
+      "prompt": "Prompt",
+      "result": "Résultat",
+      "toolUse": "1 appel d'outil",
+      "toolUses": "{count} appels d'outils",
+      "tokens": "{count} jetons",
+      "lastTool": "Dernier outil : {name}"
+    },
+    "regenerate": {
+      "button": "Régénérer",
+      "clearDraft": "Envoyez ou effacez d'abord le brouillon de la zone de saisie."
     }
   },
   "settings": {

@@ -4,26 +4,21 @@
   --no-tooltip: true;
 }
 
-.claudian-tool-header:hover {
-  opacity: 0.85;
-}
-
 .claudian-tool-icon {
   display: flex;
   align-items: center;
-  color: var(--text-accent);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .claudian-tool-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .claudian-tool-name {
-  font-family: var(--font-monospace);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-normal);
   white-space: nowrap;
   flex-shrink: 0;
@@ -31,7 +26,7 @@
 
 .claudian-tool-summary {
   font-family: var(--font-monospace);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -60,7 +55,7 @@
 
 .claudian-tool-current {
   font-family: var(--font-monospace);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -82,7 +77,7 @@
 }
 
 .claudian-tool-status.status-running {
-  color: var(--text-accent);
+  color: var(--claudian-brand);
 }
 
 .claudian-tool-status.status-completed {
@@ -99,6 +94,15 @@
 
 .claudian-tool-status.status-cancelled {
   color: var(--text-muted);
+}
+
+/* A failed call stays findable in a long run of collapsed steps. */
+.claudian-tool-call:has(> .claudian-tool-header .claudian-tool-status.status-error) > .claudian-tool-header {
+  background: rgba(var(--color-red-rgb), 0.08);
+}
+
+.claudian-tool-call:has(> .claudian-tool-header .claudian-tool-status.status-error) > .claudian-tool-header:hover {
+  background: rgba(var(--color-red-rgb), 0.14);
 }
 
 /* Tool content variants that render inline widgets instead of bordered results */
@@ -385,4 +389,9 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   color: var(--text-normal);
+}
+
+/* Consecutive successful calls of one tool, folded into one row. */
+.claudian-tool-group {
+  margin: 2px 0;
 }

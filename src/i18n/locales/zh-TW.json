@@ -102,7 +102,20 @@
       "dropImage": "將圖片拖到這裡",
       "moreContext": "顯示另外 {count} 項上下文",
       "showLess": "收合",
-      "moreItems": "+{count} 項"
+      "moreItems": "+{count} 項",
+      "send": "傳送訊息",
+      "stop": "停止",
+      "queued": "排隊中",
+      "steering": "插入中",
+      "steerNow": "立即插入",
+      "editQueued": "編輯排隊訊息",
+      "discardQueued": "捨棄排隊訊息",
+      "attach": "新增附件",
+      "attachImage": "新增圖片",
+      "mentionFile": "引用儲存庫中的檔案",
+      "uploadFile": "上傳檔案",
+      "uploaded": "已上傳到 {paths}",
+      "uploadFailed": "上傳失敗：{error}"
     },
     "worked": "已完成工作",
     "taskNotification": "任務通知",
@@ -115,7 +128,12 @@
       "resume": "繼續對話",
       "loading": "正在載入對話…",
       "current": "目前的工作階段",
-      "loadFailed": "載入對話失敗"
+      "loadFailed": "載入對話失敗",
+      "today": "今天",
+      "yesterday": "昨天",
+      "thisWeek": "本週",
+      "older": "更早",
+      "search": "搜尋對話"
     },
     "linkedContent": {
       "label": "關聯內容：",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "比對模式",
       "toolsPlaceholder": "工具",
       "agentCount": "{count} 個代理",
-      "agentCountPlural": "{count} 個代理"
+      "agentCountPlural": "{count} 個代理",
+      "names": {
+        "read": "讀取",
+        "write": "寫入",
+        "edit": "編輯",
+        "bash": "執行",
+        "glob": "尋找檔案",
+        "grep": "搜尋內容",
+        "ls": "列出資料夾",
+        "webSearch": "搜尋網頁",
+        "webFetch": "讀取網頁",
+        "skill": "技能",
+        "toolSearch": "尋找工具"
+      },
+      "groupCount": "{count} 次"
     },
     "citations": {
       "memoryUsed": "引用的記憶",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "思考中，已用時 {seconds} 秒…",
       "completed": "思考了 {seconds} 秒",
-      "label": "思考過程"
+      "label": "思考過程",
+      "interruptHint": "{duration} · Esc 中斷"
     },
     "suggestions": {
       "loading": "正在載入…",
@@ -256,7 +289,9 @@
       "loadFailed": "無法載入建議",
       "retryHint": "再次輸入以重試",
       "providerLoading": "正在載入供應商命令…",
-      "providerRetry": "重新尋找供應商命令"
+      "providerRetry": "重新尋找供應商命令",
+      "groupCommands": "指令",
+      "groupSkills": "技能"
     },
     "approval": {
       "title": "需要授權",
@@ -353,6 +388,20 @@
       "nextMessage": "下一則訊息",
       "scrollToBottom": "捲動至底端",
       "emptyDirectory": "此對話中尚無使用者提示詞"
+    },
+    "workedStep": "1 步",
+    "workedSteps": "{count} 步",
+    "subagent": {
+      "prompt": "提示詞",
+      "result": "結果",
+      "toolUse": "1 步",
+      "toolUses": "{count} 步",
+      "tokens": "{count} tokens",
+      "lastTool": "最近工具：{name}"
+    },
+    "regenerate": {
+      "button": "重新產生",
+      "clearDraft": "請先傳送或清除輸入框中的草稿。"
     }
   },
   "settings": {

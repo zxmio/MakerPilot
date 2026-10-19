@@ -12,6 +12,7 @@ import type { PromptHistoryNavigation } from '@/features/chat/composer/PromptHis
 import type { ContextUsageMeter } from '@/features/chat/composer/toolbar/ContextUsageMeter';
 import type { ModeSelector } from '@/features/chat/composer/toolbar/ModeSelector';
 import type { PermissionToggle } from '@/features/chat/composer/toolbar/PermissionToggle';
+import type { SendButton } from '@/features/chat/composer/toolbar/SendButton';
 import type { ServiceTierToggle } from '@/features/chat/composer/toolbar/ServiceTierToggle';
 import type { ConversationController } from '@/features/chat/conversation/ConversationController';
 import type { ChatExecutionCoordinator } from '@/features/chat/execution/ChatExecutionCoordinator';
@@ -109,6 +110,8 @@ export interface TabUIComponents {
   readonly serviceTierToggle: ServiceTierToggle;
   readonly composerDropdown: MainChatComposerDropdown;
   readonly contextUsageMeter: ContextUsageMeter;
+  /** Send, or Stop while the selected destination has cancellable work. */
+  readonly sendButton: SendButton;
   /** Toolbar menus; Escape closes an open one before it can cancel a turn. */
   readonly toolbarMenus: ToolbarMenus;
   readonly navigationSidebar: NavigationSidebar;
@@ -137,7 +140,7 @@ export interface TabDOMElements {
   /** Composer-owned context tray container inside the input wrapper, for per-turn context. */
   readonly contextRowEl: HTMLElement;
 
-  /** Read-only conversation facts (Linked content, context usage) directly under the input wrapper. */
+  /** Read-only conversation facts (the Linked content chip) inside the input wrapper, above the editor. */
   readonly infoRowEl: HTMLElement;
 }
 

@@ -5,6 +5,7 @@ import type { ConversationMeta } from '@/core/types';
 import type { ChatFeatureHost } from '@/features/chat/ChatFeatureHost';
 import { getObsidianLanguage } from '@/features/chat/session-manager/ProvisionalNoteNames';
 import { renderSessionGroupToggleIcon } from '@/features/chat/session-manager/SessionManagerIcons';
+import { createSessionSearchField } from '@/features/chat/session-manager/SessionSearchField';
 import {
   archiveScopeOptions,
   beginInlineRenameNextFrame,
@@ -289,57 +290,19 @@ export class SessionSidebar {
   }
 
   private buildSearchField(container: HTMLElement, list: HTMLElement): void {
-    const searchField = container.createDiv({ cls: 'claudian-session-search-field' });
-    const searchIcon = searchField.createSpan({ cls: 'claudian-session-nav-icon' });
-    setIcon(searchIcon, 'search');
     const label = this.deps.shared.isArchiveView() ? 'Search archived sessions' : 'Search sessions';
-    const searchInput = searchField.createEl('input', {
-      cls: 'claudian-session-search-input',
-      attr: {
-        type: 'search',
-        autocomplete: 'off',
-        placeholder: label,
-        'aria-label': label,
+    const { fieldEl, inputEl } = createSessionSearchField(container, {
+      label,
+      value: this.searchQuery,
+      onQuery: query => this.updateSearchQuery(query),
+      onEscape: () => this.closeSearch(),
+      onCompositionChange: (composing) => {
+        this.isSearchComposing = composing;
       },
     });
-    searchInput.value = this.searchQuery;
-    let committedCompositionValue: string | null = null;
-    searchInput.addEventListener('compositionstart', () => {
-      this.isSearchComposing = true;
-      committedCompositionValue = null;
-    });
-    searchInput.addEventListener('compositionend', () => {
-      this.isSearchComposing = false;
-      committedCompositionValue = searchInput.value;
-      this.updateSearchQuery(searchInput.value);
-      queueMicrotask(() => {
-        committedCompositionValue = null;
-      });
-    });
-    searchInput.addEventListener('input', (event) => {
-      if (
-        this.isSearchComposing
-        || (event as InputEvent | undefined)?.isComposing
-      ) return;
-      if (committedCompositionValue === searchInput.value) {
-        committedCompositionValue = null;
-        return;
-      }
-      committedCompositionValue = null;
-      this.updateSearchQuery(searchInput.value);
-    });
-    searchInput.addEventListener('keydown', (event) => {
-      if (event.key !== 'Escape') return;
-      if (this.isSearchComposing || event.isComposing) {
-        event.stopPropagation();
-        return;
-      }
-      event.preventDefault();
-      this.closeSearch();
-    });
-    container.insertBefore(searchField, list);
-    this.searchFieldEl = searchField;
-    this.searchInputEl = searchInput;
+    container.insertBefore(fieldEl, list);
+    this.searchFieldEl = fieldEl;
+    this.searchInputEl = inputEl;
   }
 
   private activateSearch(): void {

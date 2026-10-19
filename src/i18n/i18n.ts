@@ -64,6 +64,11 @@ function loadTranslation(locale: Locale): TranslationDictionary | undefined {
 const DEFAULT_LOCALE: Locale = 'en';
 let currentLocale: Locale = DEFAULT_LOCALE;
 
+/** The interface language translations currently resolve in. */
+export function getLocale(): Locale {
+  return currentLocale;
+}
+
 /**
  * Get a translation by key with optional parameters
  */

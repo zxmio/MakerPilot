@@ -203,13 +203,14 @@ describe('ChatPresentationPlacement', () => {
     expect(harness.slotEl.childElementCount).toBe(0);
   });
 
-  it('keeps navigation controls in the footer host as the shared focus scope', () => {
+  it('keeps navigation and header controls as the shared focus scope', () => {
     const harness = createPlacement([]);
     const navRowContentEl = document.createElement('div');
 
     harness.placement.attachNavRow(navRowContentEl);
 
     expect(navRowContentEl.parentElement).toBe(harness.navHostEl);
-    expect(harness.placement.getSharedFocusScopeEls()).toEqual([harness.navHostEl]);
+    const headerEl = harness.placement.headerActionsEl!.parentElement;
+    expect(harness.placement.getSharedFocusScopeEls()).toEqual([harness.navHostEl, headerEl]);
   });
 });

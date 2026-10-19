@@ -421,7 +421,8 @@ export class ClaudianView extends ItemView implements ZenModeSource {
       onDisplayStateChanged: () => this.tabWorkspace.persist(),
     });
 
-    const navActionsEl = wrapper.createDiv({ cls: 'claudian-input-nav-actions' });
+    // Session controls sit in the header beside the active session's title.
+    const navActionsEl = (this.presentation.headerActionsEl ?? wrapper).createDiv({ cls: 'claudian-input-nav-actions' });
 
     this.newTabButtonEl = navActionsEl.createEl('button', {
       cls: 'claudian-input-nav-btn claudian-new-tab-btn',
@@ -560,6 +561,8 @@ export class ClaudianView extends ItemView implements ZenModeSource {
 
       const items = this.tabManager.getTabBarItems();
       this.tabBar.update(items);
+      const active = items.find(item => item.isActive);
+      this.presentation.setHeaderTitle(active ? active.label ?? active.title : '');
       this.updateTabBarVisibility();
     }, this.containerEl.ownerDocument.defaultView ?? null);
   }

@@ -228,11 +228,12 @@ describe('SessionActions', () => {
     expect(container.querySelector('.claudian-pin-btn')).not.toBeNull();
     expect(container.querySelector('.claudian-archive-btn')).not.toBeNull();
     expect(container.querySelector('.claudian-delete-btn')).toBeNull();
+    // Rename sits inline beside pin and archive, not only in the row menu.
     expect(container.querySelectorAll('.claudian-action-btn').some(
       (button: { getAttribute(name: string): string | null | undefined }) => (
         button.getAttribute('aria-label') === 'Rename'
       ),
-    )).toBe(false);
+    )).toBe(true);
   });
 
   it('marks released and never-loaded sessions unread, and read again, from their row menus', async () => {
@@ -570,7 +571,7 @@ describe('SessionActions', () => {
     expect(menu.items.map(item => item.title)).toEqual(['Rename', 'Copy session ID', 'Delete']);
   });
 
-  it('shows inline device assignment beside pin and archive only for legacy sessions', async () => {
+  it('shows inline device assignment beside rename, pin and archive only for legacy sessions', async () => {
     const container = createMockEl();
     const onAssignConversationToDevice = jest.fn().mockResolvedValue(undefined);
     (deps.plugin.getConversationList as jest.Mock).mockReturnValue([
@@ -611,7 +612,7 @@ describe('SessionActions', () => {
     expect(
       legacyItem.querySelector('.claudian-history-item-actions')!.children
         .map((button: HTMLElement) => button.getAttribute('aria-label')),
-    ).toEqual(['Generate title', 'Assign to this device', 'Pin', 'Archive']);
+    ).toEqual(['Generate title', 'Assign to this device', 'Rename', 'Pin', 'Archive']);
 
     assignButton.dispatchEvent({
       type: 'click',

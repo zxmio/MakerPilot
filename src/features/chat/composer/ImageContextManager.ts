@@ -243,7 +243,17 @@ export class ImageContextManager {
     return IMAGE_EXTENSIONS[ext] || null;
   }
 
-  private async addImageFromFile(file: File, source: 'paste' | 'drop'): Promise<boolean> {
+  /** Whether the selected destination accepts image attachments. */
+  get canAttach(): boolean {
+    return this.enabled === true && !this.destroyed;
+  }
+
+  /** Attaches images the user picked from a file dialog, with the same checks as paste and drop. */
+  async addFiles(files: readonly File[]): Promise<void> {
+    for (const file of files) await this.addImageFromFile(file, 'file');
+  }
+
+  private async addImageFromFile(file: File, source: ImageAttachment['source']): Promise<boolean> {
     if (this.destroyed) return false;
     if (!this.enabled) {
       new Notice(t('chat.images.unsupportedProvider'));

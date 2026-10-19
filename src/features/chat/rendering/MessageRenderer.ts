@@ -80,6 +80,8 @@ export class MessageRenderer {
     branchActions?: MessageActionCallbacks['branches'],
     /** Opens a session from a transcript link; omitted where the presentation cannot navigate. */
     openConversation?: (conversationId: string) => Promise<void>,
+    regenerateCallback?: MessageActionCallbacks['regenerate'],
+    getModelLabel?: MessageActionCallbacks['getModelLabel'],
   ) {
     this.app = plugin.app;
     this.#openConversation = openConversation;
@@ -104,6 +106,8 @@ export class MessageRenderer {
       rewind: rewindCallback,
       fork: forkCallback,
       branches: branchActions,
+      regenerate: regenerateCallback,
+      getModelLabel,
     });
     this.#finalizer = new ResponseFinalizer(
       id => this.findMessageEl(id),
@@ -198,6 +202,7 @@ export class MessageRenderer {
       return this.messagesEl;
     }
     this.#actions.retireFullSessionForks();
+    this.#actions.retireRegenerate();
     const previous = this.messagesEl.lastChild;
     let element: HTMLElement;
     if (msg.role === 'user') {

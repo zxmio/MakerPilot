@@ -102,7 +102,20 @@
       "dropImage": "여기에 이미지 놓기",
       "moreContext": "컨텍스트 항목 {count}개 더 표시",
       "showLess": "접기",
-      "moreItems": "+{count}개 더"
+      "moreItems": "+{count}개 더",
+      "send": "메시지 보내기",
+      "stop": "중지",
+      "queued": "대기 중",
+      "steering": "추가 중",
+      "steerNow": "지금 추가",
+      "editQueued": "대기 중인 메시지 편집",
+      "discardQueued": "대기 중인 메시지 삭제",
+      "attach": "첨부 추가",
+      "attachImage": "이미지 추가",
+      "mentionFile": "Vault 파일 멘션",
+      "uploadFile": "파일 업로드",
+      "uploaded": "{paths}에 업로드했습니다",
+      "uploadFailed": "업로드 실패: {error}"
     },
     "worked": "작업 완료",
     "taskNotification": "작업 알림",
@@ -115,7 +128,12 @@
       "resume": "대화 이어가기",
       "loading": "대화 불러오는 중…",
       "current": "현재 세션",
-      "loadFailed": "대화를 불러오지 못했습니다"
+      "loadFailed": "대화를 불러오지 못했습니다",
+      "today": "오늘",
+      "yesterday": "어제",
+      "thisWeek": "이번 주",
+      "older": "이전",
+      "search": "세션 검색"
     },
     "linkedContent": {
       "label": "연결된 콘텐츠:",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "패턴",
       "toolsPlaceholder": "도구",
       "agentCount": "에이전트 {count}개",
-      "agentCountPlural": "에이전트 {count}개"
+      "agentCountPlural": "에이전트 {count}개",
+      "names": {
+        "read": "읽기",
+        "write": "쓰기",
+        "edit": "편집",
+        "bash": "실행",
+        "glob": "파일 찾기",
+        "grep": "내용 검색",
+        "ls": "폴더 목록",
+        "webSearch": "웹 검색",
+        "webFetch": "웹 가져오기",
+        "skill": "스킬",
+        "toolSearch": "도구 검색"
+      },
+      "groupCount": "{count}회"
     },
     "citations": {
       "memoryUsed": "사용된 메모리",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "생각 중 {seconds}초…",
       "completed": "{seconds}초 동안 생각함",
-      "label": "생각"
+      "label": "생각",
+      "interruptHint": "{duration} · Esc로 중단"
     },
     "suggestions": {
       "loading": "불러오는 중…",
@@ -256,7 +289,9 @@
       "loadFailed": "추천을 불러오지 못했습니다",
       "retryHint": "다시 입력하여 재시도",
       "providerLoading": "제공업체 명령 불러오는 중…",
-      "providerRetry": "제공업체 명령 검색 다시 시도"
+      "providerRetry": "제공업체 명령 검색 다시 시도",
+      "groupCommands": "명령",
+      "groupSkills": "스킬"
     },
     "approval": {
       "title": "권한 필요",
@@ -353,6 +388,20 @@
       "nextMessage": "다음 메시지",
       "scrollToBottom": "맨 아래로 스크롤",
       "emptyDirectory": "이 대화에는 사용자 프롬프트가 없습니다"
+    },
+    "workedStep": "1단계",
+    "workedSteps": "{count}단계",
+    "subagent": {
+      "prompt": "프롬프트",
+      "result": "결과",
+      "toolUse": "1단계",
+      "toolUses": "{count}단계",
+      "tokens": "{count} 토큰",
+      "lastTool": "최근 도구: {name}"
+    },
+    "regenerate": {
+      "button": "다시 생성",
+      "clearDraft": "먼저 입력창의 초안을 보내거나 지우세요."
     }
   },
   "settings": {

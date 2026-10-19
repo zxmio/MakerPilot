@@ -16,6 +16,10 @@ export class ChatPresentationPlacement {
   private inputFooterEl: HTMLElement | null = null;
   private sideChatChipHostEl: HTMLElement | null = null;
   private inputNavRowHostEl: HTMLElement | null = null;
+  private headerEl: HTMLElement | null = null;
+  private headerTitleEl: HTMLElement | null = null;
+  /** Where the view places its session controls (new conversation, history). */
+  headerActionsEl: HTMLElement | null = null;
   private activeInputSlotEl: HTMLElement | null = null;
   private navRowContentEl: HTMLElement | null = null;
   /**
@@ -30,9 +34,16 @@ export class ChatPresentationPlacement {
 
   constructor(private readonly context: ChatPresentationContext) {}
 
-  /** Builds the view-owned footer: chip slot, navigation row host, and composer slot. */
+  /**
+   * Builds the view-owned header (active session title and session controls) above the
+   * transcript, and the footer: chip slot, navigation row host, and composer slot.
+   */
   mount(chatPanelEl: HTMLElement): void {
     this.chatPanelEl = chatPanelEl;
+    this.headerEl = chatPanelEl.createDiv({ cls: 'claudian-chat-header' });
+    chatPanelEl.insertBefore(this.headerEl, chatPanelEl.firstChild);
+    this.headerTitleEl = this.headerEl.createDiv({ cls: 'claudian-chat-header-title' });
+    this.headerActionsEl = this.headerEl.createDiv({ cls: 'claudian-chat-header-actions' });
     this.inputFooterEl = chatPanelEl.createDiv({ cls: 'claudian-input-footer' });
     this.sideChatChipHostEl = this.inputFooterEl.createDiv({ cls: 'claudian-side-chat-chip-slot' });
     this.inputNavRowHostEl = this.inputFooterEl.createDiv({
@@ -50,7 +61,13 @@ export class ChatPresentationPlacement {
 
   /** View controls that keep the active tab's selection context while focused. */
   getSharedFocusScopeEls(): HTMLElement[] {
-    return this.inputNavRowHostEl ? [this.inputNavRowHostEl] : [];
+    return [this.inputNavRowHostEl, this.headerEl].filter((el): el is HTMLElement => el !== null);
+  }
+
+  /** Shows the active session's display name; the tab manager owns it. */
+  setHeaderTitle(title: string): void {
+    this.headerTitleEl?.setText(title);
+    if (this.headerTitleEl) this.headerTitleEl.setAttribute('title', title);
   }
 
   /** Places the active composer in the footer slot, or the zen slot while zen owns presentation. */

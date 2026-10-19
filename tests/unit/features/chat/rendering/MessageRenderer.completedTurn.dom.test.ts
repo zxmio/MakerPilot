@@ -177,7 +177,10 @@ it('keeps separate completed turns and refreshes timestamps in their own action 
     { id: 'a3', role: 'assistant', content: 'Next answer', timestamp: 7, durationSeconds: 90, completedAt: 10 },
   ], () => 'Hello');
   const headers = within(messagesEl).getAllByRole('button', { name: /Worked for/ });
-  expect(headers.map(header => header.textContent)).toEqual(['Worked for 01:05', 'Worked for 01:30']);
+  expect(headers).toEqual([
+    within(messagesEl).getByRole('button', { name: 'Worked for 01:05' }),
+    within(messagesEl).getByRole('button', { name: 'Worked for 01:30' }),
+  ]);
   settings.showMessageTimestamps = false;
   renderer.refreshMessageTimestamps();
   expect(messagesEl.querySelectorAll('.claudian-message-timestamp')).toHaveLength(0);
@@ -206,6 +209,44 @@ it.each([true, false])('keeps the final answer visible with fallback tools (cont
   fireEvent.click(within(messagesEl).getByRole('button', { name: 'Copy message' }));
   await Promise.resolve();
   expect(navigator.clipboard.writeText).toHaveBeenCalledWith('The final answer.');
+  renderer.dispose();
+});
+
+it('summarizes completed work as steps and folds consecutive successful calls of one tool', async () => {
+  const { renderer, messagesEl } = setup();
+  const search = (id: string, query: string): ToolCallInfo => ({
+    id, name: 'WebSearch', input: { query }, status: 'completed', result: 'Links: []',
+  });
+  renderer.renderStoredMessage({
+    id: 'work', role: 'assistant', content: 'Done.', timestamp: 10, durationSeconds: 95,
+    contentBlocks: [
+      { type: 'thinking', content: 'Plan the search.', durationSeconds: 3 },
+      { type: 'tool_use', toolId: 's1' }, { type: 'tool_use', toolId: 's2' }, { type: 'tool_use', toolId: 's3' },
+      { type: 'tool_use', toolId: 'fail' },
+      { type: 'text', content: 'Done.' },
+    ],
+    toolCalls: [
+      search('s1', 'black hole'), search('s2', 'accretion disk'), search('s3', 'polar jets'),
+      { id: 'fail', name: 'Bash', input: { command: 'npm run typecheck' }, status: 'error', result: 'exit 2' },
+    ],
+  });
+  await Promise.resolve();
+  // The summary is visual; the disclosure keeps its plain name.
+  const header = within(messagesEl).getByRole('button', { name: 'Worked for 01:35' });
+  expect(header.textContent).toContain('5 steps');
+  expect(header.querySelectorAll('.claudian-work-step-dot')).toHaveLength(5);
+  expect(header.querySelectorAll('.claudian-work-step-dot--error')).toHaveLength(1);
+  fireEvent.click(header);
+  const group = within(messagesEl).getByRole('button', { name: /WebSearch: 3 times/ });
+  expect(group.getAttribute('aria-expanded')).toBe('false');
+  const searches = Array.from(messagesEl.querySelectorAll<HTMLElement>('.claudian-tool-call[data-tool-id^="s"]'));
+  expect(searches.map(card => card.closest('.claudian-tool-group'))).toEqual([
+    group.parentElement, group.parentElement, group.parentElement,
+  ]);
+  expect(messagesEl.querySelector('[data-tool-id="fail"]')!.closest('.claudian-tool-group')).toBeNull();
+  fireEvent.click(group);
+  expect(group.getAttribute('aria-expanded')).toBe('true');
+  expect(await axe(messagesEl)).toHaveNoViolations();
   renderer.dispose();
 });
 
@@ -255,6 +296,38 @@ it('offers full-session fork only on the latest reply and removes it when anothe
   expect((await axe(messagesEl)).violations).toEqual([]);
   renderer.addMessage({ id: 'u3', role: 'user', content: 'Continue', timestamp: 8 });
   expect(within(messagesEl).queryByRole('button', { name: 'Fork conversation' })).toBeNull();
+  renderer.dispose();
+});
+
+it('offers Regenerate on the latest answer only and names the model that answered', async () => {
+  const messagesEl = document.body.createDiv();
+  const regenerate = jest.fn().mockResolvedValue(undefined);
+  const renderer = new MessageRenderer(
+    { app: {}, settings: { mediaFolder: '', showMessageTimestamps: false } } as any,
+    new Component() as any, messagesEl, jest.fn(), undefined, () => ProviderRegistry.getCapabilities('claude'),
+    undefined, undefined, regenerate, model => (model === 'claude-opus-5-5' ? 'Opus 5.5' : null),
+  );
+  const earlier: ChatMessage = { id: 'a1', role: 'assistant', content: 'First answer', timestamp: 2,
+    assistantMessageId: 'native-a1', model: 'claude-opus-5-5' };
+  const latest: ChatMessage = { id: 'a2', role: 'assistant', content: 'Second answer', timestamp: 4,
+    assistantMessageId: 'native-a2', model: 'claude-opus-5-5' };
+  renderer.renderMessages([
+    { id: 'u1', role: 'user', content: 'First', timestamp: 1, userMessageId: 'native-u1' }, earlier,
+    { id: 'u2', role: 'user', content: 'Second', timestamp: 3, userMessageId: 'native-u2' }, latest,
+  ], () => 'Hello');
+
+  const buttons = within(messagesEl).getAllByRole('button', { name: 'Regenerate' });
+  expect(buttons.map(button => button.closest('[data-message-id]')?.getAttribute('data-message-id'))).toEqual(['a2']);
+  const latestEl = messagesEl.querySelector<HTMLElement>('[data-message-id="a2"]')!;
+  expect(within(latestEl).getByText('Opus 5.5')).toBeDefined();
+  expect((await axe(latestEl)).violations).toEqual([]);
+  fireEvent.click(buttons[0]);
+  await Promise.resolve();
+  expect(regenerate).toHaveBeenCalledWith('a2');
+
+  // A new turn retires it, as the reply it would regenerate is no longer the latest.
+  renderer.addMessage({ id: 'u3', role: 'user', content: 'Third', timestamp: 5 });
+  expect(within(messagesEl).queryByRole('button', { name: 'Regenerate' })).toBeNull();
   renderer.dispose();
 });
 

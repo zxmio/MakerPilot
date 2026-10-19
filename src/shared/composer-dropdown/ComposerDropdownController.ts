@@ -216,7 +216,7 @@ export class ComposerDropdownController {
       if (index < 0) index = this.items.length - 1;
       if (index >= this.items.length) index = 0;
       const item = this.items[index];
-      if (item.kind !== 'status' && !item.disabled) return index;
+      if (item.kind === 'value' && !item.disabled) return index;
       index += delta;
     }
     return -1;
@@ -226,7 +226,7 @@ export class ComposerDropdownController {
     const item = this.items[index];
     const source = this.activeSource;
     const match = this.activeMatch;
-    if (!item || item.kind === 'status' || item.disabled || !source || !match) return;
+    if (!item || item.kind !== 'value' || item.disabled || !source || !match) return;
     const action = source.select(item, match);
     if (action.kind === 'invoke') {
       action.onApplied();
@@ -255,7 +255,7 @@ export class ComposerDropdownController {
 
   #setSelectedIndex(index: number): void {
     const item = this.items[index];
-    if (!item || item.kind === 'status' || item.disabled) return;
+    if (!item || item.kind !== 'value' || item.disabled) return;
     this.selectedIndex = index;
     this.view.updateSelection(index);
   }

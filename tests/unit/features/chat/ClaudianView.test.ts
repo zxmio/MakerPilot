@@ -210,11 +210,30 @@ describe('ClaudianView tab controls', () => {
     const navRowContent = contentEl.querySelector('.claudian-input-nav-content');
     expect(navRowHost?.children).toContain(navRowContent);
     expect(navRowContent?.querySelector('.claudian-tab-bar-container')).toBeTruthy();
-    expect(view.getSharedSelectionFocusScopeEls()).toEqual([navRowHost]);
+    expect(view.getSharedSelectionFocusScopeEls()).toEqual([navRowHost, contentEl.querySelector('.claudian-chat-header')]);
     expect(captureScrollPosition).toHaveBeenCalledTimes(1);
     expect(restoreScrollPosition).toHaveBeenCalledTimes(1);
     expect(captureScrollPosition.mock.invocationCallOrder[0])
       .toBeLessThan(restoreScrollPosition.mock.invocationCallOrder[0]);
+  });
+
+  it('heads the chat panel with the active session title and its session controls', async () => {
+    const manager = createFakeTabManager();
+    manager.getTabBarItems.mockReturnValue([
+      { id: 'other', title: 'Groceries', isActive: false },
+      { id: 'active', title: 'Roadmap review', label: 'Roadmap', isActive: true },
+    ]);
+    const { contentEl } = await openView({ manager });
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const chatPanel = contentEl.querySelector('.claudian-chat-panel')!;
+    const header = contentEl.querySelector('.claudian-chat-header')!;
+    expect(chatPanel.children[0]).toBe(header);
+    // A tab's own label wins over the conversation title, as in the tab bar.
+    expect(header.querySelector('.claudian-chat-header-title')?.textContent).toBe('Roadmap');
+    expect(header.querySelector('.claudian-new-conversation-btn')).toBeTruthy();
+    expect(header.querySelector('.claudian-history-container')).toBeTruthy();
+    expect(contentEl.querySelector('.claudian-input-nav-content')?.querySelector('.claudian-new-conversation-btn')).toBeNull();
   });
 
   it('focuses the composer after creating a new tab', async () => {
@@ -476,14 +495,16 @@ describe('ClaudianView dual-pane wiring', () => {
     expect(contentEl.hasClass('claudian-wide-session-layout')).toBe(true);
     expect(historyMenu.hasClass('visible')).toBe(false);
 
+    // The compact menu keeps its own search box; the sidebar's is the one under test.
+    const sidebar = contentEl.querySelector('.claudian-session-sidebar')!;
     contentEl.querySelector('.claudian-session-search-control')!.click();
-    expect(contentEl.querySelector('.claudian-session-search-input')).not.toBeNull();
+    expect(sidebar.querySelector('.claudian-session-search-input')).not.toBeNull();
 
     resize(599);
 
     // The layout stays wide until preview cleanup finishes, but search ends immediately.
     expect(contentEl.hasClass('claudian-wide-session-layout')).toBe(true);
-    expect(contentEl.querySelector('.claudian-session-search-input')).toBeNull();
+    expect(sidebar.querySelector('.claudian-session-search-input')).toBeNull();
     expect(contentEl.querySelector('.claudian-session-search-control')).not.toBeNull();
 
     cleanup.resolve(undefined);

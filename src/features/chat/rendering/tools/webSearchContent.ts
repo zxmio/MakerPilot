@@ -77,9 +77,9 @@ export function getWebSearchSummary(input: Record<string, unknown>, maxLength: n
   }
 }
 
-export function getWebSearchLabel(input: Record<string, unknown>, maxLength: number): string {
+export function getWebSearchLabel(displayName: string, input: Record<string, unknown>, maxLength: number): string {
   const summary = getWebSearchSummary(input, maxLength);
-  return `WebSearch: ${summary || t('chat.web.searchTerm')}`;
+  return `${displayName}: ${summary || t('chat.web.searchTerm')}`;
 }
 
 function parseWebSearchLinks(result: string): WebSearchLink[] {

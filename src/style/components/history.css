@@ -436,6 +436,12 @@
   border-inline-start: none;
 }
 
+/* The shown session keeps a surface and an accent edge so it reads at a glance. */
+.claudian-session-sidebar .claudian-history-item.active {
+  background: var(--background-modifier-hover);
+  box-shadow: inset 2px 0 var(--claudian-brand);
+}
+
 .claudian-session-sidebar .claudian-session-recency-divider {
   display: flex;
   align-items: center;
@@ -780,7 +786,7 @@ body.theme-dark .claudian-nav-dropup-menu {
 }
 
 .claudian-history-item.running .claudian-history-item-icon {
-  color: var(--interactive-accent);
+  color: var(--claudian-brand);
 }
 
 .claudian-history-item.running .claudian-history-item-icon svg {
@@ -788,7 +794,7 @@ body.theme-dark .claudian-nav-dropup-menu {
 }
 
 .claudian-history-item.running .claudian-history-item-date {
-  color: var(--interactive-accent);
+  color: var(--claudian-brand);
   font-weight: 500;
 }
 
@@ -914,7 +920,7 @@ body.theme-dark .claudian-nav-dropup-menu {
 
 /* Compact history menu: quiet rows with a clear title / status hierarchy. */
 .claudian-history-menu {
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: var(--shadow-s);
 }
 
@@ -939,13 +945,47 @@ body.theme-dark .claudian-nav-dropup-menu {
 
 .claudian-history-menu .claudian-history-archive-control {
   position: relative;
-  padding: 5px 8px;
-  margin-bottom: 4px;
+  padding: 8px 10px;
+  margin-top: 4px;
+  border-top: 1px solid var(--background-modifier-border);
   border-bottom: none;
   border-radius: 0;
   background: transparent;
   font-size: 12px;
   font-weight: 400;
+}
+
+.claudian-history-menu .claudian-history-archive-control .claudian-session-nav-label {
+  flex: 1;
+}
+
+.claudian-history-menu .claudian-session-nav-count {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* The menu's own search box, above the list. */
+.claudian-history-menu .claudian-session-search-field {
+  margin: 6px 6px 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--background-modifier-hover);
+}
+
+/* Today / Yesterday / This week labels between the menu's sessions. */
+.claudian-history-menu .claudian-session-recency-divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 10px 10px 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.claudian-history-menu .claudian-session-recency-divider:first-child {
+  padding-top: 4px;
 }
 
 .claudian-history-menu .claudian-history-archive-control:hover,
@@ -956,18 +996,24 @@ body.theme-dark .claudian-nav-dropup-menu {
 .claudian-history-menu .claudian-history-item {
   position: relative;
   box-sizing: border-box;
-  min-height: 30px;
-  padding: 4px 8px;
+  min-height: 32px;
+  padding: 6px 10px;
   margin: 0;
   gap: 6px;
   border: none;
-  border-radius: 0;
+  border-radius: 6px;
 }
 
+/* The shown session takes the active provider's accent as a tint, not a side bar. */
 .claudian-history-menu .claudian-history-item.active,
 .claudian-history-menu .claudian-history-item.open {
-  padding-inline-start: 8px;
-  box-shadow: inset 2px 0 var(--interactive-accent);
+  padding-inline-start: 10px;
+  background: rgba(var(--claudian-brand-rgb), 0.12);
+}
+
+.claudian-history-menu .claudian-history-item.active .claudian-history-item-title,
+.claudian-history-menu .claudian-history-item.open .claudian-history-item-title {
+  font-weight: 500;
 }
 
 .claudian-history-menu .claudian-history-item-content {
@@ -995,7 +1041,7 @@ body.theme-dark .claudian-nav-dropup-menu {
 }
 
 .claudian-history-menu .claudian-history-item.running .claudian-history-item-date {
-  color: var(--interactive-accent);
+  color: var(--claudian-brand);
 }
 
 .claudian-history-menu .claudian-history-item-actions {
@@ -1006,10 +1052,12 @@ body.theme-dark .claudian-nav-dropup-menu {
   pointer-events: none;
 }
 
+/* Layers the row's hover overlay on the menu surface so the actions blend into the row. */
 .claudian-history-menu .claudian-history-item:hover .claudian-history-item-actions,
 .claudian-history-menu .claudian-history-item:focus-within .claudian-history-item-actions {
   pointer-events: auto;
   background-color: var(--background-secondary);
+  background-image: linear-gradient(var(--background-modifier-hover), var(--background-modifier-hover));
 }
 
 .claudian-history-menu .claudian-history-item:has(.claudian-action-btn):hover .claudian-history-item-date,
@@ -1018,11 +1066,37 @@ body.theme-dark .claudian-nav-dropup-menu {
 }
 
 .claudian-history-menu .claudian-history-item:not(.active):not(.open):not(.claudian-history-item--selected):hover {
-  background: transparent;
+  background: var(--background-modifier-hover);
 }
 
 .claudian-history-menu .claudian-history-archive-control:focus-visible,
 .claudian-history-menu .claudian-history-item-content:focus-visible {
   outline: 1px solid var(--interactive-accent);
   outline-offset: -1px;
+}
+
+/* A running session's row breathes in the active accent. */
+.claudian-history-menu .claudian-history-item.running .claudian-history-item-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-inline-end: 8px;
+  border-radius: 50%;
+  background: var(--claudian-brand);
+  vertical-align: 2px;
+  animation: thinking-pulse 1.4s ease-in-out infinite;
+}
+
+/* New conversation is the sidebar's primary control. */
+.claudian-session-sidebar .claudian-session-new-control {
+  margin-bottom: 6px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.claudian-session-sidebar .claudian-session-new-control:hover,
+.claudian-session-sidebar .claudian-session-new-control:focus-visible {
+  background: var(--background-modifier-hover);
 }

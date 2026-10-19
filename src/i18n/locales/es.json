@@ -102,7 +102,20 @@
       "dropImage": "Suelta una imagen aquí",
       "moreContext": "Mostrar {count} elementos de contexto más",
       "showLess": "Mostrar menos",
-      "moreItems": "+{count} más"
+      "moreItems": "+{count} más",
+      "send": "Enviar mensaje",
+      "stop": "Detener",
+      "queued": "En cola",
+      "steering": "Dirigiendo",
+      "steerNow": "Dirigir ahora",
+      "editQueued": "Editar mensaje en cola",
+      "discardQueued": "Descartar mensaje en cola",
+      "attach": "Añadir adjunto",
+      "attachImage": "Añadir imagen",
+      "mentionFile": "Mencionar un archivo de la bóveda",
+      "uploadFile": "Subir archivo",
+      "uploaded": "Subido a {paths}",
+      "uploadFailed": "Error al subir: {error}"
     },
     "worked": "Trabajo realizado",
     "taskNotification": "Notificación de tarea",
@@ -115,7 +128,12 @@
       "resume": "Reanudar conversación",
       "loading": "Cargando conversación…",
       "current": "Sesión actual",
-      "loadFailed": "No se pudo cargar la conversación"
+      "loadFailed": "No se pudo cargar la conversación",
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "thisWeek": "Esta semana",
+      "older": "Anteriores",
+      "search": "Buscar sesiones"
     },
     "linkedContent": {
       "label": "Contenido vinculado:",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "patrón",
       "toolsPlaceholder": "herramientas",
       "agentCount": "{count} agente",
-      "agentCountPlural": "{count} agentes"
+      "agentCountPlural": "{count} agentes",
+      "names": {
+        "read": "Leer",
+        "write": "Escribir",
+        "edit": "Editar",
+        "bash": "Ejecutar",
+        "glob": "Buscar archivos",
+        "grep": "Buscar contenido",
+        "ls": "Listar carpeta",
+        "webSearch": "Buscar en la web",
+        "webFetch": "Obtener página",
+        "skill": "Skill",
+        "toolSearch": "Buscar herramientas"
+      },
+      "groupCount": "{count} veces"
     },
     "citations": {
       "memoryUsed": "Memoria utilizada",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "Pensando {seconds}s…",
       "completed": "Pensó durante {seconds}s",
-      "label": "Razonamiento"
+      "label": "Razonamiento",
+      "interruptHint": "{duration} · Esc para interrumpir"
     },
     "suggestions": {
       "loading": "Cargando…",
@@ -256,7 +289,9 @@
       "loadFailed": "No se pudieron cargar las sugerencias",
       "retryHint": "Escribe de nuevo para reintentar",
       "providerLoading": "Cargando comandos del proveedor…",
-      "providerRetry": "Reintentar la detección de comandos del proveedor"
+      "providerRetry": "Reintentar la detección de comandos del proveedor",
+      "groupCommands": "Comandos",
+      "groupSkills": "Skills"
     },
     "approval": {
       "title": "Se requiere permiso",
@@ -353,6 +388,20 @@
       "nextMessage": "Mensaje siguiente",
       "scrollToBottom": "Desplazarse al final",
       "emptyDirectory": "No hay prompts de usuario en esta conversación"
+    },
+    "workedStep": "1 paso",
+    "workedSteps": "{count} pasos",
+    "subagent": {
+      "prompt": "Prompt",
+      "result": "Resultado",
+      "toolUse": "1 uso de herramienta",
+      "toolUses": "{count} usos de herramientas",
+      "tokens": "{count} tokens",
+      "lastTool": "Última herramienta: {name}"
+    },
+    "regenerate": {
+      "button": "Regenerar",
+      "clearDraft": "Envía o borra primero el borrador del cuadro de entrada."
     }
   },
   "settings": {

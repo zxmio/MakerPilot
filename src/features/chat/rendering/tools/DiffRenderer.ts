@@ -70,6 +70,20 @@ export function splitIntoHunks(diffLines: DiffLine[], contextLines = 3): DiffHun
   return hunks;
 }
 
+/**
+ * The first changed lines of a diff, shown while its card is collapsed.
+ * Decorative: the full diff is one expansion away, so readers are not told it twice.
+ */
+export function renderDiffPreview(containerEl: HTMLElement, diffLines: DiffLine[], limit = 3): void {
+  containerEl.empty();
+  containerEl.setAttribute('aria-hidden', 'true');
+  for (const line of diffLines.filter(item => item.type !== 'equal').slice(0, limit)) {
+    const lineEl = containerEl.createDiv({ cls: `claudian-diff-line claudian-diff-${line.type}` });
+    lineEl.createSpan({ cls: 'claudian-diff-prefix', text: line.type === 'insert' ? '+' : '-' });
+    lineEl.createSpan({ cls: 'claudian-diff-text', text: line.text || ' ' });
+  }
+}
+
 /** Max lines to render for all-inserts diffs (new file creation). */
 const NEW_FILE_DISPLAY_CAP = 20;
 

@@ -18,11 +18,15 @@ import { getChatSettingsSnapshot } from '@/features/chat/ChatSettings';
 import { ComposerContextTray } from '@/features/chat/composer/ComposerContextTray';
 import { ComposerInfoRow } from '@/features/chat/composer/ComposerInfoRow';
 import { ComposerPromptSuggestion } from '@/features/chat/composer/ComposerPromptSuggestion';
+import { formatComposerWikilink } from '@/features/chat/composer/composerWikilinks';
 import { FileContextManager } from '@/features/chat/composer/FileContextManager';
 import { ImageContextManager } from '@/features/chat/composer/ImageContextManager';
 import { MainChatComposerDropdown } from '@/features/chat/composer/MainChatComposerDropdown';
 import { installTextareaSizing } from '@/features/chat/composer/textareaSizing';
+import { AttachButton } from '@/features/chat/composer/toolbar/AttachButton';
 import { createInputToolbar } from '@/features/chat/composer/toolbar/InputToolbar';
+import { SendButton } from '@/features/chat/composer/toolbar/SendButton';
+import { copyFilesIntoVault } from '@/features/chat/composer/vaultUpload';
 import { NavigationSidebar } from '@/features/chat/navigation/NavigationSidebar';
 import { getSessionProviderId } from '@/features/chat/sessions/sessionProvider';
 import { getSessionCapabilities, getSessionChatUIConfig, getSessionSelectedModel, getSessionSettingsSnapshot, type SessionSettingsSnapshot, updateSessionProviderSettings, updateSessionReasoning } from '@/features/chat/sessions/sessionSettings';
@@ -32,6 +36,7 @@ import type {
   TabRuntimeConstructionContext,
   TabRuntimeCore,
 } from '@/features/chat/tabs/runtime/TabRuntimeConstruction';
+import { cancelSelectedDestinationTurn } from '@/features/chat/tabs/TabInputEvents';
 import { TabModelSelectionCoordinator } from '@/features/chat/tabs/TabModelSelectionCoordinator';
 import { syncTabProviderServices } from '@/features/chat/tabs/tabProviderLifecycle';
 import { getBlankTabModelOptions } from '@/features/chat/tabs/tabProviderSettings';
@@ -40,6 +45,7 @@ import type {
   ProviderCatalogInfo,
   TabUIComponents,
 } from '@/features/chat/tabs/types';
+import { t } from '@/i18n/i18n';
 
 function buildContextManagers(
   options: TabRuntimeConstructionContext,
@@ -109,11 +115,38 @@ function buildInputToolbar(
   options: TabRuntimeConstructionContext,
   runtimeRef: PublishedTabRuntimeRef,
   onUserModified: () => void,
-): ReturnType<typeof createInputToolbar> {
+): ReturnType<typeof createInputToolbar> & { sendButton: SendButton } {
   const { dom } = core;
   const { plugin } = options;
 
   const inputToolbar = dom.inputWrapper.createDiv({ cls: 'claudian-input-toolbar' });
+  // The leading control; it reaches the tab's context managers when clicked.
+  new AttachButton(inputToolbar, {
+    canAttachImages: () => runtimeRef.current()?.ui.imageContextManager.canAttach ?? false,
+    uploadFiles: (files) => {
+      const tab = runtimeRef.requirePublished();
+      if (!options.isRuntimeLive(tab)) return;
+      // Attachments land where Obsidian places them for the linked note, or the vault default.
+      const sourcePath = tab.ui.linkedContentController.getSnapshot().path ?? '';
+      void copyFilesIntoVault(plugin.app, files, sourcePath).then((paths) => {
+        if (!options.isRuntimeLive(tab)) return;
+        tab.composer.appendText(paths.map(formatComposerWikilink).join('').trimEnd());
+        new Notice(t('chat.composer.uploaded', { paths: paths.join(', ') }));
+      }, (error: unknown) => {
+        new Notice(t('chat.composer.uploadFailed', { error: error instanceof Error ? error.message : String(error) }));
+      });
+    },
+    addImages: (files) => {
+      const tab = runtimeRef.requirePublished();
+      if (!options.isRuntimeLive(tab)) return;
+      void tab.ui.imageContextManager.addFiles(files);
+    },
+    startMention: () => {
+      const tab = runtimeRef.requirePublished();
+      if (!options.isRuntimeLive(tab)) return;
+      tab.composer.appendText('@');
+    },
+  });
 
   const blankTabUIConfigProxy = (): ProviderChatUIConfig => {
     const baseConfig = getSessionChatUIConfig(core, plugin);
@@ -356,7 +389,20 @@ function buildInputToolbar(
     'tab input toolbar menus',
     () => toolbarComponents.menus.destroy(),
   );
-  return toolbarComponents;
+  // The far-end control; sends and cancels resolve the selected destination when clicked.
+  const sendButton = new SendButton(inputToolbar, {
+    send: () => {
+      const tab = runtimeRef.requirePublished();
+      if (!options.isRuntimeLive(tab)) return;
+      void tab.controllers.inputController.sendMessage();
+    },
+    stop: () => {
+      const tab = runtimeRef.requirePublished();
+      if (!options.isRuntimeLive(tab)) return;
+      cancelSelectedDestinationTurn(tab);
+    },
+  });
+  return { ...toolbarComponents, sendButton };
 }
 
 export function buildTabRuntimeUI(
@@ -425,6 +471,7 @@ export function buildTabRuntimeUI(
     serviceTierToggle: toolbar.serviceTierToggle,
     composerDropdown,
     contextUsageMeter: toolbar.contextUsageMeter,
+    sendButton: toolbar.sendButton,
     toolbarMenus: toolbar.menus,
     navigationSidebar,
   };

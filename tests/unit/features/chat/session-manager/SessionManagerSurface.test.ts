@@ -724,7 +724,7 @@ describe('SessionManagerSurface New availability', () => {
 });
 
 describe('SessionManagerSurface history dropdown', () => {
-  it('keeps archive navigation at the top of the single-mode history list', () => {
+  it('keeps archive navigation, with its count, at the end of the single-mode history list', () => {
     const h = createHarness({
       conversations: [conversation('active'), conversation('archived', { isArchived: true })],
       wide: false,
@@ -733,8 +733,9 @@ describe('SessionManagerSurface history dropdown', () => {
     const list = h.historyMenu.querySelector('.claudian-history-list');
 
     const archiveControl = list.querySelector('.claudian-history-archive-control');
-    expect(list.children[0]).toBe(archiveControl);
+    expect(list.children[list.children.length - 1]).toBe(archiveControl);
     expect(navLabel(archiveControl)).toBe('Archive');
+    expect(archiveControl.querySelector('.claudian-session-nav-count')?.textContent).toBe('1');
     const stopPropagation = jest.fn();
     archiveControl.dispatchEvent({ type: 'click', stopPropagation });
 
@@ -759,7 +760,9 @@ describe('SessionManagerSurface history dropdown', () => {
     const options = render.mock.calls[0]?.[1] as any;
     expect(options.showOpenStateLabels).toBe(true);
     expect(options.showOpenStateActions).toBe(true);
-    expect(options.showInlinePinAction).toBe(false);
+    expect(options.showInlinePinAction).toBe(true);
+    expect(options.showAttentionState).toBe(true);
+    expect(options.groupByRecency).toBe('calendar');
     expect(options.onRequestInlineRename).toEqual(expect.any(Function));
     expect(options.onOpenConversationInNewTab).toEqual(expect.any(Function));
     expect(options.onBeforeRestoreListState).toEqual(expect.any(Function));
@@ -767,7 +770,7 @@ describe('SessionManagerSurface history dropdown', () => {
     expect(options).not.toHaveProperty('showMetadataPopover');
     const item = findItem(h.historyMenu, 'conversation-1');
     expect(item.querySelector('.claudian-open-new-tab-btn')).not.toBeNull();
-    expect(item.querySelector('.claudian-pin-btn')).toBeNull();
+    expect(item.querySelector('.claudian-pin-btn')).not.toBeNull();
 
     // An outside click hides the menu without abandoning the rendered list.
     h.surface.dismissDropdown();
@@ -779,6 +782,26 @@ describe('SessionManagerSurface history dropdown', () => {
     expect(beginRename).toHaveBeenCalledWith(item);
     expect(ownerRequestAnimationFrame).toHaveBeenCalledTimes(1);
     expect(globalRequestAnimationFrame).not.toHaveBeenCalled();
+  });
+
+  it('filters the single-mode history menu from its own search field', () => {
+    const h = createHarness({
+      conversations: [
+        conversation('roadmap-review', { title: 'Roadmap review' }),
+        conversation('groceries', { title: 'Groceries' }),
+      ],
+      wide: false,
+    });
+    h.historyButton.click();
+    typeSearch(h.historyMenu, 'roadmap');
+    expect(renderedIds(h.historyMenu)).toEqual(['roadmap-review']);
+    expect(searchInput(h.historyMenu).value).toBe('roadmap');
+
+    const escape = { type: 'keydown', key: 'Escape', isComposing: false, preventDefault: jest.fn(), stopPropagation: jest.fn() };
+    searchInput(h.historyMenu).dispatchEvent(escape);
+    expect(escape.preventDefault).toHaveBeenCalledTimes(1);
+    expect(searchInput(h.historyMenu).value).toBe('');
+    expect(renderedIds(h.historyMenu).sort()).toEqual(['groceries', 'roadmap-review']);
   });
 
   it('opens history entries through navigation and closes the dropdown', async () => {

@@ -71,6 +71,7 @@ export async function continueResponseAfterNotification(
     id: host.createMessageId(), role: 'assistant', content: '', timestamp: Date.now(),
     toolCalls: [], contentBlocks: [],
     ...(message.isAutomaticResponse ? { isAutomaticResponse: true } : {}),
+    ...(message.model ? { model: message.model } : {}),
   };
   recordResponseContinuation(continuation, message.isAutomaticResponse ? preceding : message);
   const insertionIndex = host.state.messages.indexOf(preceding) + 1;

@@ -102,7 +102,20 @@
       "dropImage": "Bild hier ablegen",
       "moreContext": "{count} weitere Kontextelemente anzeigen",
       "showLess": "Weniger anzeigen",
-      "moreItems": "+{count} weitere"
+      "moreItems": "+{count} weitere",
+      "send": "Nachricht senden",
+      "stop": "Stoppen",
+      "queued": "In Warteschlange",
+      "steering": "Wird eingesteuert",
+      "steerNow": "Jetzt einsteuern",
+      "editQueued": "Wartende Nachricht bearbeiten",
+      "discardQueued": "Wartende Nachricht verwerfen",
+      "attach": "Anhang hinzufügen",
+      "attachImage": "Bild hinzufügen",
+      "mentionFile": "Vault-Datei erwähnen",
+      "uploadFile": "Datei hochladen",
+      "uploaded": "Hochgeladen nach {paths}",
+      "uploadFailed": "Hochladen fehlgeschlagen: {error}"
     },
     "worked": "Gearbeitet",
     "taskNotification": "Aufgabenbenachrichtigung",
@@ -115,7 +128,12 @@
       "resume": "Unterhaltung fortsetzen",
       "loading": "Unterhaltung wird geladen…",
       "current": "Aktuelle Sitzung",
-      "loadFailed": "Unterhaltung konnte nicht geladen werden"
+      "loadFailed": "Unterhaltung konnte nicht geladen werden",
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "thisWeek": "Diese Woche",
+      "older": "Älter",
+      "search": "Sitzungen durchsuchen"
     },
     "linkedContent": {
       "label": "Verknüpfter Inhalt:",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "Muster",
       "toolsPlaceholder": "Werkzeuge",
       "agentCount": "{count} Agent",
-      "agentCountPlural": "{count} Agenten"
+      "agentCountPlural": "{count} Agenten",
+      "names": {
+        "read": "Lesen",
+        "write": "Schreiben",
+        "edit": "Bearbeiten",
+        "bash": "Ausführen",
+        "glob": "Dateien suchen",
+        "grep": "Inhalt durchsuchen",
+        "ls": "Ordner auflisten",
+        "webSearch": "Websuche",
+        "webFetch": "Webseite abrufen",
+        "skill": "Skill",
+        "toolSearch": "Tools suchen"
+      },
+      "groupCount": "{count}-mal"
     },
     "citations": {
       "memoryUsed": "Verwendete Erinnerungen",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "Denke seit {seconds}s…",
       "completed": "{seconds}s nachgedacht",
-      "label": "Gedanken"
+      "label": "Gedanken",
+      "interruptHint": "{duration} · Esc zum Unterbrechen"
     },
     "suggestions": {
       "loading": "Wird geladen…",
@@ -256,7 +289,9 @@
       "loadFailed": "Vorschläge konnten nicht geladen werden",
       "retryHint": "Erneut eingeben, um es noch einmal zu versuchen",
       "providerLoading": "Anbieterbefehle werden geladen…",
-      "providerRetry": "Anbieterbefehle erneut suchen"
+      "providerRetry": "Anbieterbefehle erneut suchen",
+      "groupCommands": "Befehle",
+      "groupSkills": "Skills"
     },
     "approval": {
       "title": "Berechtigung erforderlich",
@@ -353,6 +388,20 @@
       "nextMessage": "Nächste Nachricht",
       "scrollToBottom": "Nach unten scrollen",
       "emptyDirectory": "Keine Benutzer-Prompts in dieser Unterhaltung"
+    },
+    "workedStep": "1 Schritt",
+    "workedSteps": "{count} Schritte",
+    "subagent": {
+      "prompt": "Prompt",
+      "result": "Ergebnis",
+      "toolUse": "1 Toolaufruf",
+      "toolUses": "{count} Toolaufrufe",
+      "tokens": "{count} Tokens",
+      "lastTool": "Letztes Tool: {name}"
+    },
+    "regenerate": {
+      "button": "Neu generieren",
+      "clearDraft": "Sende oder leere zuerst den Entwurf im Eingabefeld."
     }
   },
   "settings": {

@@ -4,7 +4,7 @@ import '@/providers';
 import { holdResponse } from '@test/helpers/ConversationPorts';
 import { installSessionRuntimePool } from '@test/helpers/features/chat/SessionRuntimePoolHarness';
 import { createHarness, releaseSideChatHarnesses } from '@test/helpers/features/chat/SideChatDOMHarness';
-import { fireEvent, within } from '@testing-library/dom';
+import { fireEvent, waitFor, within } from '@testing-library/dom';
 import { axe } from 'jest-axe';
 import { App, Component, TFile } from 'obsidian';
 
@@ -30,9 +30,12 @@ const note = Object.assign(new TFile(), {
   path: 'Notes/Plan.md', name: 'Plan.md', basename: 'Plan', extension: 'md',
 });
 
+let lastApp: App;
+
 async function createTab(linkedContentPath?: string): Promise<AssembledTabRuntime> {
   const harness = createHarness();
   const app = new App();
+  lastApp = app;
   Object.assign(app.vault.adapter, { basePath: '/vault' });
   Object.assign(app.vault, {
     on: () => ({}),
@@ -74,9 +77,10 @@ async function createTab(linkedContentPath?: string): Promise<AssembledTabRuntim
 }
 
 function infoRowOf(tab: AssembledTabRuntime): HTMLElement {
-  // The info row is the composer's last row, directly under the bordered input box.
-  const row = tab.dom.inputWrapper.nextElementSibling as HTMLElement | null;
-  expect(row?.parentElement).toBe(tab.dom.inputContainerEl);
+  // The linked note is a chip inside the input box, after the per-turn context and before the editor.
+  const row = tab.dom.contextRowEl.nextElementSibling as HTMLElement | null;
+  expect(row?.parentElement).toBe(tab.dom.inputWrapper);
+  expect(row?.nextElementSibling).toBe(tab.dom.inputEl);
   return row!;
 }
 
@@ -121,7 +125,7 @@ it('attaches a queued follow-up to the top of the input box, under the tab bar',
   }
 });
 
-it('shows the linked note in an info row under the input box', async () => {
+it('shows the linked note as a chip inside the input box', async () => {
   const tab = await createTab(note.path);
   try {
     const row = infoRowOf(tab);
@@ -130,8 +134,8 @@ it('shows the linked note in an info row under the input box', async () => {
     expect(linked.textContent).toBe('Plan');
     // Locked after the first message: shown, activatable, not removable.
     expect(info.queryByRole('button', { name: /^Remove/ })).toBeNull();
-    // The in-box tray is left to per-turn context.
-    expect(within(tab.dom.inputWrapper).queryByRole('button', { name: /Linked content/ })).toBeNull();
+    // The per-turn context tray stays separate from the linked note.
+    expect(within(tab.dom.contextRowEl).queryByRole('button', { name: /Linked content/ })).toBeNull();
 
     tab.state.usage = usage(42);
     expect(info.queryByRole('progressbar')).toBeNull();
@@ -144,9 +148,7 @@ it('shows the linked note in an info row under the input box', async () => {
 it('shows context usage in the toolbar next to the model picker', async () => {
   const tab = await createTab();
   try {
-    // Without a linked note the row still holds its place, so the composer does not shift.
     const row = infoRowOf(tab);
-    expect(row.classList.contains('claudian-hidden')).toBe(false);
 
     tab.state.usage = usage(42);
     const toolbar = tab.dom.inputWrapper.querySelector<HTMLElement>(':scope > .claudian-input-toolbar')!;
@@ -154,6 +156,60 @@ it('shows context usage in the toolbar next to the model picker', async () => {
     const modelAnchor = toolbar.querySelector('.claudian-toolbar-chip-anchor--model');
     expect(modelAnchor?.nextElementSibling).toBe(meter);
     expect(within(row).queryByRole('progressbar')).toBeNull();
+  } finally {
+    await destroyTab(tab);
+  }
+});
+
+it('opens an attach popover above the toolbar start for uploading, images and vault mentions', async () => {
+  jest.spyOn(ProviderRegistry, 'getCapabilities').mockReturnValue({
+    ...ProviderRegistry.getCapabilities('claude'), supportsImageAttachments: true,
+  });
+  const tab = await createTab();
+  try {
+    const toolbar = tab.dom.inputWrapper.querySelector<HTMLElement>(':scope > .claudian-input-toolbar')!;
+    const attach = within(toolbar).getByRole('button', { name: 'Add attachment' });
+    expect(toolbar.firstElementChild?.contains(attach)).toBe(true);
+    expect(attach.getAttribute('aria-expanded')).toBe('false');
+
+    fireEvent.click(attach);
+    const menu = within(toolbar).getByRole('menu', { name: 'Add attachment' });
+    expect(attach.getAttribute('aria-expanded')).toBe('true');
+    expect(within(menu).getAllByRole('menuitem').map(item => item.textContent)).toEqual([
+      expect.stringContaining('Upload file'),
+      expect.stringContaining('Add image'),
+      expect.stringContaining('Mention a vault file'),
+    ]);
+    expect(await axe(toolbar.firstElementChild as HTMLElement)).toHaveNoViolations();
+    fireEvent.keyDown(menu, { key: 'Escape' });
+    expect(within(toolbar).queryByRole('menu')).toBeNull();
+
+    // Uploading copies the file into the vault's attachment folder and references its path.
+    const app = lastApp as unknown as { vault: Record<string, unknown>; fileManager: Record<string, unknown> };
+    const createBinary = jest.fn(async () => undefined);
+    Object.assign(app.vault, { createBinary });
+    app.fileManager = { getAvailablePathForAttachment: jest.fn(async (name: string) => `Attachments/${name}`) };
+    const uploadPicker = toolbar.querySelector<HTMLInputElement>('input[type="file"]:not([accept])')!;
+    const report = new File([new Uint8Array([1, 2, 3])], 'report.pdf', { type: 'application/pdf' });
+    Object.defineProperty(report, 'arrayBuffer', { value: async () => new Uint8Array([1, 2, 3]).buffer });
+    Object.defineProperty(uploadPicker, 'files', { configurable: true, value: [report] });
+    fireEvent.change(uploadPicker);
+    await waitFor(() => expect(tab.dom.inputEl.value).toContain('[[Attachments/report.pdf|report.pdf]]'));
+    expect(createBinary).toHaveBeenCalledWith('Attachments/report.pdf', expect.any(ArrayBuffer));
+
+    // Images still go to the model as image attachments.
+    const imagePicker = toolbar.querySelector<HTMLInputElement>('input[type="file"][accept]')!;
+    const image = new File([new Uint8Array([137, 80, 78, 71])], 'shot.png', { type: 'image/png' });
+    Object.defineProperty(image, 'arrayBuffer', { value: async () => new Uint8Array([137, 80, 78, 71]).buffer });
+    Object.defineProperty(imagePicker, 'files', { configurable: true, value: [image] });
+    fireEvent.change(imagePicker);
+    await waitFor(() => expect(tab.ui.imageContextManager.getAttachedImages()
+      .map(attachment => [attachment.name, attachment.source])).toEqual([['shot.png', 'file']]));
+
+    fireEvent.click(attach);
+    fireEvent.click(within(toolbar).getByRole('menuitem', { name: /Mention a vault file/ }));
+    expect(tab.dom.inputEl.value.endsWith('@')).toBe(true);
+    expect(within(toolbar).queryByRole('menu')).toBeNull();
   } finally {
     await destroyTab(tab);
   }

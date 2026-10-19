@@ -192,3 +192,17 @@ it.each([false, true])('counts each main response once across blocks and tools (
   const result = await loadSDKSessionMessages('/vault', 'session', undefined, sessionPath);
   expect(result.messages.at(-1)?.turnStats).toEqual(missing ? undefined : { outputTokens: 125, durationMs: 2500 });
 });
+
+it('restores the model that wrote each answer from native history', async () => {
+  const entries = [
+    { type: 'user', uuid: 'u', timestamp: '2026-09-20T11:00:00Z', message: { content: 'Explain' } },
+    { type: 'assistant', uuid: 'a', parentUuid: 'u', timestamp: '2026-09-20T11:00:02Z',
+      message: { model: 'claude-opus-5-5', content: [{ type: 'text', text: 'Answer.' }] } },
+  ];
+  const sessionPath = writeSession(entries.map(entry => JSON.stringify(entry)).join('\n'));
+
+  const result = await loadSDKSessionMessages('/vault', 'session', undefined, sessionPath);
+
+  expect(result.messages[1]).toMatchObject({ role: 'assistant', content: 'Answer.', model: 'claude-opus-5-5' });
+  expect(result.messages[0].model).toBeUndefined();
+});

@@ -60,8 +60,9 @@ function buildTabDOM(contentEl: HTMLElement, options: TabRuntimeConstructionCont
   // A queued follow-up is attached to the top of the box it will be sent from.
   const queueIndicatorEl = inputWrapper.createDiv({ cls: 'claudian-input-queue-strip claudian-hidden' });
   const contextRowEl = inputWrapper.createDiv({ cls: 'claudian-context-row' });
+  // The linked note is a chip in the box, apart from the per-turn context tray.
+  const infoRowEl = inputWrapper.createDiv({ cls: 'claudian-input-info-row' });
   const composerEditor = new ComposerEditor(inputWrapper, options.plugin.app, options.component);
-  const infoRowEl = inputContainerEl.createDiv({ cls: 'claudian-input-info-row' });
   options.registerCleanup('tab composer editor', () => composerEditor.destroy());
   const vault = options.plugin.app.vault;
   const refresh = () => composerEditor.refreshLinks();

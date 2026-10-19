@@ -104,12 +104,28 @@ function inputText(key: string, fallback = ''): (input: ToolInput) => string {
   return input => getInputText(input, key, fallback);
 }
 
-function filePresentation(displayName: string): ToolPresentation {
+function filePresentation(displayName: () => string): ToolPresentation {
   return {
+    name: displayName,
     summary: input => fileNameOnly(getInputText(input, 'file_path')),
-    label: input => `${displayName}: ${shortenPath(getInputText(input, 'file_path')) || t('chat.tools.file')}`,
+    label: input => `${displayName()}: ${shortenPath(getInputText(input, 'file_path')) || t('chat.tools.file')}`,
   };
 }
+
+/** Core tools read as verbs in the interface language; English keeps the native names. */
+const toolNames = {
+  read: () => t('chat.tools.names.read'),
+  write: () => t('chat.tools.names.write'),
+  edit: () => t('chat.tools.names.edit'),
+  bash: () => t('chat.tools.names.bash'),
+  glob: () => t('chat.tools.names.glob'),
+  grep: () => t('chat.tools.names.grep'),
+  ls: () => t('chat.tools.names.ls'),
+  webSearch: () => t('chat.tools.names.webSearch'),
+  webFetch: () => t('chat.tools.names.webFetch'),
+  skill: () => t('chat.tools.names.skill'),
+  toolSearch: () => t('chat.tools.names.toolSearch'),
+};
 
 const commandSummary = (input: ToolInput) => truncateText(getInputText(input, 'command'), 60);
 const promptSummary = (input: ToolInput) => truncateText(getInputText(input, 'prompt'), 60);
@@ -176,14 +192,15 @@ const DEFAULT_PRESENTATION: ToolPresentation = {};
 
 const TOOL_PRESENTATIONS: ReadonlyMap<string, ToolPresentation> = new Map<string, ToolPresentation>([
   [TOOL_READ, {
-    ...filePresentation('Read'),
+    ...filePresentation(toolNames.read),
     body: (container, tool) => renderReadExpanded(container, tool.result ?? '', tool.resultFormat),
   }],
-  [TOOL_WRITE, filePresentation('Write')],
-  [TOOL_EDIT, filePresentation('Edit')],
+  [TOOL_WRITE, filePresentation(toolNames.write)],
+  [TOOL_EDIT, filePresentation(toolNames.edit)],
   [TOOL_BASH, {
+    name: toolNames.bash,
     summary: commandSummary,
-    label: input => `Bash: ${truncateText(getInputText(input, 'command', t('chat.tools.commandPlaceholder')), 40)}`,
+    label: input => `${toolNames.bash()}: ${truncateText(getInputText(input, 'command', t('chat.tools.commandPlaceholder')), 40)}`,
     body: (container, tool) => renderBashContent(container, tool.input, tool.result ?? ''),
     handlesMissingResult: true,
     pendingBody: (container, tool, pendingText) =>
@@ -200,38 +217,45 @@ const TOOL_PRESENTATIONS: ReadonlyMap<string, ToolPresentation> = new Map<string
   [TOOL_EDIT_IMAGE, { summary: promptSummary }],
   [TOOL_GENERATE_VIDEO, { summary: promptSummary }],
   [TOOL_GLOB, {
+    name: toolNames.glob,
     summary: inputText('pattern'),
-    label: input => `Glob: ${getInputText(input, 'pattern', t('chat.tools.filesPlaceholder'))}`,
+    label: input => `${toolNames.glob()}: ${getInputText(input, 'pattern', t('chat.tools.filesPlaceholder'))}`,
     body: FILE_SEARCH_BODY,
   }],
   [TOOL_GREP, {
+    name: toolNames.grep,
     summary: inputText('pattern'),
-    label: input => `Grep: ${getInputText(input, 'pattern', t('chat.tools.patternPlaceholder'))}`,
+    label: input => `${toolNames.grep()}: ${getInputText(input, 'pattern', t('chat.tools.patternPlaceholder'))}`,
     body: FILE_SEARCH_BODY,
   }],
   [TOOL_LS, {
+    name: toolNames.ls,
     summary: input => fileNameOnly(getInputText(input, 'path', '.')),
-    label: input => `LS: ${shortenPath(getInputText(input, 'path')) || '.'}`,
+    label: input => `${toolNames.ls()}: ${shortenPath(getInputText(input, 'path')) || '.'}`,
     body: FILE_SEARCH_BODY,
   }],
   [TOOL_WEB_SEARCH, {
+    name: toolNames.webSearch,
     summary: input => getWebSearchSummary(input, 60),
-    label: input => getWebSearchLabel(input, 40),
+    label: input => getWebSearchLabel(toolNames.webSearch(), input, 40),
     body: (container, tool) => renderWebSearchExpanded(container, tool.input, tool.result, tool.webSearchResults),
     handlesMissingResult: true,
   }],
   [TOOL_WEB_FETCH, {
+    name: toolNames.webFetch,
     summary: input => truncateText(getInputText(input, 'url'), 60),
-    label: input => `WebFetch: ${truncateText(getInputText(input, 'url', 'url'), 40)}`,
+    label: input => `${toolNames.webFetch()}: ${truncateText(getInputText(input, 'url', 'url'), 40)}`,
     body: (container, tool) => renderWebFetchExpanded(container, tool.result ?? ''),
   }],
   [TOOL_SKILL, {
+    name: toolNames.skill,
     summary: inputText('skill'),
-    label: input => `Skill: ${getInputText(input, 'skill', t('settings.agentSkills.skillBadge'))}`,
+    label: input => `${toolNames.skill()}: ${getInputText(input, 'skill', t('settings.agentSkills.skillBadge'))}`,
   }],
   [TOOL_TOOL_SEARCH, {
+    name: toolNames.toolSearch,
     summary: input => truncateText(parseToolSearchQuery(getInputText(input, 'query')), 60),
-    label: input => `ToolSearch: ${parseToolSearchQuery(getInputText(input, 'query')) || t('chat.tools.toolsPlaceholder')}`,
+    label: input => `${toolNames.toolSearch()}: ${parseToolSearchQuery(getInputText(input, 'query')) || t('chat.tools.toolsPlaceholder')}`,
     body: (container, tool) => renderToolSearchExpanded(container, tool.result ?? ''),
   }],
   [TOOL_TODO_WRITE, {

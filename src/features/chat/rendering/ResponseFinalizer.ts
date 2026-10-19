@@ -6,6 +6,8 @@ import {
   getResponseLayout,
   markResponseElement,
 } from '@/features/chat/rendering/ResponseLayout';
+import { groupConsecutiveToolCards } from '@/features/chat/rendering/tools/ToolGroupRenderer';
+import { renderStepSummary, unwrapLiveWork } from '@/features/chat/rendering/WorkDisclosure';
 import { t } from '@/i18n/i18n';
 
 // Disclosure ids stay unique across every renderer sharing the document.
@@ -40,6 +42,12 @@ export class ResponseFinalizer {
 
     const { blocks, finalText, canCollapse, notificationPredecessor,
       automaticNotification, earlierMessages, hasContinuation, finalBlockCount } = getResponseLayout(msg, messages, collapse, index);
+    // Streaming grew this turn's steps in live disclosures; fold the same flat output replay renders.
+    unwrapLiveWork(contentEl);
+    for (const message of earlierMessages) {
+      const el = this.findMessageEl(message.id)?.querySelector<HTMLElement>('.claudian-message-content');
+      if (el) unwrapLiveWork(el);
+    }
     const precedingNotificationHistory = notificationPredecessor
       ? this.findMessageEl(notificationPredecessor.id)?.querySelector<HTMLElement>(
         '.claudian-task-notification .claudian-work-history',
@@ -82,6 +90,13 @@ export class ResponseFinalizer {
           : t('chat.zen.workedFor', { duration: formatWorkDuration(msg.durationSeconds) });
         const history = this.#createDisclosure(wrapper, 'claudian-work-history', label);
         for (const el of [...earlierEls, ...workEls]) history.appendChild(el);
+        const toolsById = new Map([...earlierMessages, msg].flatMap(message => message.toolCalls ?? [])
+          .map(tool => [tool.id, tool] as const));
+        renderStepSummary(wrapper.querySelector<HTMLElement>('.claudian-work-header')!, history, (step) => {
+          const status = toolsById.get(step.dataset.toolId ?? step.dataset.subagentId ?? '')?.status;
+          return status === 'error' || status === 'blocked';
+        });
+        groupConsecutiveToolCards(history, toolsById);
       }
     }
 

@@ -18,6 +18,7 @@ import {
   finalizeThinkingBlock,
   type ThinkingBlockState,
 } from '@/features/chat/rendering/ThinkingBlockRenderer';
+import { getLiveWorkHistory, refreshLiveWorkSummary } from '@/features/chat/rendering/WorkDisclosure';
 import type { ChatState } from '@/features/chat/state/ChatState';
 import type { AsyncSubagentHistoryRecovery } from '@/features/chat/subagents/AsyncSubagentHistoryRecovery';
 import type { SubagentManager } from '@/features/chat/subagents/SubagentManager';
@@ -43,6 +44,8 @@ export interface StreamControllerDeps {
   getProviderId?: () => ProviderId;
   /** Recovers finished async subagents from provider history; absent when the owner has none. */
   asyncSubagentHistoryRecovery?: AsyncSubagentHistoryRecovery;
+  /** Grows a streaming response's steps in a live work disclosure; background streams render settled output flat. */
+  liveWorkDisclosure?: boolean;
 }
 
 interface StreamingContentSnapshot {
@@ -81,6 +84,9 @@ export class StreamController {
       updateQueueIndicator: deps.updateQueueIndicator,
       scrollToBottom,
     });
+    const getStepParent = (contentEl: HTMLElement): HTMLElement => (
+      deps.liveWorkDisclosure ? getLiveWorkHistory(contentEl) : contentEl
+    );
     this.#tools = new ToolCallStream({
       plugin: deps.plugin,
       state: deps.state,
@@ -88,6 +94,7 @@ export class StreamController {
       getMessagesEl: deps.getMessagesEl,
       scrollToBottom,
       onQuestionToolChanged: deps.onQuestionToolChanged,
+      getStepParent,
     });
     this.subagents = new SubagentStreamRouter({
       state: deps.state,
@@ -98,6 +105,7 @@ export class StreamController {
       tools: this.#tools,
       indicator: this.thinkingIndicator,
       scrollToBottom,
+      getStepParent,
     });
     this.textRenderCoordinator = this.#createRenderCoordinator(
       () => this.#getStreamingRenderWindow()
@@ -116,7 +124,9 @@ export class StreamController {
   /** Share provider/subagent ownership, but isolate a background response's render buffers. */
   createBackgroundStream(state: ChatState): StreamController {
     const deps = this.deps;
-    const stream = new StreamController({ ...deps, state, get renderer() { return deps.renderer; } });
+    const stream = new StreamController({
+      ...deps, state, liveWorkDisclosure: false, get renderer() { return deps.renderer; },
+    });
     this.backgroundStreams.add(stream);
     stream.onDispose = () => this.backgroundStreams.delete(stream);
     stream.tabActive = this.tabActive;
@@ -309,6 +319,7 @@ export class StreamController {
       if (tool) state.recordActivity({ kind: 'tool', tool });
     }
 
+    refreshLiveWorkSummary(state.currentContentEl);
     this.scrollToBottom();
   }
 
@@ -397,7 +408,8 @@ export class StreamController {
     if (!state.currentContentEl) return;
     if (!state.currentThinkingState) {
       this.thinkingRenderCoordinator.cancel();
-      const thinkingState = createThinkingBlock(state.currentContentEl, {
+      const thinkingParent = this.deps.liveWorkDisclosure ? getLiveWorkHistory(state.currentContentEl) : state.currentContentEl;
+      const thinkingState = createThinkingBlock(thinkingParent, {
         startTime: block.startTime,
         onToggle: (isExpanded) => {
           this.#handleThinkingToggle(thinkingState, isExpanded);

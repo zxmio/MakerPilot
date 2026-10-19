@@ -1,16 +1,20 @@
 /*
- * Composer info row: read-only conversation facts attached under the input box.
+ * Composer info row: the linked note as a chip inside the input box, above the editor.
  * The toolbar inside the box holds only what the user can change.
  */
 .claudian-input-info-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   min-width: 0;
-  height: 24px;
-  padding: 2px 8px 0 12px;
+  padding: 8px 10px 0;
   color: var(--text-muted);
   font-size: 12px;
+}
+
+/* Nothing linked: the row takes no space. */
+.claudian-input-info-row:not(:has(.claudian-input-info-linked:not(:empty))) {
+  display: none;
 }
 
 .claudian-input-info-linked {
@@ -19,6 +23,12 @@
   flex: 0 1 auto;
   gap: 2px;
   min-width: 0;
+  max-width: min(240px, 100%);
+  height: 24px;
+  box-sizing: border-box;
+  padding: 0 4px 0 8px;
+  border-radius: 6px;
+  background: var(--background-modifier-hover);
 
   /* Inherited by the chip's buttons; Obsidian then skips their aria-label hover tooltips. */
   --no-tooltip: true;
@@ -42,7 +52,7 @@
   border: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--text-muted);
+  color: var(--text-normal);
   font-family: inherit;
   font-size: 12px;
   line-height: 1;

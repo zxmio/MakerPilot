@@ -102,7 +102,20 @@
       "dropImage": "ここに画像をドロップ",
       "moreContext": "他 {count} 件のコンテキストを表示",
       "showLess": "折りたたむ",
-      "moreItems": "他 {count} 件"
+      "moreItems": "他 {count} 件",
+      "send": "メッセージを送信",
+      "stop": "停止",
+      "queued": "待機中",
+      "steering": "追加中",
+      "steerNow": "今すぐ追加",
+      "editQueued": "待機中のメッセージを編集",
+      "discardQueued": "待機中のメッセージを破棄",
+      "attach": "添付を追加",
+      "attachImage": "画像を追加",
+      "mentionFile": "Vault のファイルをメンション",
+      "uploadFile": "ファイルをアップロード",
+      "uploaded": "{paths} にアップロードしました",
+      "uploadFailed": "アップロードに失敗しました: {error}"
     },
     "worked": "作業完了",
     "taskNotification": "タスク通知",
@@ -115,7 +128,12 @@
       "resume": "会話を再開",
       "loading": "会話を読み込み中…",
       "current": "現在のセッション",
-      "loadFailed": "会話の読み込みに失敗しました"
+      "loadFailed": "会話の読み込みに失敗しました",
+      "today": "今日",
+      "yesterday": "昨日",
+      "thisWeek": "今週",
+      "older": "それ以前",
+      "search": "セッションを検索"
     },
     "linkedContent": {
       "label": "リンクされたコンテンツ：",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "パターン",
       "toolsPlaceholder": "ツール",
       "agentCount": "エージェント {count} 件",
-      "agentCountPlural": "エージェント {count} 件"
+      "agentCountPlural": "エージェント {count} 件",
+      "names": {
+        "read": "読み取り",
+        "write": "書き込み",
+        "edit": "編集",
+        "bash": "実行",
+        "glob": "ファイル検索",
+        "grep": "内容検索",
+        "ls": "フォルダー一覧",
+        "webSearch": "ウェブ検索",
+        "webFetch": "ウェブ取得",
+        "skill": "スキル",
+        "toolSearch": "ツール検索"
+      },
+      "groupCount": "{count} 回"
     },
     "citations": {
       "memoryUsed": "使用したメモリ",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "思考中 {seconds}秒…",
       "completed": "{seconds}秒間思考しました",
-      "label": "思考"
+      "label": "思考",
+      "interruptHint": "{duration} · Esc で中断"
     },
     "suggestions": {
       "loading": "読み込み中…",
@@ -256,7 +289,9 @@
       "loadFailed": "候補を読み込めませんでした",
       "retryHint": "再入力して再試行",
       "providerLoading": "プロバイダーのコマンドを読み込み中…",
-      "providerRetry": "プロバイダーのコマンド検出を再試行"
+      "providerRetry": "プロバイダーのコマンド検出を再試行",
+      "groupCommands": "コマンド",
+      "groupSkills": "スキル"
     },
     "approval": {
       "title": "権限が必要です",
@@ -353,6 +388,20 @@
       "nextMessage": "次のメッセージ",
       "scrollToBottom": "最下部へスクロール",
       "emptyDirectory": "この会話にはユーザープロンプトがありません"
+    },
+    "workedStep": "1 ステップ",
+    "workedSteps": "{count} ステップ",
+    "subagent": {
+      "prompt": "プロンプト",
+      "result": "結果",
+      "toolUse": "1 ステップ",
+      "toolUses": "{count} ステップ",
+      "tokens": "{count} トークン",
+      "lastTool": "直近のツール: {name}"
+    },
+    "regenerate": {
+      "button": "再生成",
+      "clearDraft": "先に入力欄の下書きを送信するか消去してください。"
     }
   },
   "settings": {

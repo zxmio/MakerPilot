@@ -2,7 +2,7 @@ import type { ComposerInfoRow } from '@/features/chat/composer/ComposerInfoRow';
 import type { LinkedContentPresentation } from '@/features/chat/linked-content/LinkedContentPresentation';
 import { t } from '@/i18n/i18n';
 
-/** Presents Linked content in the composer info row, under the input box. */
+/** Presents Linked content as a chip in the composer info row, inside the input box. */
 export class LinkedContentChip {
   constructor(
     private readonly infoRow: ComposerInfoRow,

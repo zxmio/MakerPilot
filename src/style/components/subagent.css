@@ -1,20 +1,19 @@
 .claudian-subagent-icon {
   display: flex;
   align-items: center;
-  color: var(--interactive-accent);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .claudian-subagent-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .claudian-subagent-label {
   flex: 1;
-  font-family: var(--font-monospace);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-normal);
 }
 
@@ -31,7 +30,7 @@
 
 .claudian-subagent-status.status-running,
 .claudian-subagent-tool-status.status-running {
-  color: var(--text-accent);
+  color: var(--claudian-brand);
 }
 
 .claudian-subagent-status.status-completed,
@@ -51,7 +50,7 @@
   align-items: baseline;
   gap: 0 8px;
   padding: 0 0 4px;
-  padding-inline-start: 24px;
+  padding-inline-start: 22px;
   font-family: var(--font-monospace);
   font-size: 11px;
   min-width: 0;
@@ -240,4 +239,17 @@
 
 .claudian-subagent-list.async.orphaned .claudian-subagent-status-text {
   color: var(--color-orange);
+}
+
+/* A subagent reads as a card: its header and progress sit on a bordered surface. */
+.claudian-subagent-list {
+  padding: 2px 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: rgba(var(--mono-rgb-100), 0.02);
+}
+
+.claudian-subagent-list > .claudian-subagent-header {
+  margin-inline: -8px;
+  padding-inline: 8px;
 }

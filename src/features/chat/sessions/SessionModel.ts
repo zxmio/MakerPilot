@@ -139,6 +139,7 @@ export class SessionModel {
       onQuestionToolChanged: tool => this.inputController.updateAsyncQuestion(tool),
       updateQueueIndicator: () => this.inputController.queue.updateIndicator(),
       asyncSubagentHistoryRecovery: recovery,
+      liveWorkDisclosure: true,
     });
     this.transcript = new SessionTranscript(this.state, this.streamController, this.subagentManager);
     this.inlinePrompts = new SessionInteractions({

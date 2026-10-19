@@ -1,35 +1,43 @@
 /* Write/Edit Diff Block - Subagent style */
+/* Write/Edit renders as a bordered card so file changes stand apart from read-only steps. */
 .claudian-write-edit-block {
-  margin: 4px 0;
+  margin: 6px 0;
   overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
 }
 
 .claudian-text-block+.claudian-write-edit-block,
 .claudian-write-edit-block+.claudian-text-block {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
+/* Inside the card the header fills its width instead of bleeding into the gutter. */
 .claudian-write-edit-header {
+  min-height: 34px;
+  padding: 0 10px;
+  margin-inline: 0;
+  border-radius: 0;
+  background: rgba(var(--mono-rgb-100), 0.025);
   user-select: none;
 }
 
 .claudian-write-edit-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--text-accent);
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .claudian-write-edit-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 /* Two-part header: name (fixed) + summary (flexible) */
 .claudian-write-edit-name {
-  font-family: var(--font-monospace);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-normal);
   white-space: nowrap;
   flex-shrink: 0;
@@ -37,7 +45,7 @@
 
 .claudian-write-edit-summary {
   font-family: var(--font-monospace);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -83,6 +91,7 @@
 
 .claudian-write-edit-content {
   overflow: hidden;
+  border-top: 1px solid var(--background-modifier-border);
 }
 
 .claudian-write-edit-diff-row {
@@ -140,7 +149,7 @@
 }
 
 .claudian-diff-delete {
-  background: rgb(255 80 80 / 25%);
+  background: rgba(var(--color-red-rgb), 0.14);
   color: var(--text-normal);
 }
 
@@ -149,7 +158,7 @@
 }
 
 .claudian-diff-insert {
-  background: rgb(80 200 80 / 25%);
+  background: rgba(var(--color-green-rgb), 0.14);
   color: var(--text-normal);
 }
 
@@ -173,4 +182,26 @@
   color: var(--text-muted);
   font-style: italic;
   padding: 8px;
+}
+
+/* The first changed lines, shown under a collapsed card's header. */
+.claudian-write-edit-preview {
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  line-height: 1.6;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.claudian-write-edit-preview:empty {
+  display: none;
+}
+
+.claudian-write-edit-preview .claudian-diff-line {
+  padding-inline-end: 10px;
+  white-space: nowrap;
+}
+
+.claudian-write-edit-preview .claudian-diff-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

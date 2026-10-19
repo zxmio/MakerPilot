@@ -60,7 +60,17 @@ export class ComposerDropdownView {
 
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
-      const selectable = item.kind !== 'status' && !item.disabled;
+      if (item.kind === 'header') {
+        // Kept in the item list so indices stay aligned; exposed as an unavailable option.
+        const headerEl = dropdown.createDiv({ cls: 'claudian-composer-dropdown-header', text: item.label });
+        headerEl.setAttribute('id', `${this.listboxId}-option-${index}`);
+        headerEl.setAttribute('role', 'option');
+        headerEl.setAttribute('aria-selected', 'false');
+        headerEl.setAttribute('aria-disabled', 'true');
+        this.itemEls.push(headerEl);
+        continue;
+      }
+      const selectable = item.kind === 'value' && !item.disabled;
       const itemEl = dropdown.createDiv({
         cls: [
           'claudian-composer-dropdown-item',

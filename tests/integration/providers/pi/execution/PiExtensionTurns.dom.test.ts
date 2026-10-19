@@ -184,7 +184,10 @@ function responseElements(view: PiView): HTMLElement[] {
 function disclosures(element: HTMLElement): string[] {
   return within(element).queryAllByRole('button', { hidden: true })
     .filter(button => button.classList.contains('claudian-work-header'))
-    .map(button => button.textContent ?? '');
+    // The name a reader hears; the decorative step summary is aria-hidden.
+    .map(button => Array.from(button.childNodes)
+      .filter(node => !(node instanceof HTMLElement && node.getAttribute('aria-hidden') === 'true'))
+      .map(node => node.textContent ?? '').join(''));
 }
 
 /** An answer is visible outside every collapsed disclosure. */

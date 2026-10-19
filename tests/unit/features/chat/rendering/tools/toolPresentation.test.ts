@@ -8,6 +8,7 @@ import {
   getToolName,
   getToolSummary,
 } from '@/features/chat/rendering/tools/toolPresentation';
+import { setLocale } from '@/i18n/i18n';
 
 jest.mock('obsidian', () => ({
   Platform: { resourcePathPrefix: 'app://local/' },
@@ -26,6 +27,20 @@ function createToolCall(overrides: Partial<ToolCallInfo> = {}): ToolCallInfo {
 }
 
 describe('toolPresentation', () => {
+  it('names core tools in the interface language and keeps native names for other tools', () => {
+    expect(getToolName('Bash', {})).toBe('Bash');
+    setLocale('zh-CN');
+    try {
+      expect(getToolName('Bash', {})).toBe('运行');
+      expect(getToolName('WebSearch', {})).toBe('搜索网页');
+      expect(getToolName('Edit', {})).toBe('编辑');
+      expect(getToolLabel('Bash', { command: 'npm test' })).toBe('运行: npm test');
+      expect(getToolName('mcp__notes__search', {})).toBe('mcp__notes__search');
+    } finally {
+      setLocale('en');
+    }
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });

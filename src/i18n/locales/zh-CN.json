@@ -102,7 +102,20 @@
       "dropImage": "将图片拖到这里",
       "moreContext": "显示另外 {count} 项上下文",
       "showLess": "收起",
-      "moreItems": "+{count} 项"
+      "moreItems": "+{count} 项",
+      "send": "发送消息",
+      "stop": "停止",
+      "queued": "排队中",
+      "steering": "插入中",
+      "steerNow": "立即插入",
+      "editQueued": "编辑排队消息",
+      "discardQueued": "丢弃排队消息",
+      "attach": "添加附件",
+      "attachImage": "添加图片",
+      "mentionFile": "引用库中文件",
+      "uploadFile": "上传文件",
+      "uploaded": "已上传到 {paths}",
+      "uploadFailed": "上传失败：{error}"
     },
     "worked": "已完成工作",
     "taskNotification": "任务通知",
@@ -115,7 +128,12 @@
       "resume": "继续对话",
       "loading": "正在加载对话…",
       "current": "当前会话",
-      "loadFailed": "加载对话失败"
+      "loadFailed": "加载对话失败",
+      "today": "今天",
+      "yesterday": "昨天",
+      "thisWeek": "本周",
+      "older": "更早",
+      "search": "搜索对话"
     },
     "linkedContent": {
       "label": "关联内容：",
@@ -197,7 +215,21 @@
       "patternPlaceholder": "匹配模式",
       "toolsPlaceholder": "工具",
       "agentCount": "{count} 个代理",
-      "agentCountPlural": "{count} 个代理"
+      "agentCountPlural": "{count} 个代理",
+      "names": {
+        "read": "读取",
+        "write": "写入",
+        "edit": "编辑",
+        "bash": "运行",
+        "glob": "查找文件",
+        "grep": "搜索内容",
+        "ls": "列出目录",
+        "webSearch": "搜索网页",
+        "webFetch": "读取网页",
+        "skill": "技能",
+        "toolSearch": "查找工具"
+      },
+      "groupCount": "{count} 次"
     },
     "citations": {
       "memoryUsed": "引用的记忆",
@@ -248,7 +280,8 @@
     "thinking": {
       "active": "思考中，已用时 {seconds} 秒…",
       "completed": "思考了 {seconds} 秒",
-      "label": "思考过程"
+      "label": "思考过程",
+      "interruptHint": "{duration} · Esc 中断"
     },
     "suggestions": {
       "loading": "正在加载…",
@@ -256,7 +289,9 @@
       "loadFailed": "无法加载建议",
       "retryHint": "再次输入以重试",
       "providerLoading": "正在加载提供商命令…",
-      "providerRetry": "重新查找提供商命令"
+      "providerRetry": "重新查找提供商命令",
+      "groupCommands": "命令",
+      "groupSkills": "技能"
     },
     "approval": {
       "title": "需要授权",
@@ -353,6 +388,20 @@
       "nextMessage": "下一条消息",
       "scrollToBottom": "滚动到底部",
       "emptyDirectory": "此对话中暂无用户提示词"
+    },
+    "workedStep": "1 步",
+    "workedSteps": "{count} 步",
+    "subagent": {
+      "prompt": "提示词",
+      "result": "结果",
+      "toolUse": "1 步",
+      "toolUses": "{count} 步",
+      "tokens": "{count} tokens",
+      "lastTool": "最近工具：{name}"
+    },
+    "regenerate": {
+      "button": "重新生成",
+      "clearDraft": "请先发送或清空输入框里的草稿。"
     }
   },
   "settings": {

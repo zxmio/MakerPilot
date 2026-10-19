@@ -19,6 +19,8 @@ interface ResponseStreamHost {
 /** Requested-response presentation, independent of durable or temporary conversation ownership. */
 export class ResponseStream {
   #active: ChatMessage | null = null;
+  /** The model of the turn being streamed; later projections of the same turn keep it. */
+  #model: string | undefined;
 
   constructor(private readonly host: ResponseStreamHost) {}
 
@@ -26,11 +28,14 @@ export class ResponseStream {
     return this.#active;
   }
 
-  start(): ChatMessage {
+  /** Starts an assistant projection; a turn's first start names its model. */
+  start(model: string | undefined = this.#model): ChatMessage {
     const { state, renderer } = this.host;
+    this.#model = model;
     const message: ChatMessage = {
       id: this.host.createMessageId(), role: 'assistant', content: '', timestamp: Date.now(),
       toolCalls: [], contentBlocks: [],
+      ...(model ? { model } : {}),
     };
     state.addMessage(message);
     this.#active = message;

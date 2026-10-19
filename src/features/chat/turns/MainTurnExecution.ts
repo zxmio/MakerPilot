@@ -212,7 +212,8 @@ export class MainTurnExecution {
     turnConversationId = state.currentConversationId;
     const admittedTurnRequest = admission.bind(turnRequest);
 
-    const assistantMsg = this.responseStream.start();
+    // The same snapshot the submission reads, so the answer names the model it was sent to.
+    const assistantMsg = this.responseStream.start(this.deps.getSettings().model || undefined);
     this.sawInitialProviderUserMessage = false;
     this.awaitingProviderAssistantStart = true;
 

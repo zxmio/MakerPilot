@@ -191,6 +191,35 @@ describe('SessionListOrganizer', () => {
   );
 });
 
+describe('calendar recency groups', () => {
+  it('splits by local calendar day into Today, Yesterday, This week and Older', () => {
+    const now = testClock()().getTime();
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    const day = 86_400_000;
+    const at = (timestamp: number): Partial<ConversationMeta> => ({ createdAt: timestamp, lastActivityAt: timestamp });
+    const sections = organizeSessionList([
+      createConversation('this-morning', at(startOfToday.getTime())),
+      createConversation('last-night', at(startOfToday.getTime() - 1)),
+      createConversation('yesterday-start', at(startOfToday.getTime() - day)),
+      createConversation('six-days-back', at(startOfToday.getTime() - 6 * day)),
+      createConversation('a-week-back', at(startOfToday.getTime() - 6 * day - 1)),
+    ], {
+      organization: 'list',
+      sort: 'last-updated',
+      language: 'en',
+      groupByRecency: { now, scheme: 'calendar' },
+    });
+
+    expect(sections.map(section => [section.label, section.conversations.map(({ id }) => id)])).toEqual([
+      ['Today', ['this-morning']],
+      ['Yesterday', ['last-night', 'yesterday-start']],
+      ['This week', ['six-days-back']],
+      ['Older', ['a-week-back']],
+    ]);
+  });
+});
+
 describe('deriveSessionListModel', () => {
   const conversations = [
     createConversation('plan-a', { title: 'Plan draft', linkedContentPath: 'Projects/Plan.md', lastActivityAt: 5 }),

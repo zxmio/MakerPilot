@@ -17,6 +17,9 @@ import { setLocale } from '@/i18n/i18n';
 HTMLElement.prototype.empty = function () { this.replaceChildren(); };
 HTMLElement.prototype.addClass = function (...classes) { this.classList.add(...classes); };
 HTMLElement.prototype.removeClass = function (...classes) { this.classList.remove(...classes); };
+HTMLElement.prototype.setCssProps = function (props) {
+  for (const [name, value] of Object.entries(props)) this.style.setProperty(name, value);
+};
 HTMLElement.prototype.toggleClass = function (classes, enabled) {
   for (const cls of typeof classes === 'string' ? [classes] : classes) {
     this.classList.toggle(cls, enabled);
@@ -86,6 +89,31 @@ it('restores an Edit summary without mounting diff rows until keyboard expansion
   fireEvent.keyDown(header, { key: 'Enter' });
   fireEvent.click(header);
   expect(content.firstElementChild).toBe(firstRow);
+});
+
+it('previews the first changed lines of a collapsed Edit and keeps the full diff for expansion', () => {
+  const tool: ToolCallInfo = {
+    id: 'stored-preview',
+    name: 'Edit',
+    input: { file_path: 'fixture.md' },
+    status: 'completed',
+    diffData: {
+      filePath: 'fixture.md',
+      diffLines: [
+        { type: 'equal', text: 'unchanged', oldLineNum: 1, newLineNum: 1 },
+        { type: 'delete', text: 'old one', oldLineNum: 2 },
+        { type: 'insert', text: 'new one', newLineNum: 2 },
+        { type: 'insert', text: 'new two', newLineNum: 3 },
+        { type: 'insert', text: 'new three', newLineNum: 4 },
+      ],
+      stats: { added: 3, removed: 1 },
+    },
+  };
+  const block = renderStoredWriteEdit(document.body.createDiv(), tool);
+  const preview = block.querySelector<HTMLElement>('.claudian-write-edit-preview')!;
+  expect(Array.from(preview.querySelectorAll('.claudian-diff-text'), el => el.textContent))
+    .toEqual(['old one', 'new one', 'new two']);
+  expect(block.querySelector('.claudian-write-edit-content')!.childElementCount).toBe(0);
 });
 
 describe.each(['completed', 'error', 'blocked'] as const)('stored %s output', (status) => {
@@ -401,9 +429,9 @@ it('localizes task progress and patch status through their real card consumers',
 
 
 it.each([
-  ['Bash', 'Bash: 命令'], ['Glob', 'Glob: 文件'], ['Grep', 'Grep: 匹配模式'],
-  ['Skill', 'Skill: 技能'], ['ToolSearch', 'ToolSearch: 工具'],
-])('localizes the %s placeholder through its disclosure', (name, label) => {
+  ['Bash', '运行: 命令'], ['Glob', '查找文件: 文件'], ['Grep', '搜索内容: 匹配模式'],
+  ['Skill', '技能: 技能'], ['ToolSearch', '查找工具: 工具'],
+])('localizes the %s name and placeholder through its disclosure', (name, label) => {
   setLocale('zh-CN');
   const block = renderToolCall(document.body.createDiv(), { id: 'partial', name, status: 'running', input: {} });
   expect(within(block).getByRole('button', { name: `${label} - 点击展开` })).toBeDefined();

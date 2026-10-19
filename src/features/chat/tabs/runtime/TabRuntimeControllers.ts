@@ -1,7 +1,9 @@
-import type { Component } from 'obsidian';
+import { type Component, Notice } from 'obsidian';
 
+import { findAvailableModelOption } from '@/core/providers/models/modelOptions';
 import { ComposerDraftController } from '@/features/chat/composer/ComposerDraftController';
 import { PromptHistoryNavigation } from '@/features/chat/composer/PromptHistoryNavigation';
+import { regenerateResponse } from '@/features/chat/conversation/regenerate';
 import { BrowserSelectionController } from '@/features/chat/input/BrowserSelectionController';
 import { BuiltInCommandController } from '@/features/chat/input/BuiltInCommandController';
 import { CanvasSelectionController } from '@/features/chat/input/CanvasSelectionController';
@@ -12,7 +14,8 @@ import { NavigationController } from '@/features/chat/navigation/NavigationContr
 import { MessageRenderer } from '@/features/chat/rendering/MessageRenderer';
 import { handleForkRequest } from '@/features/chat/sessions/SessionForkSource';
 import type { SessionChange } from '@/features/chat/sessions/SessionModel';
-import { getSessionCapabilities } from '@/features/chat/sessions/sessionSettings';
+import { getSessionProviderId } from '@/features/chat/sessions/sessionProvider';
+import { getSessionCapabilities, getSessionChatUIConfig, getSessionSettingsSnapshot } from '@/features/chat/sessions/sessionSettings';
 import type { TabManagerViewHost } from '@/features/chat/tabs/ChatTab';
 import type { PublishedTabRuntimeRef, TabRuntimeConstructionContext, TabRuntimeControllerBundle, TabRuntimeCore } from '@/features/chat/tabs/runtime/TabRuntimeConstruction';
 import { hasCancellableSelectedWork } from '@/features/chat/tabs/TabInputEvents';
@@ -47,7 +50,32 @@ export function buildTabRuntimeControllers(
     () => getSessionCapabilities(core, plugin),
     { navigate: (id, branchId) => conversationController.navigateBranch(id, branchId),
       isBusy: () => !core.session.canNavigateConversation },
-    async id => { if (isRuntimeLive(runtimeRef.requirePublished())) await openConversation(id); });
+    async id => { if (isRuntimeLive(runtimeRef.requirePublished())) await openConversation(id); },
+    async (id) => {
+      // Regenerate resends through the main composer; a side-chat destination would receive it instead.
+      if (!isRuntimeLive(runtimeRef.requirePublished()) || sideChatController.destination !== 'main') return;
+      await regenerateResponse(id, {
+        getMessages: () => state.messages,
+        capabilities: getSessionCapabilities(core, plugin),
+        hasComposerDraft: () => dom.inputEl.value.trim().length > 0 || ui.imageContextManager.hasImages(),
+        rewindConversation: messageId => conversationController.rewind(messageId, 'conversation'),
+        previewBranch: messageId => conversationController.navigateBranch(messageId),
+        hasBranchDraft: () => conversationController.hasBranchDraft,
+        // The resend carries the original prompt, not whatever the editor selects now.
+        send: () => inputController.sendMessage({
+          editorContextOverride: null, browserContextOverride: null, canvasContextOverride: null,
+        }),
+        notify: message => new Notice(message),
+      });
+    },
+    (model) => {
+      const providerId = getSessionProviderId(core, plugin);
+      if (!providerId) return null;
+      const uiConfig = getSessionChatUIConfig(core, plugin);
+      const settings = getSessionSettingsSnapshot(core.session.runtime, plugin) as Record<string, unknown>;
+      const value = findAvailableModelOption(providerId, uiConfig, model, settings);
+      return value ? uiConfig.getModelOptions(settings).find(option => option.value === value)?.label ?? null : null;
+    });
   options.registerCleanup('tab message renderer', () => renderer.dispose());
   const messageQuoteController = new MessageQuoteController({
     messagesEl: dom.messagesEl,
@@ -137,6 +165,14 @@ export function buildTabRuntimeControllers(
   };
   const unsubscribeAttention = core.session.runtime.subscribe(publishAttention);
   options.registerCleanup('tab session attention listener', () => { unsubscribeAttention(); });
+
+  // Every published change reaches session subscribers, including side-chat status and destination switches.
+  const refreshSendButton = (): void => {
+    const tab = runtimeRef.current();
+    if (tab) ui.sendButton.setStopMode(hasCancellableSelectedWork(tab));
+  };
+  const unsubscribeSendButton = core.session.runtime.subscribe(refreshSendButton);
+  options.registerCleanup('tab send button listener', () => { unsubscribeSendButton(); });
 
   const onChanged = (change: SessionChange): void => {
     const tab = runtimeRef.current();

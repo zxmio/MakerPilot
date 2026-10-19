@@ -18,6 +18,8 @@ type SlashValue = { readonly kind: 'command' | 'retry' };
 
 type SlashCommandDropdownItem = ComposerDropdownValueItem & {
   readonly aliases?: readonly string[];
+  /** Built-ins count as commands. */
+  readonly group: ProviderCommandKind;
 };
 
 export interface SlashCommandSourceOptions {
@@ -83,7 +85,7 @@ export class SlashCommandSource implements ComposerDropdownSource {
     const includeBuiltIns = this.includeBuiltIns
       && match.atInputStart
       && match.trigger === '/';
-    const items = this.#buildItems(providerEntries, includeBuiltIns)
+    const matches = this.#buildItems(providerEntries, includeBuiltIns)
       .filter(item => {
         const query = match.query.toLocaleLowerCase();
         return item.label.toLocaleLowerCase().includes(query)
@@ -91,6 +93,7 @@ export class SlashCommandSource implements ComposerDropdownSource {
           || item.aliases?.some(alias => alias.toLocaleLowerCase().includes(query));
       })
       .sort((left, right) => left.label.localeCompare(right.label));
+    const items = groupCommandsBeforeSkills(matches);
 
     if (result && result.status !== 'ready' && result.status !== 'empty') {
       const label = result.status === 'requires-session' || result.status === 'error'
@@ -241,6 +244,7 @@ export class SlashCommandSource implements ComposerDropdownSource {
           id: command.id,
           kind: 'value',
           label: `/${command.name}`,
+          group: 'command',
           replacement: `/${command.name} `,
           value: { kind: 'command' } satisfies SlashValue,
         });
@@ -258,6 +262,7 @@ export class SlashCommandSource implements ComposerDropdownSource {
         id: entry.id,
         kind: 'value',
         label: `${entry.displayPrefix}${entry.name}`,
+        group: entry.kind,
         replacement: `${entry.insertPrefix}${entry.name} `,
         value: { kind: 'command' } satisfies SlashValue,
       });
@@ -268,4 +273,17 @@ export class SlashCommandSource implements ComposerDropdownSource {
   private notify(): void {
     for (const listener of this.listeners) listener();
   }
+}
+
+/** Headers appear only when both groups have matches; a single group stays a plain list. */
+function groupCommandsBeforeSkills(items: readonly SlashCommandDropdownItem[]): ComposerDropdownItem[] {
+  const commands = items.filter(item => item.group === 'command');
+  const skills = items.filter(item => item.group === 'skill');
+  if (commands.length === 0 || skills.length === 0) return [...items];
+  return [
+    { id: 'group:command', kind: 'header', label: t('chat.suggestions.groupCommands') },
+    ...commands,
+    { id: 'group:skill', kind: 'header', label: t('chat.suggestions.groupSkills') },
+    ...skills,
+  ];
 }
