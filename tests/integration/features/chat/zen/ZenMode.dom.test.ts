@@ -494,8 +494,8 @@ it('shares one status across waiting, thinking, tools, text and silent pauses, t
     type: 'tool_started', toolCallId: 'tool-1', name: 'Read', input: { file_path: 'note.md' },
     toolScope: { kind: 'main' },
   } as never);
-  // The transcript keeps its waiting surface while the tool runs; zen names the tool instead.
-  await waitForFlavor(tab);
+  // While the tool runs, the transcript's last line and zen both name it.
+  await waitFor(() => expect(waitingIndicatorText(tab)).toBe('Read: note.md'));
   expect(preview()).toBe('Read · running');
 
   session.emitText('Here is the answer.');
@@ -539,7 +539,7 @@ it('gives a pending approval priority over the waiting status and resumes it aft
 
   fireEvent.click(await within(zenPanel()!).findByText('Allow once'));
   await expect(approval).resolves.toMatchObject({ decision: 'allow' });
-  await waitForFlavor(tab);
+  await waitFor(() => expect(waitingIndicatorText(tab)).toBe('Write: note.md'));
   await waitFor(() => expect(preview()).toBe('Write · running'));
 
   session.complete();

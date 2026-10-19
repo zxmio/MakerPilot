@@ -873,15 +873,41 @@ button.claudian-session-link:focus-visible {
   white-space: nowrap;
 }
 
-/* A streaming response's work disclosure: open, with a spinner before its label. */
-.claudian-work--live > button.claudian-work-header::before {
-  content: '';
-  flex: 0 0 auto;
-  width: 9px;
-  height: 9px;
-  margin-inline-end: 8px;
-  border: 2px solid rgba(var(--claudian-brand-rgb), 0.25);
-  border-top-color: var(--claudian-brand);
-  border-radius: 50%;
-  animation: claudian-spin 0.9s linear infinite;
+/* A streaming response's header shows only its step dots after the count; no leading separator. */
+.claudian-work-summary--dots::before {
+  content: none;
+}
+
+/* A streaming response's header: the answering model's logo, then the step dots. */
+.claudian-work-header-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: 6px;
+  color: var(--claudian-provider-logo, var(--claudian-brand));
+}
+
+.claudian-work-header-icon:empty {
+  display: none;
+}
+
+.claudian-work-header-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* The step count names the button for readers; the bottom status line shows it to everyone. */
+.claudian-work-header-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.claudian-work--live .claudian-work-summary--dots {
+  margin-inline-start: 0;
 }

@@ -482,10 +482,9 @@ it('keeps streaming steps under an expanded live work header, then folds it into
     await stream.handleStreamChunk({ type: 'tool_use', id: 'second', name: 'Read', input: { file_path: 'second.md' } }, response);
     await stream.handleStreamChunk({ type: 'tool_result', id: 'second', content: 'Second' }, response);
 
-    // While streaming: one expanded header above every step and the text between them.
-    const live = within(messagesEl).getByRole('button', { name: 'Working…' });
+    // While streaming: one expanded header, named by its step count, above every step and the text between them.
+    const live = within(messagesEl).getByRole('button', { name: '2 steps' });
     expect(live.getAttribute('aria-expanded')).toBe('true');
-    expect(live.textContent).toContain('2 steps');
     const liveHistory = document.getElementById(live.getAttribute('aria-controls')!)!;
     for (const step of [
       within(messagesEl).getByRole('button', { name: /Read.*first\.md/ }),
@@ -501,7 +500,7 @@ it('keeps streaming steps under an expanded live work header, then folds it into
     response.durationSeconds = 5;
     renderer.finalizeResponse(response, state.messages);
 
-    expect(within(messagesEl).queryByRole('button', { name: 'Working…' })).toBeNull();
+    expect(within(messagesEl).queryByRole('button', { name: '2 steps' })).toBeNull();
     const done = within(messagesEl).getByRole('button', { name: 'Worked for 00:05' });
     expect(done.getAttribute('aria-expanded')).toBe('false');
     expect(messagesEl.querySelectorAll('.claudian-work')).toHaveLength(1);
@@ -513,7 +512,7 @@ it('keeps streaming steps under an expanded live work header, then folds it into
   }
 });
 
-it('shows one running indicator, inside the live work header once steps exist', async () => {
+it('keeps one running indicator as the response\'s last line, below its live steps', async () => {
   const messagesEl = document.body.createDiv();
   const plugin = { app: {}, settings: { mediaFolder: '', showMessageTimestamps: false } } as any;
   const renderer = new MessageRenderer(plugin, new Component(), messagesEl);
@@ -525,13 +524,9 @@ it('shows one running indicator, inside the live work header once steps exist', 
   const settle = () => new Promise(resolve => setTimeout(resolve, 450));
   try {
     state.addMessage(response);
-    state.currentContentEl = renderer.addMessage(response).querySelector('.claudian-message-content');
-    // Before any step the indicator stands on its own line.
-    stream.thinkingIndicator.show();
-    await settle();
-    expect(messagesEl.querySelectorAll('.claudian-thinking')).toHaveLength(1);
-    expect(messagesEl.querySelector('.claudian-thinking')!.closest('.claudian-work')).toBeNull();
-
+    const contentEl = renderer.addMessage(response).querySelector<HTMLElement>('.claudian-message-content')!;
+    state.currentContentEl = contentEl;
+    state.responseStartTime = performance.now();
     await stream.handleStreamChunk({ type: 'tool_use', id: 'read', name: 'Read', input: { file_path: 'notes.md' } }, response);
     await stream.handleStreamChunk({ type: 'tool_result', id: 'read', content: 'Notes' }, response);
     stream.thinkingIndicator.show();
@@ -539,8 +534,12 @@ it('shows one running indicator, inside the live work header once steps exist', 
 
     const indicators = messagesEl.querySelectorAll('.claudian-thinking');
     expect(indicators).toHaveLength(1);
-    const header = within(messagesEl).getByRole('button', { name: 'Working…' });
-    expect(header.contains(indicators[0])).toBe(true);
+    expect(indicators[0].closest('.claudian-work')).toBeNull();
+    expect(contentEl.lastElementChild).toBe(indicators[0]);
+    // The header shows the answering model's logo; the last line carries the working state and step count.
+    const header = within(messagesEl).getByRole('button', { name: '1 step' });
+    expect(header.querySelector('.claudian-work-header-icon .claudian-provider-icon')).not.toBeNull();
+    expect(indicators[0].querySelector('.claudian-thinking-hint')?.textContent).toMatch(/^1 step · \S+ · esc to interrupt$/);
   } finally {
     stream.dispose(); subagents.clear(); renderer.dispose();
   }

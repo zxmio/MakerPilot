@@ -1,4 +1,4 @@
-/* The live "working" row: a spinner, the activity breathing in muted text, then the timer. */
+/* The response's last line while it works: a pulsing dot, what is running now, then the timer and Esc hint. */
 .claudian-thinking {
   display: flex;
   align-items: center;
@@ -13,23 +13,24 @@
 .claudian-thinking::before {
   content: '';
   flex: 0 0 auto;
-  width: 11px;
-  height: 11px;
-  border: 2px solid rgba(var(--claudian-brand-rgb), 0.25);
-  border-top-color: var(--claudian-brand);
+  width: 7px;
+  height: 7px;
+  margin-inline: 2px;
   border-radius: 50%;
-  animation: claudian-spin 0.9s linear infinite;
+  background: var(--claudian-brand);
+  animation: thinking-pulse 1.4s ease-in-out infinite;
 }
 
 .claudian-thinking > span:first-of-type {
-  color: var(--text-normal);
-  font-weight: 500;
-  animation: thinking-pulse 1.6s ease-in-out infinite;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .claudian-thinking.claudian-thinking--compact::before {
-  border-color: rgba(var(--claudian-brand-rgb), 0.25);
-  border-top-color: var(--claudian-compact);
+  background: var(--claudian-compact);
 }
 
 .claudian-thinking-hint {
@@ -66,21 +67,4 @@
 .claudian-thinking-content code {
   font-family: var(--font-monospace);
   font-size: 12px;
-}
-
-/* In the live work header the header already says it is working: keep only the timer and Esc hint. */
-.claudian-work-header > .claudian-thinking {
-  display: inline-flex;
-  min-height: 0;
-  margin-inline-start: 8px;
-  font-size: inherit;
-}
-
-.claudian-work-header > .claudian-thinking::before,
-.claudian-work-header > .claudian-thinking > span:first-of-type {
-  display: none;
-}
-
-.claudian-work-header > .claudian-thinking > .claudian-thinking-hint::before {
-  content: '· ';
 }

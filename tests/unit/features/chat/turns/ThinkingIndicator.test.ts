@@ -346,6 +346,18 @@ describe('ThinkingIndicator', () => {
     }
   });
 
+  it('names the running tool on its line while one runs', () => {
+    jest.advanceTimersByTime(1);
+    state.responseStartTime = performance.now();
+    indicator.show();
+    jest.advanceTimersByTime(500);
+    const thinkingEl = state.thinkingEl!;
+    Object.defineProperty(thinkingEl.children[1], 'isConnected', { value: true, configurable: true });
+    state.recordActivity({ kind: 'tool', tool: { id: 't', name: 'Bash', input: { command: 'npm test' }, status: 'running' } });
+    jest.advanceTimersByTime(1000);
+    expect(thinkingEl.children[0].textContent).toBe('Bash: npm test');
+  });
+
   it('should clear pre-existing interval before creating new one', () => {
     jest.advanceTimersByTime(1);
     state.responseStartTime = performance.now();

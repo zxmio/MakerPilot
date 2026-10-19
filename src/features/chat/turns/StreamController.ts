@@ -1,3 +1,4 @@
+import { ProviderRegistry } from '@/core/providers/ProviderRegistry';
 import { DEFAULT_CHAT_PROVIDER_ID, type ProviderId } from '@/core/providers/types';
 import type {
   ChatMessage,
@@ -31,6 +32,7 @@ import {
   scheduleAnimationFrame,
   type ScheduledAnimationFrame,
 } from '@/features/chat/utils/animationFrame';
+import { createProviderIconSvg } from '@/shared/icons';
 import { hasStreamingMathDelimiters } from '@/utils/markdownMath';
 
 export interface StreamControllerDeps {
@@ -85,7 +87,7 @@ export class StreamController {
       scrollToBottom,
     });
     const getStepParent = (contentEl: HTMLElement): HTMLElement => (
-      deps.liveWorkDisclosure ? getLiveWorkHistory(contentEl) : contentEl
+      deps.liveWorkDisclosure ? getLiveWorkHistory(contentEl, slot => this.#renderProviderIcon(slot)) : contentEl
     );
     this.#tools = new ToolCallStream({
       plugin: deps.plugin,
@@ -323,6 +325,13 @@ export class StreamController {
     this.scrollToBottom();
   }
 
+  /** The answering provider's logo, shown in a streaming response's work header. */
+  #renderProviderIcon(slot: HTMLElement): void {
+    const providerId = this.deps.getProviderId?.() ?? DEFAULT_CHAT_PROVIDER_ID;
+    const icon = ProviderRegistry.getChatUIConfig(providerId).getProviderIcon?.();
+    if (icon) createProviderIconSvg(icon, { parent: slot, width: 14, height: 14, dataProvider: providerId });
+  }
+
   /** Renders buffered tools and finalizes open thinking and text before a standalone block. */
   async #closeOpenBlocks(msg: ChatMessage): Promise<void> {
     this.#tools.flush();
@@ -408,7 +417,9 @@ export class StreamController {
     if (!state.currentContentEl) return;
     if (!state.currentThinkingState) {
       this.thinkingRenderCoordinator.cancel();
-      const thinkingParent = this.deps.liveWorkDisclosure ? getLiveWorkHistory(state.currentContentEl) : state.currentContentEl;
+      const thinkingParent = this.deps.liveWorkDisclosure
+        ? getLiveWorkHistory(state.currentContentEl, slot => this.#renderProviderIcon(slot))
+        : state.currentContentEl;
       const thinkingState = createThinkingBlock(thinkingParent, {
         startTime: block.startTime,
         onToggle: (isExpanded) => {

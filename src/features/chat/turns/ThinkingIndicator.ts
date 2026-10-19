@@ -1,4 +1,5 @@
-import { getLiveWorkHeader, placeIndicatorInHeader } from '@/features/chat/rendering/WorkDisclosure';
+import { getToolLabel } from '@/features/chat/rendering/tools/toolPresentation';
+import { countLiveSteps, formatStepCount } from '@/features/chat/rendering/WorkDisclosure';
 import type { ChatState } from '@/features/chat/state/ChatState';
 import { FLAVOR_TEXTS } from '@/features/chat/turns/flavorTexts';
 import { getLocale, t } from '@/i18n/i18n';
@@ -89,17 +90,6 @@ export class ThinkingIndicator {
     this.endExplicit();
   }
 
-  /** The response's last line, or the live work header once the response has steps. */
-  #place(contentEl: HTMLElement, indicator: HTMLElement): void {
-    const header = getLiveWorkHeader(contentEl);
-    if (header) {
-      placeIndicatorInHeader(header, indicator);
-      return;
-    }
-    indicator.removeAttribute('aria-hidden');
-    contentEl.appendChild(indicator);
-  }
-
   #schedule(delay: number, overrideText?: string, overrideCls?: string): void {
     const { state } = this.deps;
     const generation = state.streamGeneration;
@@ -128,7 +118,7 @@ export class ThinkingIndicator {
     if (state.currentThinkingBlock) return;
 
     if (state.thinkingEl) {
-      this.#place(state.currentContentEl, state.thinkingEl);
+      state.currentContentEl.appendChild(state.thinkingEl);
       this.deps.updateQueueIndicator();
       this.deps.scrollToBottom();
       return;
@@ -151,14 +141,12 @@ export class ThinkingIndicator {
       const cls = overrideCls
         ? `claudian-thinking ${overrideCls}`
         : 'claudian-thinking';
-      // A span, so it can sit inside the live work header's button.
-      state.thinkingEl = state.currentContentEl.createSpan({ cls });
-      this.#place(state.currentContentEl, state.thinkingEl);
+      state.thinkingEl = state.currentContentEl.createDiv({ cls });
       // The playful flavor texts are English; other interface languages get a plain working label.
       const text = overrideText || (getLocale() === 'en'
         ? FLAVOR_TEXTS[Math.floor(Math.random() * FLAVOR_TEXTS.length)]
         : t('chat.zen.working'));
-      state.thinkingEl.createSpan({ text });
+      const activityEl = state.thinkingEl.createSpan({ text });
       state.waitingStatus = text;
 
       const timerSpan = state.thinkingEl.createSpan({ cls: 'claudian-thinking-hint' });
@@ -172,7 +160,14 @@ export class ThinkingIndicator {
           return;
         }
         const elapsedSeconds = Math.floor((performance.now() - state.responseStartTime) / 1000);
-        timerSpan.setText(t('chat.thinking.interruptHint', { duration: formatDurationMmSs(elapsedSeconds) }));
+        // The response's step count leads the timer, so its header can show only the model and dots.
+        const steps = countLiveSteps(state.currentContentEl);
+        const hint = t('chat.thinking.interruptHint', { duration: formatDurationMmSs(elapsedSeconds) });
+        timerSpan.setText(steps > 0 ? `${formatStepCount(steps)} · ${hint}` : hint);
+        // While a tool runs, the line names it; an explicit status (such as compacting) keeps its own text.
+        const running = state.activity?.kind === 'tool' && state.activity.tool.status === 'running'
+          ? state.activity.tool : null;
+        if (!overrideText) activityEl.setText(running ? getToolLabel(running.name, running.input) : text);
       };
       updateTimer();
 
