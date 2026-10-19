@@ -64,7 +64,7 @@ describe('Toolbar popover styles', () => {
     // Effort labels cannot resize the menu; narrow composers still bound its width.
     expect(style(anchor).position).toBe('relative');
     expect({ start: popover.getPropertyValue('inset-inline-start'), width: popover.width })
-      .toEqual({ start: '0', width: '224px' });
+      .toEqual({ start: '0', width: '188px' });
     expect(popover.minWidth).toBe('0');
     expect(popover.maxWidth).toContain('100cqi');
   });

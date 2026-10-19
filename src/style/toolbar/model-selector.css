@@ -137,9 +137,9 @@
 
 /* Keep effort changes from resizing the menu or moving the slider stops under the pointer. */
 .claudian-toolbar-chip-anchor--model > .claudian-toolbar-popover {
-  width: 224px;
+  width: 188px;
   min-width: 0;
-  max-width: min(224px, calc(100cqi - 12px));
+  max-width: min(188px, calc(100cqi - 12px));
 }
 
 /* A floating menu (ToolbarMenu's floatingLayer) is fixed above its button's end edge. */
