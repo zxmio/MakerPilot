@@ -93,8 +93,8 @@ export class SessionManagerSurface {
   }
 
   /** Hides the dropdown for an outside click, keeping its rendered list. */
-  dismissDropdown(): void {
-    this.dropdown.dismiss();
+  dismissDropdown(target?: EventTarget | null): void {
+    this.dropdown.dismiss(target);
   }
 
   /** The wide layout replaces the dropdown with the sidebar. */

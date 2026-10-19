@@ -804,6 +804,17 @@ describe('SessionManagerSurface history dropdown', () => {
     expect(renderedIds(h.historyMenu).sort()).toEqual(['groceries', 'roadmap-review']);
   });
 
+  it('keeps the menu open for clicks inside it, such as focusing its search box', () => {
+    const h = createHarness({ conversations: [conversation('first')], wide: false });
+    h.historyButton.click();
+
+    h.surface.dismissDropdown(searchInput(h.historyMenu));
+    expect(h.historyMenu.hasClass('visible')).toBe(true);
+
+    h.surface.dismissDropdown(createMockEl());
+    expect(h.historyMenu.hasClass('visible')).toBe(false);
+  });
+
   it('finds archived sessions from the menu search and restores one before opening it', async () => {
     const h = createHarness({
       conversations: [

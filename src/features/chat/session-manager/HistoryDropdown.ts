@@ -80,8 +80,9 @@ export class HistoryDropdown {
     this.cancelRendering();
   }
 
-  /** Hides the menu for an outside click, keeping its rendered list. */
-  dismiss(): void {
+  /** Hides the menu for an outside click, keeping its rendered list; clicks inside it, like on its search box, keep it open. */
+  dismiss(target?: EventTarget | null): void {
+    if (target && this.menuEl?.contains(target as Node)) return;
     this.menuEl?.removeClass('visible');
   }
 

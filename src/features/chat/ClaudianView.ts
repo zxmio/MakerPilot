@@ -616,8 +616,8 @@ export class ClaudianView extends ItemView implements ZenModeSource {
     const activeDocument = this.containerEl.ownerDocument;
 
     // Document-level click to close dropdowns
-    this.registerDomEvent(activeDocument, 'click', () => {
-      this.sessions.dismissDropdown();
+    this.registerDomEvent(activeDocument, 'click', (e) => {
+      this.sessions.dismissDropdown(e.target);
     });
 
     // View scopes are the Obsidian-owned boundary for main-area tab hotkeys.
