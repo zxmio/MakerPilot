@@ -135,9 +135,11 @@
   background-color: var(--background-secondary);
 }
 
-/* The model popover also keeps enough width for the reasoning slider to be usable. */
+/* Keep effort changes from resizing the menu or moving the slider stops under the pointer. */
 .claudian-toolbar-chip-anchor--model > .claudian-toolbar-popover {
-  min-width: max(100%, 160px);
+  width: 224px;
+  min-width: 0;
+  max-width: min(224px, calc(100cqi - 12px));
 }
 
 /* A floating menu (ToolbarMenu's floatingLayer) is fixed above its button's end edge. */

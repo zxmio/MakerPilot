@@ -57,15 +57,16 @@ describe('Toolbar popover styles', () => {
 
   const style = (el: Element) => window.getComputedStyle(el);
 
-  it('sizes the model popover from its button and its content instead of a fixed width', () => {
+  it('keeps the model menu width independent of effort text and bounded by the composer', () => {
     const toolbar = renderToolbar();
     const anchor = toolbar.querySelector('.claudian-toolbar-chip-anchor--model')!;
     const popover = style(toolbar.querySelector('[data-popover="model"]')!);
-    // The button is the containing block, so the popover starts at its edge and is at least as wide.
+    // Effort labels cannot resize the menu; narrow composers still bound its width.
     expect(style(anchor).position).toBe('relative');
     expect({ start: popover.getPropertyValue('inset-inline-start'), width: popover.width })
-      .toEqual({ start: '0', width: 'max-content' });
-    expect(popover.minWidth).toContain('100%');
+      .toEqual({ start: '0', width: '224px' });
+    expect(popover.minWidth).toBe('0');
+    expect(popover.maxWidth).toContain('100cqi');
   });
 
   it('gives the model and permission chips no fill on hover, focus or while open', () => {

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Stabilize model-menu, effort-label, and toolbar widths when switching reasoning levels; retain responsive sizing in narrow composers.
+- Reduce slider focus/hover decoration while keeping keyboard focus visible.
+
 ## 0.2.1 — 2026-10-19
 
 - Double-click a numbered or titled conversation tab with the left mouse button to close it while preserving history.

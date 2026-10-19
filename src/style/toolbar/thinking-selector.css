@@ -2,6 +2,8 @@
 
 /* The level stays muted while the chip brightens on hover, focus or while open. */
 .claudian-thinking-current {
+  /* Reserve the common effort labels so the chevron and adjacent controls stay still. */
+  min-width: calc(8ch + 10px);
   color: var(--text-muted);
 }
 
@@ -43,6 +45,11 @@
 }
 
 .claudian-toolbar-slider-value {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-width: 64px;
+  text-align: center;
+  white-space: nowrap;
   padding: 2px 8px;
   border-radius: 6px;
   background: color-mix(in srgb, var(--claudian-slider-accent) 10%, transparent);
@@ -161,7 +168,7 @@
   --slider-thumb-y-active: 0;
   --slider-thumb-opacity-active: 1;
   --slider-thumb-shadow-active: var(--claudian-slider-thumb-shadow);
-  --slider-thumb-shadow-focus: 0 0 0 2px var(--background-secondary), 0 0 0 4px var(--claudian-slider-accent);
+  --slider-thumb-shadow-focus: 0 0 0 2px var(--claudian-slider-accent);
 }
 
 .claudian-toolbar-slider input.claudian-toolbar-slider-input::-webkit-slider-runnable-track {
@@ -179,8 +186,9 @@
   height: var(--claudian-slider-track-height);
   top: 0;
   margin-top: calc((var(--claudian-slider-height) - var(--claudian-slider-track-height)) / 2);
-  border: 0;
+  border: 1px solid color-mix(in srgb, var(--claudian-slider-accent) 25%, transparent);
   border-radius: 5px;
+  transform: none;
   background: var(--claudian-slider-thumb);
   box-shadow: var(--claudian-slider-thumb-shadow);
   opacity: 1;
@@ -188,11 +196,11 @@
 }
 
 .claudian-toolbar-slider input.claudian-toolbar-slider-input:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--claudian-slider-accent) 12%, transparent), var(--claudian-slider-thumb-shadow);
+  box-shadow: var(--claudian-slider-thumb-shadow);
 }
 
 .claudian-toolbar-slider input.claudian-toolbar-slider-input:active::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--claudian-slider-accent) 18%, transparent);
+  box-shadow: 0 1px 4px rgb(43 52 119 / 22%);
 }
 
 .claudian-toolbar-slider input.claudian-toolbar-slider-input:disabled {
@@ -202,5 +210,5 @@
 
 /* The thumb carries the keyboard focus ring, clear of both the fill and the bare track. */
 .claudian-toolbar-slider input.claudian-toolbar-slider-input:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 2px var(--background-secondary), 0 0 0 4px var(--claudian-slider-accent);
+  box-shadow: 0 0 0 2px var(--claudian-slider-accent);
 }
