@@ -4,13 +4,14 @@
 
 [English](README.md) · [下载最新版](https://github.com/zxmio/MakerPilot/releases/latest) · [更新记录](CHANGELOG.md) · [反馈问题](https://github.com/zxmio/MakerPilot/issues)
 
-MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24) 独立开发，以 MIT 协议开源。当前版本为 **0.2.1**，新增双击关闭对话标签。0.2.0 是首个公开版本，重点完善 Gemini 接入、模型发现和日常交互。
+MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24) 独立开发，以 MIT 协议开源。当前版本为 **0.2.2**，统一 Effort 与 Fast mode 配色，并优化菜单宽度与切换稳定性。0.2.0 是首个公开版本，重点完善 Gemini 接入、模型发现和日常交互。
 
 ## 当前功能
 
 - 在同一模型菜单中使用 Claude Code、Codex 和 Gemini。
 - 模型与努力程度由本机提供商程序及账号动态提供，不在插件中写死最新型号。
-- 统一的 Effort 拖动控件：18px 蓝紫色轨道、白色圆角滑钮、离散档位。
+- 统一的 Effort 拖动控件：18px 蓝紫色轨道、白色圆角滑钮、离散档位；Fast mode 使用相同的明暗配色。
+- 模型菜单宽度收至 188px，切换 Effort 时保持稳定，窄窗口下自动适配。
 - Gemini 支持图片附件、对话回退、从回复位置分叉，并在重开会话后恢复图片引用。
 - macOS 默认优先使用 Codex/ChatGPT 桌面应用内置的 Codex，避免旧版独立 CLI 限制模型列表。
 - 独立插件 ID `makerpilot` 和数据目录 `.makerpilot`，保留原版数据。
@@ -27,7 +28,7 @@ MakerPilot 基于 [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.
 4. 同一仓库中先关闭 Claudian/iClaudian，避免继承样式重复加载造成冲突。
 5. 在 MakerPilot 设置里启用所需提供商，完成它自己的登录，刷新模型列表并勾选要显示的模型。
 
-也可以下载 `MakerPilot-0.2.1.zip`，把其中的 `makerpilot` 文件夹解压到 `.obsidian/plugins/`。不要出现 `makerpilot/makerpilot/` 的重复目录。
+也可以下载 `MakerPilot-0.2.2.zip`，把其中的 `makerpilot` 文件夹解压到 `.obsidian/plugins/`。不要出现 `makerpilot/makerpilot/` 的重复目录。
 
 ## 连接账号
 

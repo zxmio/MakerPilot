@@ -6,11 +6,11 @@
 
 MakerPilot is an independent, MIT-licensed fork of [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24). It keeps the upstream workspace and provider architecture, adds a Gemini integration using the official Antigravity CLI's existing Google login, and refines everyday model selection.
 
-## What's included in 0.2.1
+## What's included in 0.2.2
 
 - Double-click a conversation tab to close it without deleting its history; use its context menu to switch between title and number.
 - Claude Code, Codex, and Gemini in one model picker. Models come from your installed provider runtime and account; there is no fixed MakerPilot model list.
-- A shared, stepped effort slider with a compact blue-purple track, white rounded thumb, and model-specific reasoning levels.
+- A shared, stepped effort slider with a compact blue-purple track, white rounded thumb, and model-specific reasoning levels. The 188px model menu keeps its width when effort changes; Fast mode shares the same light/dark palette.
 - Gemini images (PNG, JPEG, GIF, WebP), conversation rewind, and independent checkpoint forks with durable attachment references.
 - macOS Codex discovery prefers the Codex/ChatGPT desktop runtime over an inherited older shell installation. Explicit CLI configuration still takes priority.
 - Independent plugin identity and `.makerpilot` storage. Gemini gradient definitions are isolated per icon so hidden menus cannot turn other logos blue.

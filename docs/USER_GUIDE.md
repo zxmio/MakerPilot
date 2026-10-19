@@ -6,7 +6,7 @@ For the complete Chinese guide, see [README.zh-CN.md](../README.zh-CN.md).
 
 Install and sign in to the native CLI/runtime for each provider before enabling it in MakerPilot. Claude uses Claude Code; GPT uses Codex; Gemini uses Antigravity CLI (`agy`). Set an explicit executable path when automatic discovery cannot find your installation. The account and native runtime determine models, access, and quotas.
 
-After enabling a provider, refresh its model catalog and select at least one visible model. Discovered models are not automatically all selected. Drag selected models to order them; the first available selection becomes that provider's default. Use the shared effort slider in the model menu; its levels follow the selected model's capabilities.
+After enabling a provider, refresh its model catalog and select at least one visible model. Discovered models are not automatically all selected. Drag selected models to order them; the first available selection becomes that provider's default. Use the shared effort slider in the model menu; its levels follow the selected model's capabilities. The compact menu stays the same width when effort changes and adapts to narrow composers. Fast mode uses the same blue-purple palette and white thumb in both themes.
 
 On macOS, automatic Codex lookup prefers the Codex/ChatGPT desktop runtime. An explicit CLI path or provider PATH overrides that preference. Update your desktop app, reload MakerPilot after runtime updates, and refresh its model settings to see new entries. Standalone CLI installations remain a fallback.
 

@@ -1,10 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.2.2 — 2026-10-19
 
 - Match Fast mode to the Effort palette, with a white thumb and theme-aware switch and hover colors.
-
 - Stabilize model-menu, effort-label, and toolbar widths when switching reasoning levels; retain responsive sizing in narrow composers.
+- Compact the model menu from 224px to 188px while preserving stable effort geometry and responsive bounds.
 - Reduce slider focus/hover decoration while keeping keyboard focus visible.
 
 ## 0.2.1 — 2026-10-19
