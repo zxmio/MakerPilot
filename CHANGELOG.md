@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.6 — 2026-10-20
+
+- Show a response's work as a timeline card: the model's logo and one progress segment per step in the header, each step on a round node whose color shows its state, and expanded commands and results in a quiet panel.
+- Text after a step streams inside the work card from the start instead of rendering below it and jumping in later.
+- A steered message appears at the end of the transcript, marked "Steering", until the model takes it in.
+- Link the open note to a new chat after startup, and offer to link it again with one click after unlinking.
+- The history search is one bordered field with the search icon inside.
+
 ## 0.2.5 — 2026-10-19
 
 - Show the working status as the response's last line, Claude style: a pulsing dot, what runs now (the running tool's name and arguments), the step count, the elapsed time and the Esc hint.

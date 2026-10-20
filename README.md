@@ -6,8 +6,9 @@
 
 MakerPilot is an independent, MIT-licensed fork of [Claudian 2.3.24](https://github.com/YishenTu/claudian/tree/2.3.24). It keeps the upstream workspace and provider architecture, adds a Gemini integration using the official Antigravity CLI's existing Google login, and refines everyday model selection.
 
-## What's included in 0.2.5
+## What's included in 0.2.6
 
+- Work shown as a timeline card with per-step state nodes and progress segments; steered messages appear in the transcript right away; one click links the open note again after unlinking.
 - A working status line at the end of each streaming answer: what runs now, the step count, elapsed time and the Esc hint; the work header shows the model's logo.
 - A redesigned chat: a session header, live work steps with step counts, folded repeat tool calls, diff previews, Regenerate, and the answering model's name.
 - A composer with send/stop, a "+" menu to upload files into the vault, attach images or mention vault files, and the linked note as a chip in the box.
