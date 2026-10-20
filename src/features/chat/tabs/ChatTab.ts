@@ -56,6 +56,8 @@ export type TabHydrationState = 'idle' | 'loading' | 'ready' | 'failed';
 export interface TabLinkedContentPort {
   selectExplicit(path: string | null): void;
   handleActiveFileChanged(file: TFile | null, isActiveOwner: boolean): void;
+  /** Re-reads the note in use when this tab becomes current without a file-open event. */
+  syncWithWorkspace(): void;
   handleActiveFileMetadataChanged(file: TFile | null): void;
   handleRenamed(oldPath: string, newPath: string, includeDescendants?: boolean): void;
   handleDeleted(path: string, includeDescendants?: boolean): void;

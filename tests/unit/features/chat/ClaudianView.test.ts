@@ -248,6 +248,23 @@ describe('ClaudianView tab controls', () => {
     expect(focus).toHaveBeenCalledTimes(1);
   });
 
+  it('re-reads the open note for the active tab once the view is ready and when tabs switch', async () => {
+    const syncWithWorkspace = jest.fn();
+    const manager = createFakeTabManager();
+    const { view } = await openView({ manager });
+    manager.getActiveTab.mockReturnValue({
+      linkedContent: { syncWithWorkspace },
+      // Placement is outside this behavior; every placement call is accepted.
+      placement: new Proxy({}, { get: () => jest.fn() }),
+    });
+
+    manager.callbacks.onActiveTabChanged();
+    expect(syncWithWorkspace).toHaveBeenCalledTimes(1);
+    manager.callbacks.onTabSwitched();
+    expect(syncWithWorkspace).toHaveBeenCalledTimes(2);
+    expect(view).toBeDefined();
+  });
+
   it('routes active-file changes only to the active tab Linked content owner', () => {
     const handleActiveFileChanged = jest.fn();
     const view = createClaudianView({
@@ -324,6 +341,7 @@ describe('ClaudianView tab controls', () => {
       conversationId: null,
       dom,
       placement: createTabPlacementPort(dom as never, setSideChatChipHost, () => {}),
+      linkedContent: { syncWithWorkspace: jest.fn() },
     };
     const manager = createFakeTabManager({
       getActiveTab: jest.fn().mockReturnValue(tab),

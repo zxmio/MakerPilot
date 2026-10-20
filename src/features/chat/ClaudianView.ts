@@ -163,6 +163,7 @@ export class ClaudianView extends ItemView implements ZenModeSource {
       getTabManager: () => this.tabManager,
       getTabBar: () => this.tabBar,
       onInitialized: () => {
+        this.syncActiveLinkedContent();
         this.syncProviderBrandColor();
         this.presentation.update();
         this.updateTabBar();
@@ -252,6 +253,7 @@ export class ClaudianView extends ItemView implements ZenModeSource {
     const persist = (): void => this.tabWorkspace.persist(tabManager, tabStatePersistence);
     const refreshActiveTabPresentationIfInitialized = (): void => {
       if (!isTabWorkspaceInitialized()) return;
+      this.syncActiveLinkedContent();
       this.updateTabBar();
       this.notifyConversationNavigationChanged();
       this.presentation.update();
@@ -599,6 +601,11 @@ export class ClaudianView extends ItemView implements ZenModeSource {
   // ============================================
   // Linked content events
   // ============================================
+
+  /** A tab that becomes current had no file-open event of its own; it re-reads the note in use. */
+  private syncActiveLinkedContent(): void {
+    this.tabManager?.getActiveTab()?.linkedContent.syncWithWorkspace();
+  }
 
   private handleWorkspaceFileOpen(file: TFile | null): void {
     this.tabManager?.getActiveTab()?.linkedContent.handleActiveFileChanged(file, true);

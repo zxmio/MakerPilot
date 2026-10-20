@@ -114,8 +114,14 @@ export class LinkedContentController {
     this.#assertLive();
     this.activeSubmission = null;
     this.mode = 'auto-draft';
-    this.path = this.#eligibleActiveFilePath(this.app.workspace.getActiveFile());
+    this.path = this.#eligibleActiveFilePath(this.#currentWorkspaceFile());
     this.publish();
+  }
+
+  /** Re-reads the note the user is working in, for owners that become current without a file-open event. */
+  syncWithWorkspace(): void {
+    if (this.destroyed || this.mode !== 'auto-draft') return;
+    this.#reconcileAutoDraftPath(this.#currentWorkspaceFile());
   }
 
   selectExplicit(path: string | null): void {
@@ -138,7 +144,7 @@ export class LinkedContentController {
 
   handleActiveFileMetadataChanged(file: TFile | null): void {
     if (this.destroyed || this.mode !== 'auto-draft') return;
-    const activeFile = this.app.workspace.getActiveFile();
+    const activeFile = this.#currentWorkspaceFile();
     if (file !== null && activeFile?.path !== file.path) return;
     this.#reconcileAutoDraftPath(activeFile);
   }
@@ -317,6 +323,18 @@ export class LinkedContentController {
     this.mode = 'explicit-draft';
     this.path = null;
     return true;
+  }
+
+  /**
+   * The active file, or the note left open in the main area. At startup the chat view itself
+   * can be the active leaf, and Obsidian then reports no active file until a note is focused.
+   */
+  #currentWorkspaceFile(): TFile | null {
+    const { workspace } = this.app;
+    const active = workspace.getActiveFile();
+    if (active) return active;
+    const recentFile = (workspace.getMostRecentLeaf?.(workspace.rootSplit)?.view as { file?: unknown } | undefined)?.file;
+    return recentFile instanceof TFile ? recentFile : null;
   }
 
   #reconcileAutoDraftPath(file: TFile | null): void {

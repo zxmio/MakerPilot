@@ -25,6 +25,7 @@ function createFolder(path: string): TFolder {
 function createHarness(initialFiles: Array<TFile | TFolder> = []) {
   const entries = new Map(initialFiles.map(entry => [entry.path || '.', entry]));
   let activeFile: TFile | null = null;
+  let recentMainFile: TFile | null = null;
   const app = {
     vault: {
       getRoot: jest.fn(() => createFolder('')),
@@ -32,6 +33,8 @@ function createHarness(initialFiles: Array<TFile | TFolder> = []) {
     },
     workspace: {
       getActiveFile: jest.fn(() => activeFile),
+      rootSplit: {},
+      getMostRecentLeaf: jest.fn(() => (recentMainFile ? { view: { file: recentMainFile } } : null)),
       getLeaf: jest.fn(() => ({ openFile: jest.fn().mockResolvedValue(undefined) })),
       getLeavesOfType: jest.fn(() => []),
       getLeftLeaf: jest.fn(() => null),
@@ -58,6 +61,9 @@ function createHarness(initialFiles: Array<TFile | TFolder> = []) {
     entries,
     setActiveFile(file: TFile | null) {
       activeFile = file;
+    },
+    setRecentMainFile(file: TFile | null) {
+      recentMainFile = file;
     },
   };
 }
@@ -93,6 +99,24 @@ describe('LinkedContentController', () => {
     harness.controller.resetAutoDraft();
     harness.controller.handleActiveFileChanged(second, false);
     expect(harness.controller.getSnapshot().path).toBe('Notes/First.md');
+  });
+
+  it('links the note left open in the main area when no file view has been active yet', () => {
+    const note = createFile('Projects/MBA/Outline.md');
+    const harness = createHarness([note]);
+
+    // At startup the chat view can be the active leaf, so Obsidian reports no active file.
+    harness.controller.resetAutoDraft();
+    expect(harness.controller.getSnapshot().path).toBeNull();
+
+    harness.setRecentMainFile(note);
+    harness.controller.syncWithWorkspace();
+    expect(harness.controller.getSnapshot()).toMatchObject({ mode: 'auto-draft', path: 'Projects/MBA/Outline.md' });
+
+    // An explicit choice is never overridden by the workspace.
+    harness.controller.selectExplicit(null);
+    harness.controller.syncWithWorkspace();
+    expect(harness.controller.getSnapshot()).toMatchObject({ mode: 'explicit-draft', path: null });
   });
 
   it('normalizes every explicit selection through the core Linked content codec', () => {
