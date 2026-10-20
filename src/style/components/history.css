@@ -964,12 +964,50 @@ body.theme-dark .claudian-nav-dropup-menu {
   font-size: 11px;
 }
 
-/* The menu's own search box, above the list. */
+/*
+ * The menu's own search box: one bordered field with the icon inside it. The wrapper owns
+ * the border and focus ring; the embedded input stays transparent and borderless in every state.
+ */
 .claudian-history-menu .claudian-session-search-field {
+  /* The placeholder already says what the field is; Obsidian would repeat the aria-label as a tooltip. */
+  --no-tooltip: true;
+
+  height: 34px;
+  box-sizing: border-box;
   margin: 6px 6px 2px;
-  padding: 6px 10px;
+  padding: 0 10px;
+  border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
-  background: var(--background-modifier-hover);
+  background: transparent;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.claudian-history-menu .claudian-session-search-field:hover {
+  border-color: var(--background-modifier-border-hover);
+}
+
+.claudian-history-menu .claudian-session-search-field:focus-within {
+  border-color: rgba(var(--claudian-brand-rgb), 0.55);
+  box-shadow: 0 0 0 3px rgba(var(--claudian-brand-rgb), 0.12);
+}
+
+.claudian-history-menu .claudian-session-search-field .claudian-session-nav-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.claudian-history-menu input[type='search'].claudian-session-search-input,
+.claudian-history-menu input[type='search'].claudian-session-search-input:is(:hover, :focus, :focus-visible, :active) {
+  appearance: none;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  font-size: 13px;
 }
 
 /* Today / Yesterday / This week labels between the menu's sessions. */
