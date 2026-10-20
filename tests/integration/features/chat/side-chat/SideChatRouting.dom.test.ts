@@ -86,6 +86,7 @@ function createRouting(
       addMessage: () => document.createElement('div'),
       finalizeResponse: () => undefined,
       refreshActionButtons: () => undefined,
+      showPendingSteer: () => undefined,
     },
     session,
     state,

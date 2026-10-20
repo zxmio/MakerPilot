@@ -147,6 +147,7 @@ export function createFixture(overrides: Record<string, unknown> = {}) {
       refreshActionButtons: jest.fn(),
       finalizeResponse: jest.fn(),
       removeMessage: jest.fn(),
+      showPendingSteer: jest.fn(),
     },
     streamController: {
       beginResponse: jest.fn(),

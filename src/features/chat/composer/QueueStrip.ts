@@ -3,9 +3,11 @@ import { setIcon } from 'obsidian';
 import type { QueuedMessage } from '@/features/chat/state/types';
 import { t } from '@/i18n/i18n';
 
-export type QueueStripView =
-  | { kind: 'queued'; message: QueuedMessage; canSteer: boolean }
-  | { kind: 'steering'; message: QueuedMessage };
+/** Input queued behind the running turn; a pending steer shows in the transcript instead. */
+export interface QueueStripView {
+  message: QueuedMessage;
+  canSteer: boolean;
+}
 
 export interface QueueStripActions {
   steer(): void;
@@ -22,39 +24,34 @@ export function renderQueueStrip(el: HTMLElement, view: QueueStripView | null, a
     return;
   }
 
-  el.createSpan({
-    cls: 'claudian-input-queue-strip-tag',
-    text: view.kind === 'steering' ? t('chat.composer.steering') : t('chat.composer.queued'),
-  });
+  el.createSpan({ cls: 'claudian-input-queue-strip-tag', text: t('chat.composer.queued') });
   el.createSpan({
     cls: 'claudian-queue-indicator-text',
     text: formatQueuedMessagePreview(view.message),
   });
 
-  if (view.kind === 'queued') {
-    const actionsEl = el.createDiv({ cls: 'claudian-queue-indicator-actions' });
+  const actionsEl = el.createDiv({ cls: 'claudian-queue-indicator-actions' });
 
-    if (view.canSteer) {
-      const steerButton = actionsEl.createEl('button', {
-        cls: 'claudian-queue-indicator-action',
-        text: t('chat.composer.steerNow'),
-      });
-      steerButton.setAttribute('type', 'button');
-      steerButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        actions.steer();
-      });
-    }
-
-    createIconButton(actionsEl, 'pencil', t('chat.composer.editQueued')).addEventListener('click', (event) => {
-      event.stopPropagation();
-      actions.edit();
+  if (view.canSteer) {
+    const steerButton = actionsEl.createEl('button', {
+      cls: 'claudian-queue-indicator-action',
+      text: t('chat.composer.steerNow'),
     });
-    createIconButton(actionsEl, 'trash-2', t('chat.composer.discardQueued')).addEventListener('click', (event) => {
+    steerButton.setAttribute('type', 'button');
+    steerButton.addEventListener('click', (event) => {
       event.stopPropagation();
-      actions.discard();
+      actions.steer();
     });
   }
+
+  createIconButton(actionsEl, 'pencil', t('chat.composer.editQueued')).addEventListener('click', (event) => {
+    event.stopPropagation();
+    actions.edit();
+  });
+  createIconButton(actionsEl, 'trash-2', t('chat.composer.discardQueued')).addEventListener('click', (event) => {
+    event.stopPropagation();
+    actions.discard();
+  });
 
   el.addClass('claudian-visible-flex');
   el.removeClass('claudian-hidden');

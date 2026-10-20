@@ -148,6 +148,7 @@ export class InputController {
         }, signal);
       },
       onContinuationFailed: () => this.execution.reportDeferredReview(),
+      showPendingSteer: text => this.deps.renderer?.showPendingSteer(text),
     });
     deps.inlinePrompts.subscribe(() => deps.state.setActionRequired(deps.inlinePrompts.pendingCount > 0));
     deps.inlinePrompts.bindAsyncQuestions({

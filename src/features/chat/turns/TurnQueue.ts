@@ -22,6 +22,8 @@ export interface TurnQueueDeps {
   runQueued: (message: QueuedMessage, signal: AbortSignal) => Promise<void>;
   /** A continuation that could not start or failed settles the review its predecessor deferred. */
   onContinuationFailed: () => void;
+  /** Presents the current conversation's visible pending steer in the transcript; null removes it. */
+  showPendingSteer?: (text: string | null) => void;
 }
 
 /**
@@ -154,14 +156,15 @@ export class TurnQueue {
     if (pending.providerDisposition === 'definitely-unsent') steering.restoreIfDefinitelyUnsent(pending);
   }
 
-  /** The queued message, or else the current conversation's visible pending steer. */
+  /** The queued message shown above the composer. */
   get visible(): QueueStripView | null {
-    if (this.message) return { kind: 'queued', message: this.message, canSteer: this.deps.steering.canSteer };
-    const pendingSteer = this.deps.steering.current;
-    return pendingSteer?.uiState === 'visible' ? { kind: 'steering', message: pendingSteer.message } : null;
+    return this.message ? { message: this.message, canSteer: this.deps.steering.canSteer } : null;
   }
 
   updateIndicator(): void {
+    const pendingSteer = this.deps.steering.current;
+    const steer = pendingSteer?.uiState === 'visible' ? pendingSteer.message : null;
+    this.deps.showPendingSteer?.(steer ? formatSteerText(steer) : null);
     const el = this.deps.state.queueIndicatorEl;
     if (!el) return;
     renderQueueStrip(el, this.visible, {
@@ -170,4 +173,10 @@ export class TurnQueue {
       discard: () => this.clear(),
     });
   }
+}
+
+function formatSteerText(message: QueuedMessage): string {
+  const text = (message.content || message.turnRequest.draftContent || '').trim();
+  if ((message.turnRequest.images?.length ?? 0) === 0) return text;
+  return text ? `${text} [images]` : '[images]';
 }

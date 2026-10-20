@@ -301,6 +301,45 @@
   border-end-end-radius: 4px;
 }
 
+/* Input waiting to join the running turn: a quieter user bubble with its state below. */
+.claudian-message--steering {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-self: flex-end;
+  gap: 4px;
+  max-width: 95%;
+}
+
+.claudian-message--steering > .claudian-message-content {
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px dashed var(--background-modifier-border-hover);
+  border-radius: 14px;
+  border-end-end-radius: 4px;
+  background: rgba(var(--mono-rgb-100), 0.03);
+  color: var(--text-muted);
+  white-space: pre-wrap;
+}
+
+.claudian-message-steering-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.claudian-message-steering-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--claudian-brand);
+  animation: thinking-pulse 1.4s ease-in-out infinite;
+}
+
 .claudian-message-user ol {
   list-style-position: inside;
 }

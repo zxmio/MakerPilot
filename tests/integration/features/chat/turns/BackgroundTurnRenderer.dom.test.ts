@@ -342,6 +342,47 @@ it.each([
   } finally { await dispose(); }
 });
 
+it.each(['echoed', 'unsent'] as const)('shows a steered message in the transcript until its provider echo (%s)', async outcome => {
+  const { messagesEl, state, coordinator, backend, input, dispose } = createBackgroundChat(true);
+  try {
+    await coordinator.bindConversation({ conversationId: 'conversation-1', providerId: 'claude' });
+    await coordinator.prepare();
+    const native = backend.latest;
+    const admission = deferred<boolean>();
+    Object.assign(native, { steer: jest.fn(() => admission.promise) });
+    input!.input.value = 'initial message';
+    const first = input!.controller.sendMessage();
+    await waitFor(() => expect(native.requests).toHaveLength(1));
+    native.emitOutput({ type: 'user_message_started', content: 'initial message', nativeUserMessageId: 'initial-user' });
+    native.emitText('initial answer');
+    await waitFor(() => expect(within(messagesEl).getByText('initial answer')).toBeTruthy());
+    input!.input.value = 'insert this';
+    await input!.controller.sendMessage();
+    const steering = input!.controller.queue.steerNow();
+
+    // Waiting for Claude to fold it in: the message already sits at the end of the transcript, not above the composer.
+    const pendingBubble = () => messagesEl.querySelector<HTMLElement>('.claudian-message--steering');
+    await waitFor(() => expect(pendingBubble()).not.toBeNull());
+    expect(within(pendingBubble()!).getByText('insert this')).toBeTruthy();
+    expect(within(pendingBubble()!).getByText('Steering')).toBeTruthy();
+    expect(state.queueIndicatorEl?.textContent ?? '').not.toContain('insert this');
+    native.emitText(' continued');
+    await waitFor(() => expect(within(messagesEl).getByText(/continued/)).toBeTruthy());
+    expect(messagesEl.lastElementChild).toBe(pendingBubble());
+
+    // The echo replaces the bubble with the real message; unsent input leaves the transcript.
+    if (outcome === 'echoed') {
+      native.emitOutput({ type: 'user_message_started', content: 'insert this', nativeUserMessageId: 'steer-user' });
+    }
+    admission.resolve(outcome === 'echoed');
+    await steering;
+    await waitFor(() => expect(pendingBubble()).toBeNull());
+    expect(within(messagesEl).queryAllByText('insert this')).toHaveLength(outcome === 'echoed' ? 1 : 0);
+    native.complete();
+    await first;
+  } finally { await dispose(); }
+});
+
 function createBackgroundChat(withInput = false) {
   const messagesEl = document.body.createDiv();
   const plugin = { app: {}, settings: { mediaFolder: '', showMessageTimestamps: false } } as any;

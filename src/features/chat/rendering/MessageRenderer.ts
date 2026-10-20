@@ -60,6 +60,8 @@ export class MessageRenderer {
   private readonly imagePreviewModal = new ImagePreviewModal();
   private readonly contentRemovalObserver?: MutationObserver;
   #pendingLayoutScroll: ResizeObserver | null = null;
+  /** Input waiting to join the running turn; the provider echo renders the real message. */
+  #pendingSteerEl: HTMLElement | null = null;
   readonly #markdown: MarkdownContentRenderer;
   readonly #actions: MessageActions;
   readonly #finalizer: ResponseFinalizer;
@@ -226,9 +228,31 @@ export class MessageRenderer {
       const added: ChildNode[] = [];
       for (let node = previous ? previous.nextSibling : this.messagesEl.firstChild; node; node = node.nextSibling) added.push(node);
       anchor.after(...added);
+    } else if (this.#pendingSteerEl?.parentElement === this.messagesEl) {
+      // Output that arrives before the steer joins the turn stays above it.
+      this.messagesEl.appendChild(this.#pendingSteerEl);
     }
     this.scrollToBottom();
     return element;
+  }
+
+  /**
+   * Shows input waiting to join the running turn as the transcript's last bubble, or removes it
+   * with null. Its provider echo later renders the real user message in place.
+   */
+  showPendingSteer(text: string | null): void {
+    const current = this.#pendingSteerEl;
+    if (text !== null && current?.parentElement === this.messagesEl && current.dataset.text === text) return;
+    current?.remove();
+    this.#pendingSteerEl = null;
+    if (text === null) return;
+    const el = this.messagesEl.createDiv({ cls: 'claudian-message claudian-message--steering' });
+    el.dataset.text = text;
+    el.createDiv({ cls: 'claudian-message-content', text, attr: { dir: 'auto' } });
+    const status = el.createDiv({ cls: 'claudian-message-steering-status', text: t('chat.composer.steering') });
+    status.setAttribute('role', 'status');
+    this.#pendingSteerEl = el;
+    this.scrollToBottom();
   }
 
   getMessageContentEl(messageId: string): HTMLElement | null {
