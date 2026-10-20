@@ -496,6 +496,8 @@ it('keeps streaming steps under an expanded live work header, then folds it into
     expect((await axe(messagesEl)).violations).toEqual([]);
 
     await stream.handleStreamChunk({ type: 'text', content: 'Final answer.' }, response);
+    // Text after a step streams inside the card; it never renders below it first and jumps in later.
+    expect(state.currentTextEl?.parentElement).toBe(liveHistory);
     await stream.finalizeCurrentTextBlock(response);
     response.durationSeconds = 5;
     renderer.finalizeResponse(response, state.messages);

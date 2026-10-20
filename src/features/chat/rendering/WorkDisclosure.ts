@@ -97,6 +97,11 @@ export function getLiveWorkHistory(contentEl: HTMLElement, renderIcon?: (slot: H
   return history;
 }
 
+/** A streaming response's live work history once its first step exists; null before. */
+export function findLiveWorkHistory(contentEl: HTMLElement): HTMLElement | null {
+  return findLiveWork(contentEl)?.querySelector<HTMLElement>(':scope > .claudian-work-history') ?? null;
+}
+
 /** How many steps a streaming response has grown so far; zero without a live disclosure. */
 export function countLiveSteps(contentEl: HTMLElement | null): number {
   const wrapper = contentEl ? findLiveWork(contentEl) : null;

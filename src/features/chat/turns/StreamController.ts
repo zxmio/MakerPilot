@@ -19,7 +19,7 @@ import {
   finalizeThinkingBlock,
   type ThinkingBlockState,
 } from '@/features/chat/rendering/ThinkingBlockRenderer';
-import { getLiveWorkHistory, refreshLiveWorkSummary } from '@/features/chat/rendering/WorkDisclosure';
+import { findLiveWorkHistory, getLiveWorkHistory, refreshLiveWorkSummary } from '@/features/chat/rendering/WorkDisclosure';
 import type { ChatState } from '@/features/chat/state/ChatState';
 import type { AsyncSubagentHistoryRecovery } from '@/features/chat/subagents/AsyncSubagentHistoryRecovery';
 import type { SubagentManager } from '@/features/chat/subagents/SubagentManager';
@@ -376,7 +376,11 @@ export class StreamController {
 
     if (!state.currentTextEl) {
       this.textRenderCoordinator.cancel();
-      state.currentTextEl = createResponseTextBlock(state.currentContentEl);
+      // After a step, text streams inside the live work: it may be commentary, and moving it in later makes it jump.
+      const textParent = this.deps.liveWorkDisclosure
+        ? findLiveWorkHistory(state.currentContentEl) ?? state.currentContentEl
+        : state.currentContentEl;
+      state.currentTextEl = createResponseTextBlock(textParent);
     }
 
     this.textRenderCoordinator.request({
