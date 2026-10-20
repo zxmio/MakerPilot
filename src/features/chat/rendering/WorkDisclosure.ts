@@ -36,10 +36,16 @@ export function formatStepCount(count: number): string {
   return count === 1 ? t('chat.workedStep') : t('chat.workedSteps', { count: String(count) });
 }
 
-function appendStepDots(summary: HTMLElement, steps: readonly HTMLElement[], isFailed: (step: HTMLElement) => boolean): void {
+function appendStepDots(
+  summary: HTMLElement,
+  steps: readonly HTMLElement[],
+  isFailed: (step: HTMLElement) => boolean,
+  isRunning: (step: HTMLElement) => boolean = () => false,
+): void {
   const dots = summary.createSpan({ cls: 'claudian-work-step-dots' });
   for (const step of steps.slice(-MAX_STEP_DOTS)) {
-    dots.createSpan({ cls: isFailed(step) ? 'claudian-work-step-dot claudian-work-step-dot--error' : 'claudian-work-step-dot' });
+    const state = isFailed(step) ? ' claudian-work-step-dot--error' : isRunning(step) ? ' claudian-work-step-dot--running' : '';
+    dots.createSpan({ cls: `claudian-work-step-dot${state}` });
   }
 }
 
@@ -52,6 +58,12 @@ function findLiveWork(contentEl: HTMLElement): HTMLElement | null {
 function isLiveStepFailed(step: HTMLElement): boolean {
   return step.classList.contains('error')
     || step.querySelector(':scope > .claudian-tool-header .status-error, :scope > .claudian-subagent-header .status-error') !== null;
+}
+
+const LIVE_STEP_HEADERS = ':scope > :is(.claudian-tool-header, .claudian-subagent-header, .claudian-write-edit-header)';
+
+function isLiveStepRunning(step: HTMLElement): boolean {
+  return step.querySelector(`${LIVE_STEP_HEADERS} .status-running`) !== null;
 }
 
 /**
@@ -107,7 +119,7 @@ export function refreshLiveWorkSummary(contentEl: HTMLElement | null): void {
   header.querySelector(':scope > .claudian-work-header-label')?.setText(formatStepCount(steps.length));
   header.querySelector(':scope > .claudian-work-summary')?.remove();
   const dots = header.createSpan({ cls: 'claudian-work-summary claudian-work-summary--dots', attr: { 'aria-hidden': 'true' } });
-  appendStepDots(dots, steps, isLiveStepFailed);
+  appendStepDots(dots, steps, isLiveStepFailed, isLiveStepRunning);
 }
 
 /**

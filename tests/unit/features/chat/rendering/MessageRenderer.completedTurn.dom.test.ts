@@ -236,6 +236,8 @@ it('summarizes completed work as steps and folds consecutive successful calls of
   expect(header.textContent).toContain('5 steps');
   expect(header.querySelectorAll('.claudian-work-step-dot')).toHaveLength(5);
   expect(header.querySelectorAll('.claudian-work-step-dot--error')).toHaveLength(1);
+  // The completed card keeps the answering model's logo the live header showed.
+  expect(header.querySelector('.claudian-work-header-icon .claudian-provider-icon')).not.toBeNull();
   fireEvent.click(header);
   const group = within(messagesEl).getByRole('button', { name: /WebSearch: 3 times/ });
   expect(group.getAttribute('aria-expanded')).toBe('false');

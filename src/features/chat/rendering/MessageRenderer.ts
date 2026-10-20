@@ -1,6 +1,7 @@
 import { type Component, Notice } from 'obsidian';
 
 import { getUserDisplayText } from '@/core/prompt/promptContext';
+import { ProviderRegistry } from '@/core/providers/ProviderRegistry';
 import { DEFAULT_CHAT_PROVIDER_ID, type ProviderCapabilities, type ProviderSubagentLifecycleAdapter } from '@/core/providers/types';
 import type { ChatMessage, ImageAttachment, SubagentInfo, ToolCallInfo } from '@/core/types';
 import type { ChatFeatureHost } from '@/features/chat/ChatFeatureHost';
@@ -20,6 +21,7 @@ import { resolveSubagentAdapter } from '@/features/chat/subagents/subagentAdapte
 import { renderSubagentHistory } from '@/features/chat/subagents/SubagentHistoryRenderer';
 import { renderStoredAsyncSubagent, renderStoredSubagent } from '@/features/chat/subagents/SubagentRenderer';
 import { t } from '@/i18n/i18n';
+import { createProviderIconSvg } from '@/shared/icons';
 import { ImagePreviewModal } from '@/shared/modals/ImagePreviewModal';
 import { registerFileLinkHandler } from '@/utils/fileLink';
 
@@ -112,6 +114,11 @@ export class MessageRenderer {
     this.#finalizer = new ResponseFinalizer(
       id => this.findMessageEl(id),
       (el, markdown) => this.renderContent(el, markdown),
+      slot => {
+        const providerId = this.getCapabilities().providerId;
+        const icon = ProviderRegistry.getChatUIConfig(providerId).getProviderIcon?.();
+        if (icon) createProviderIconSvg(icon, { parent: slot, width: 14, height: 14, dataProvider: providerId });
+      },
     );
 
     // Register delegated click handler for file links

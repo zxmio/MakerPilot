@@ -854,14 +854,19 @@ button.claudian-session-link:focus-visible {
 }
 
 .claudian-work-step-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-green);
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(var(--color-green-rgb), 0.55);
 }
 
 .claudian-work-step-dot--error {
   background: var(--color-red);
+}
+
+.claudian-work-step-dot--running {
+  background: var(--claudian-brand);
+  animation: thinking-pulse 1.4s ease-in-out infinite;
 }
 
 /* The model that wrote the answer, beside its actions. */
@@ -911,3 +916,4 @@ button.claudian-session-link:focus-visible {
 .claudian-work--live .claudian-work-summary--dots {
   margin-inline-start: 0;
 }
+

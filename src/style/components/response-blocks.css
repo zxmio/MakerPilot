@@ -1,6 +1,6 @@
-/* Collapsible response blocks share one layout: a clickable header row over
-   tree-branch content whose border aligns with the 14px header icon. The header's
-   hover surface bleeds into the gutter so its icon stays on the text edge. */
+/* Collapsible response blocks share one layout: a clickable header row whose node sits on
+   the work timeline, over content aligned with the header's text. The header's hover
+   surface bleeds into the gutter so its node stays on the text edge. */
 .claudian-thinking-block,
 .claudian-tool-call,
 .claudian-subagent-list {
@@ -14,9 +14,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 30px;
+  min-height: 28px;
   box-sizing: border-box;
-  padding: 3px 6px;
+  padding: 2px 6px;
   margin-inline: -6px;
   border-radius: 6px;
   cursor: pointer;
@@ -35,7 +35,6 @@
 .claudian-tool-content,
 .claudian-subagent-content {
   padding: 4px 0 6px;
-  padding-inline-start: 14px;
-  margin-inline-start: 6px;
-  border-inline-start: 1px solid var(--background-modifier-border);
+  /* 22px node + 8px gap */
+  margin-inline-start: 30px;
 }

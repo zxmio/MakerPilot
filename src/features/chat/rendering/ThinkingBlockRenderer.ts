@@ -1,3 +1,5 @@
+import { setIcon } from 'obsidian';
+
 import { collapseElement, setupCollapsible } from '@/features/chat/rendering/collapsible';
 import { t } from '@/i18n/i18n';
 
@@ -26,6 +28,9 @@ interface ThinkingBlockElements {
 function createThinkingBlockElements(parentEl: HTMLElement, label: string, content = ''): ThinkingBlockElements {
   const wrapperEl = parentEl.createDiv({ cls: 'claudian-thinking-block' });
   const headerEl = wrapperEl.createDiv({ cls: 'claudian-thinking-header' });
+  const iconEl = headerEl.createSpan({ cls: 'claudian-thinking-icon' });
+  iconEl.setAttribute('aria-hidden', 'true');
+  setIcon(iconEl, 'lightbulb');
   const labelEl = headerEl.createSpan({ cls: 'claudian-thinking-label' });
   labelEl.setText(label);
   const contentEl = wrapperEl.createDiv({ cls: 'claudian-thinking-content', text: content });

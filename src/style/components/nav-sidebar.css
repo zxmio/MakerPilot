@@ -26,7 +26,8 @@
 .claudian-nav-sidebar button.claudian-nav-btn,
 .claudian-nav-sidebar button.claudian-nav-btn:focus,
 .claudian-nav-sidebar button.claudian-nav-btn:active {
-    opacity: 0.15;
+    /* Fully hidden until the pointer reaches the column, so it never sits over step statuses. */
+    opacity: 0;
     width: 32px;
     height: 32px;
     padding: 0;

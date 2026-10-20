@@ -7,17 +7,17 @@
 .claudian-tool-icon {
   display: flex;
   align-items: center;
-  color: var(--text-muted);
+  color: var(--text-faint);
   flex-shrink: 0;
 }
 
 .claudian-tool-icon svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .claudian-tool-name {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--text-normal);
   white-space: nowrap;
@@ -26,7 +26,7 @@
 
 .claudian-tool-summary {
   font-family: var(--font-monospace);
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -72,8 +72,8 @@
 }
 
 .claudian-tool-status svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .claudian-tool-status.status-running {
@@ -96,13 +96,44 @@
   color: var(--text-muted);
 }
 
-/* A failed call stays findable in a long run of collapsed steps. */
-.claudian-tool-call:has(> .claudian-tool-header .claudian-tool-status.status-error) > .claudian-tool-header {
-  background: rgba(var(--color-red-rgb), 0.08);
+/*
+ * An expanded tool shows its input and output in one quiet panel under the name, instead of a
+ * second rail inside the work rail. Inline widgets (task lists, questions) keep their own layout.
+ */
+.claudian-tool-call > .claudian-tool-content:not(.claudian-tool-content-todo, .claudian-tool-content-ask) {
+  margin: 2px 0 8px 30px;
+  padding: 6px 10px;
+  overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: rgba(var(--mono-rgb-100), 0.025);
 }
 
-.claudian-tool-call:has(> .claudian-tool-header .claudian-tool-status.status-error) > .claudian-tool-header:hover {
-  background: rgba(var(--color-red-rgb), 0.14);
+.claudian-tool-call > .claudian-tool-content > .claudian-tool-lines .claudian-tool-line {
+  color: var(--text-muted);
+}
+
+/* The command is the panel's title strip; its output scrolls below it. */
+.claudian-tool-call > .claudian-tool-content > .claudian-tool-bash-command {
+  margin: -6px -10px 6px;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
+.claudian-tool-call > .claudian-tool-content > .claudian-tool-bash-command:not(:last-child) {
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.claudian-tool-call > .claudian-tool-content > .claudian-tool-bash-command:last-child {
+  margin-bottom: -6px;
+}
+
+.claudian-tool-call > .claudian-tool-content > .claudian-tool-lines {
+  max-height: 280px;
+  overflow: auto;
+  font-size: 11.5px;
+  line-height: 1.55;
 }
 
 /* Tool content variants that render inline widgets instead of bordered results */

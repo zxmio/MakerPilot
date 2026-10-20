@@ -528,7 +528,12 @@ it('keeps one running indicator as the response\'s last line, below its live ste
     state.currentContentEl = contentEl;
     state.responseStartTime = performance.now();
     await stream.handleStreamChunk({ type: 'tool_use', id: 'read', name: 'Read', input: { file_path: 'notes.md' } }, response);
+    // Following text renders the waiting card; its segment stays marked running until the result arrives.
+    await stream.handleStreamChunk({ type: 'text', content: 'Reading the notes.' }, response);
+    const running = () => messagesEl.querySelectorAll('.claudian-work-step-dot--running').length;
+    expect(running()).toBe(1);
     await stream.handleStreamChunk({ type: 'tool_result', id: 'read', content: 'Notes' }, response);
+    expect(running()).toBe(0);
     stream.thinkingIndicator.show();
     await settle();
 

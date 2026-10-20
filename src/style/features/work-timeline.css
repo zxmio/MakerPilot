@@ -1,0 +1,310 @@
+/*
+ * A response's work reads as one card: a header naming the answering model with one
+ * segment per step, over a timeline whose steps sit on round nodes joined by a rail.
+ * A step's state shows on its node; the header status icons stay for screen readers only.
+ */
+
+/* Card */
+.claudian-work {
+  margin-bottom: 14px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.claudian-work > button.claudian-work-header {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  gap: 8px;
+  margin: 0;
+  padding: 0 12px;
+  border-radius: 11px;
+  color: var(--text-normal);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: start;
+}
+
+.claudian-work > button.claudian-work-header[aria-expanded="true"] {
+  border-radius: 11px 11px 0 0;
+}
+
+.claudian-work > button.claudian-work-header:hover,
+.claudian-work > button.claudian-work-header:focus-visible,
+.claudian-work > button.claudian-work-header:active {
+  color: var(--text-normal);
+}
+
+.claudian-work > button.claudian-work-header:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Chevron: right while folded, down while open. */
+.claudian-work > button.claudian-work-header::after {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-inline: 6px 4px;
+  border-right: 1.5px solid var(--text-faint);
+  border-bottom: 1.5px solid var(--text-faint);
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+}
+
+.claudian-work > button.claudian-work-header[aria-expanded="true"]::after {
+  transform: translateY(-2px) rotate(45deg);
+}
+
+.claudian-work > button.claudian-work-header:not(:has(.claudian-work-step-dots))::after {
+  margin-inline-start: auto;
+}
+
+/* The answering model's logo on a tinted tile. */
+.claudian-work > .claudian-work-header > .claudian-work-header-icon {
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-inline-end: 2px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--claudian-provider-logo, var(--claudian-brand)) 12%, transparent);
+}
+
+/* The count follows the label; the step segments sit at the right edge. */
+.claudian-work > .claudian-work-header > .claudian-work-summary {
+  display: contents;
+}
+
+.claudian-work > .claudian-work-header .claudian-work-step-count,
+.claudian-work > .claudian-work-header > .claudian-work-summary::before {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+.claudian-work > .claudian-work-header .claudian-work-step-dots {
+  margin-inline-start: auto;
+}
+
+/* Timeline */
+.claudian-work > .claudian-work-history {
+  position: relative;
+  margin: 0;
+  padding: 12px 14px 8px;
+  border-inline-start: 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+/* The rail runs through the node centres: 14px padding + half a 22px node. */
+.claudian-work > .claudian-work-history::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  inset-inline-start: 25px;
+  width: 1px;
+  background: var(--background-modifier-border);
+}
+
+/* Commentary between steps aligns with step text and reads quieter than the answer. */
+.claudian-work-history > .claudian-text-block {
+  margin: 4px 0 10px;
+  padding-inline-start: 30px;
+  color: var(--text-normal);
+  font-size: 0.94em;
+  line-height: 1.65;
+}
+
+/* Nodes */
+.claudian-tool-icon,
+.claudian-write-edit-icon,
+.claudian-subagent-icon,
+.claudian-thinking-icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 50%;
+  background: var(--background-primary);
+  color: var(--text-muted);
+}
+
+.claudian-tool-icon svg,
+.claudian-write-edit-icon svg,
+.claudian-subagent-icon svg,
+.claudian-thinking-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Running: a tinted node with a turning arc. Task lists stay "in progress" after their call ends, so they are excluded. */
+.claudian-tool-call:not(:has(> .claudian-tool-content-todo)):has(> .claudian-tool-header .status-running) > .claudian-tool-header .claudian-tool-icon,
+.claudian-write-edit-block:has(> .claudian-write-edit-header .status-running) .claudian-write-edit-icon,
+.claudian-subagent-list:has(> .claudian-subagent-header .status-running) > .claudian-subagent-header .claudian-subagent-icon {
+  border-color: color-mix(in srgb, var(--claudian-brand) 35%, var(--background-modifier-border));
+  background: color-mix(in srgb, var(--claudian-brand) 8%, var(--background-primary));
+  color: var(--claudian-brand);
+}
+
+.claudian-tool-call:not(:has(> .claudian-tool-content-todo)):has(> .claudian-tool-header .status-running) > .claudian-tool-header .claudian-tool-icon::after,
+.claudian-write-edit-block:has(> .claudian-write-edit-header .status-running) .claudian-write-edit-icon::after,
+.claudian-subagent-list:has(> .claudian-subagent-header .status-running) > .claudian-subagent-header .claudian-subagent-icon::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1.5px solid transparent;
+  border-top-color: var(--claudian-brand);
+  border-radius: 50%;
+  animation: claudian-spin 0.9s linear infinite;
+}
+
+/* The running step's name shimmers. */
+.claudian-tool-call:not(:has(> .claudian-tool-content-todo)):has(> .claudian-tool-header .status-running) > .claudian-tool-header .claudian-tool-name {
+  background: linear-gradient(90deg, var(--text-normal) 0%, var(--text-normal) 40%, var(--text-faint) 50%, var(--text-normal) 60%, var(--text-normal) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: claudian-shimmer 1.8s linear infinite;
+}
+
+/* Failed */
+.claudian-tool-call:has(> .claudian-tool-header .status-error) > .claudian-tool-header .claudian-tool-icon,
+.claudian-write-edit-block.error .claudian-write-edit-icon,
+.claudian-subagent-list:has(> .claudian-subagent-header .status-error) > .claudian-subagent-header .claudian-subagent-icon {
+  border-color: color-mix(in srgb, var(--color-red) 35%, var(--background-modifier-border));
+  background: color-mix(in srgb, var(--color-red) 7%, var(--background-primary));
+  color: var(--color-red);
+}
+
+/* Blocked by a permission rule */
+.claudian-tool-call:has(> .claudian-tool-header .status-blocked) > .claudian-tool-header .claudian-tool-icon {
+  border-color: color-mix(in srgb, var(--color-orange) 40%, var(--background-modifier-border));
+  background: color-mix(in srgb, var(--color-orange) 8%, var(--background-primary));
+  color: var(--color-orange);
+}
+
+/* Status icons move onto the node; their labels stay readable. Diff stats stay visible. */
+.claudian-tool-header > .claudian-tool-status:not(.claudian-write-edit-stats),
+.claudian-write-edit-header > .claudian-write-edit-status,
+.claudian-subagent-header > .claudian-subagent-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Step rows */
+.claudian-tool-header,
+.claudian-write-edit-header,
+.claudian-subagent-header,
+.claudian-thinking-header {
+  position: relative;
+}
+
+.claudian-tool-name,
+.claudian-write-edit-name,
+.claudian-subagent-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* A step's target reads as a quiet chip; a command stays plain text. */
+.claudian-tool-summary,
+.claudian-write-edit-summary {
+  flex: 0 1 auto;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(var(--mono-rgb-100), 0.05);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.claudian-tool-call-bash .claudian-tool-summary {
+  padding: 0;
+  background: none;
+}
+
+.claudian-tool-current,
+.claudian-tool-header > .claudian-write-edit-stats,
+.claudian-write-edit-stats {
+  margin-inline-start: auto;
+}
+
+/* Thinking */
+.claudian-thinking-header .claudian-thinking-label {
+  color: var(--text-normal);
+  font-weight: 500;
+}
+
+.claudian-thinking-content {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(var(--mono-rgb-100), 0.025);
+}
+
+/* File changes: a timeline step whose diff opens in a panel under its text. */
+.claudian-write-edit-block {
+  margin: 2px 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+}
+
+.claudian-write-edit-header {
+  min-height: 28px;
+  padding: 2px 6px;
+  margin-inline: -6px;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.claudian-write-edit-content,
+.claudian-write-edit-preview:not(:empty) {
+  margin: 2px 0 8px 30px;
+  overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+}
+
+/* A subagent is one step on the timeline; its own progress stays inside it. */
+.claudian-work-history > .claudian-subagent-list {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.claudian-work-history > .claudian-subagent-list > .claudian-subagent-header {
+  margin-inline: -6px;
+  padding-inline: 6px;
+}
+
+/* Folded runs of one tool: their calls nest under the group's text. */
+.claudian-tool-group > .claudian-tool-group-body {
+  margin-inline-start: 30px;
+  padding-top: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .claudian-work-step-dot--running,
+  .claudian-tool-icon::after,
+  .claudian-write-edit-icon::after,
+  .claudian-subagent-icon::after,
+  .claudian-tool-name {
+    animation: none;
+  }
+}

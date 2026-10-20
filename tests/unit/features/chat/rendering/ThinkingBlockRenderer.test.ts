@@ -102,6 +102,8 @@ describe('ThinkingBlockRenderer', () => {
       const wrapperEl = renderStoredThinkingBlock(parentEl, 'thinking content', 10, mockRenderContent);
 
       expect(wrapperEl.querySelector('.claudian-thinking-label')?.textContent).toBe('Thought for 10s');
+      // Thinking sits on the work timeline as a step node, like a tool's icon.
+      expect(wrapperEl.querySelector('.claudian-thinking-icon')?.getAttribute('aria-hidden')).toBe('true');
     });
   });
 });

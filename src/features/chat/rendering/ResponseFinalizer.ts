@@ -23,6 +23,8 @@ export class ResponseFinalizer {
   constructor(
     private readonly findMessageEl: (id: string) => HTMLElement | null,
     private readonly renderContent: (el: HTMLElement, markdown: string) => Promise<void>,
+    /** Draws the answering model's logo into a completed work header. */
+    private readonly renderIcon?: (slot: HTMLElement) => void,
   ) {}
 
   /**
@@ -88,7 +90,7 @@ export class ResponseFinalizer {
         workContentEl.insertBefore(wrapper, workContentEl.firstChild);
         const label = msg.durationSeconds === undefined ? t('chat.worked')
           : t('chat.zen.workedFor', { duration: formatWorkDuration(msg.durationSeconds) });
-        const history = this.#createDisclosure(wrapper, 'claudian-work-history', label);
+        const history = this.#createDisclosure(wrapper, 'claudian-work-history', label, undefined, this.renderIcon);
         for (const el of [...earlierEls, ...workEls]) history.appendChild(el);
         const toolsById = new Map([...earlierMessages, msg].flatMap(message => message.toolCalls ?? [])
           .map(tool => [tool.id, tool] as const));
@@ -118,8 +120,15 @@ export class ResponseFinalizer {
     idPrefix: string,
     label: string,
     onFirstExpand?: () => void,
+    renderIcon?: (slot: HTMLElement) => void,
   ): HTMLElement {
-    const header = wrapper.createEl('button', { cls: 'claudian-work-header', text: label });
+    const header = wrapper.createEl('button', { cls: 'claudian-work-header' });
+    if (renderIcon) {
+      const slot = header.createSpan({ cls: 'claudian-work-header-icon' });
+      slot.setAttribute('aria-hidden', 'true');
+      renderIcon(slot);
+    }
+    header.createSpan({ cls: 'claudian-work-header-title', text: label });
     const history = wrapper.createDiv({
       cls: 'claudian-work-history', attr: { id: `${idPrefix}-${nextHistoryId++}` },
     });
