@@ -119,3 +119,22 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* An offer to link the open note: a dashed, quieter chip that becomes a real link on click. */
+.claudian-input-info-linked.claudian-input-info-linked--suggested {
+  border: 1px dashed var(--background-modifier-border-hover);
+  background: transparent;
+}
+
+.claudian-input-info-linked.claudian-input-info-linked--suggested > button.claudian-input-info-linked-main,
+.claudian-input-info-linked.claudian-input-info-linked--suggested > button.claudian-input-info-linked-main:is(:hover, :focus, :focus-visible, :active) {
+  color: var(--text-muted);
+}
+
+.claudian-input-info-linked.claudian-input-info-linked--suggested:hover {
+  border-color: rgba(var(--claudian-brand-rgb), 0.55);
+}
+
+.claudian-input-info-linked.claudian-input-info-linked--suggested:hover > button.claudian-input-info-linked-main {
+  color: var(--text-normal);
+}

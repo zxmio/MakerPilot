@@ -161,7 +161,9 @@
       "missingPath": "關聯內容：{path}。內容遺失",
       "noContent": "無關聯內容",
       "missingNotice": "關聯內容遺失：{path}",
-      "openFailed": "開啟關聯內容失敗：{error}"
+      "openFailed": "開啟關聯內容失敗：{error}",
+      "linkOpenNote": "關聯「{name}」",
+      "linkOpenNoteLabel": "關聯目前筆記：{name}"
     },
     "questions": {
       "title": "問題",

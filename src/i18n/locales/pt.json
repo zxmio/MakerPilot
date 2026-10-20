@@ -161,7 +161,9 @@
       "missingPath": "Conteúdo vinculado: {path}. Conteúdo ausente",
       "noContent": "Nenhum conteúdo vinculado",
       "missingNotice": "Conteúdo vinculado ausente: {path}",
-      "openFailed": "Não foi possível abrir o conteúdo vinculado: {error}"
+      "openFailed": "Não foi possível abrir o conteúdo vinculado: {error}",
+      "linkOpenNote": "Vincular {name}",
+      "linkOpenNoteLabel": "Vincular a nota aberta: {name}"
     },
     "questions": {
       "title": "Pergunta",

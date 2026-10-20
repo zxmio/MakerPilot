@@ -10,9 +10,23 @@ export class LinkedContentChip {
     private readonly onRemove: () => void,
   ) {}
 
-  render(content: LinkedContentPresentation | null, removable: boolean): void {
+  /**
+   * Shows the linked content, or, when nothing is linked but a note is open, a one-click
+   * offer to link that note again.
+   */
+  render(
+    content: LinkedContentPresentation | null,
+    removable: boolean,
+    openNote?: { readonly name: string; readonly link: () => void },
+  ): void {
     if (!content) {
-      this.infoRow.setLinkedContent(null);
+      this.infoRow.setLinkedContent(openNote ? {
+        label: t('chat.linkedContent.linkOpenNote', { name: openNote.name }),
+        icon: 'link',
+        ariaLabel: t('chat.linkedContent.linkOpenNoteLabel', { name: openNote.name }),
+        suggested: true,
+        onActivate: openNote.link,
+      } : null);
       return;
     }
     this.infoRow.setLinkedContent({

@@ -161,7 +161,9 @@
       "missingPath": "Contenu lié : {path}. Contenu manquant",
       "noContent": "Aucun contenu lié",
       "missingNotice": "Contenu lié manquant : {path}",
-      "openFailed": "Impossible d’ouvrir le contenu lié : {error}"
+      "openFailed": "Impossible d’ouvrir le contenu lié : {error}",
+      "linkOpenNote": "Lier {name}",
+      "linkOpenNoteLabel": "Lier la note ouverte : {name}"
     },
     "questions": {
       "title": "Question",

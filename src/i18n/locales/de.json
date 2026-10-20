@@ -161,7 +161,9 @@
       "missingPath": "Verknüpfter Inhalt: {path}. Inhalt fehlt",
       "noContent": "Kein verknüpfter Inhalt",
       "missingNotice": "Verknüpfter Inhalt fehlt: {path}",
-      "openFailed": "Verknüpfter Inhalt konnte nicht geöffnet werden: {error}"
+      "openFailed": "Verknüpfter Inhalt konnte nicht geöffnet werden: {error}",
+      "linkOpenNote": "{name} verknüpfen",
+      "linkOpenNoteLabel": "Geöffnete Notiz verknüpfen: {name}"
     },
     "questions": {
       "title": "Frage",

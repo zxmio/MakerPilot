@@ -426,4 +426,29 @@ describe('LinkedContentController DOM', () => {
     expect(welcome.querySelector('.claudian-linked-content-selector')).toBeNull();
     expect(welcome.querySelector('.claudian-linked-content-picker')).toBeNull();
   });
+  it('offers to link the open note again after its link was removed, then follows the open note', () => {
+    const plan = createFile('Notes/Plan.md');
+    const other = createFile('Notes/Other.md');
+    const harness = createHarness({ entries: [plan, other] });
+    harness.app.workspace.getActiveFile.mockReturnValue(plan as never);
+    harness.controller.resetAutoDraft();
+    const rowEl = createMockEl();
+    harness.controller.mountInfoRow(new ComposerInfoRow(rowEl as unknown as HTMLElement));
+    const linkedButton = () => rowEl.querySelector('.claudian-input-info-linked-main')!;
+
+    rowEl.querySelector('.claudian-input-info-linked-remove')!.click();
+    expect(harness.controller.getSnapshot()).toMatchObject({ mode: 'explicit-draft', path: null });
+    expect(linkedButton().getAttribute('aria-label')).toBe('Link the open note: Plan');
+    expect(rowEl.querySelector('.claudian-input-info-linked-remove')).toBeNull();
+
+    // The offer names whichever note is open now.
+    harness.app.workspace.getActiveFile.mockReturnValue(other as never);
+    harness.controller.handleActiveFileChanged(other, true);
+    expect(linkedButton().getAttribute('aria-label')).toBe('Link the open note: Other');
+
+    linkedButton().click();
+    expect(harness.controller.getSnapshot()).toMatchObject({ mode: 'auto-draft', path: 'Notes/Other.md' });
+    harness.controller.handleActiveFileChanged(plan, true);
+    expect(harness.controller.getSnapshot().path).toBe('Notes/Plan.md');
+  });
 });

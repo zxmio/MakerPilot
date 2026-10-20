@@ -8,6 +8,8 @@ export interface ComposerInfoItem {
   icon?: string;
   ariaLabel?: string;
   missing?: boolean;
+  /** An offer to link something, not a link: drawn as a dashed chip. */
+  suggested?: boolean;
   onActivate: () => void;
   onRemove?: () => void;
 }
@@ -28,6 +30,7 @@ export class ComposerInfoRow {
   setLinkedContent(item: ComposerInfoItem | null): void {
     this.linkedSlotEl.empty();
     this.linkedSlotEl.removeClass('claudian-input-info-linked--missing');
+    this.linkedSlotEl.removeClass('claudian-input-info-linked--suggested');
     if (item) this.#renderLinkedContent(item);
   }
 
@@ -37,6 +40,7 @@ export class ComposerInfoRow {
 
   #renderLinkedContent(item: ComposerInfoItem): void {
     this.linkedSlotEl.toggleClass('claudian-input-info-linked--missing', item.missing === true);
+    this.linkedSlotEl.toggleClass('claudian-input-info-linked--suggested', item.suggested === true);
     const label = item.ariaLabel ?? item.label;
     const mainEl = this.linkedSlotEl.createEl('button', {
       cls: 'claudian-input-info-linked-main',

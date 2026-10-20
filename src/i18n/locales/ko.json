@@ -161,7 +161,9 @@
       "missingPath": "연결된 콘텐츠: {path}. 콘텐츠 없음",
       "noContent": "연결된 콘텐츠 없음",
       "missingNotice": "연결된 콘텐츠 없음: {path}",
-      "openFailed": "연결된 콘텐츠를 열지 못했습니다: {error}"
+      "openFailed": "연결된 콘텐츠를 열지 못했습니다: {error}",
+      "linkOpenNote": "{name} 연결",
+      "linkOpenNoteLabel": "열린 노트 연결: {name}"
     },
     "questions": {
       "title": "질문",

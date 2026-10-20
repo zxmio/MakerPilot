@@ -161,7 +161,9 @@
       "missingPath": "Linked content: {path}. Missing content",
       "noContent": "No Linked content",
       "missingNotice": "Linked content is missing: {path}",
-      "openFailed": "Failed to open Linked content: {error}"
+      "openFailed": "Failed to open Linked content: {error}",
+      "linkOpenNote": "Link {name}",
+      "linkOpenNoteLabel": "Link the open note: {name}"
     },
     "questions": {
       "title": "Question",

@@ -161,7 +161,9 @@
       "missingPath": "リンクされたコンテンツ：{path}。コンテンツが見つかりません",
       "noContent": "リンクされたコンテンツなし",
       "missingNotice": "リンクされたコンテンツが見つかりません：{path}",
-      "openFailed": "リンクされたコンテンツを開けませんでした：{error}"
+      "openFailed": "リンクされたコンテンツを開けませんでした：{error}",
+      "linkOpenNote": "{name} をリンク",
+      "linkOpenNoteLabel": "開いているノートをリンク: {name}"
     },
     "questions": {
       "title": "質問",

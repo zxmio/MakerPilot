@@ -120,7 +120,9 @@ export class LinkedContentController {
 
   /** Re-reads the note the user is working in, for owners that become current without a file-open event. */
   syncWithWorkspace(): void {
-    if (this.destroyed || this.mode !== 'auto-draft') return;
+    if (this.destroyed) return;
+    if (this.mode === 'explicit-draft' && this.path === null) this.#renderChip();
+    if (this.mode !== 'auto-draft') return;
     this.#reconcileAutoDraftPath(this.#currentWorkspaceFile());
   }
 
@@ -138,7 +140,10 @@ export class LinkedContentController {
   }
 
   handleActiveFileChanged(file: TFile | null, isActiveOwner: boolean): void {
-    if (this.destroyed || !isActiveOwner || this.mode !== 'auto-draft') return;
+    if (this.destroyed || !isActiveOwner) return;
+    // An unlinked draft keeps its choice but offers the note now open.
+    if (this.mode === 'explicit-draft' && this.path === null) this.#renderChip();
+    if (this.mode !== 'auto-draft') return;
     this.#reconcileAutoDraftPath(file);
   }
 
@@ -398,7 +403,16 @@ export class LinkedContentController {
 
   #renderChip(presentation = this.#derivePresentation(this.path)): void {
     const removable = this.mode === 'auto-draft' || this.mode === 'explicit-draft';
-    this.chip?.render(presentation, removable);
+    this.chip?.render(presentation, removable, this.#openNoteOffer());
+  }
+
+  /** After the link was removed, the note now open can be linked again in one click; linking resumes following it. */
+  #openNoteOffer(): { name: string; link: () => void } | undefined {
+    if (this.mode !== 'explicit-draft' || this.path !== null) return undefined;
+    const path = this.#eligibleActiveFilePath(this.#currentWorkspaceFile());
+    if (!path) return undefined;
+    const presentation = this.#derivePresentation(path);
+    return { name: presentation?.label ?? path, link: () => this.resetAutoDraft() };
   }
 
   #derivePresentation(path: string | null): LinkedContentPresentation | null {

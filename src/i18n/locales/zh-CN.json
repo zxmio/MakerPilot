@@ -161,7 +161,9 @@
       "missingPath": "关联内容：{path}。内容缺失",
       "noContent": "无关联内容",
       "missingNotice": "关联内容缺失：{path}",
-      "openFailed": "打开关联内容失败：{error}"
+      "openFailed": "打开关联内容失败：{error}",
+      "linkOpenNote": "关联「{name}」",
+      "linkOpenNoteLabel": "关联当前笔记：{name}"
     },
     "questions": {
       "title": "问题",
