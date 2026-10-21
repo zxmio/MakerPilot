@@ -299,8 +299,7 @@
     "thinking": {
       "active": "생각 중 {seconds}초…",
       "completed": "{seconds}초 동안 생각함",
-      "label": "생각",
-      "interruptHint": "{duration} · Esc로 중단"
+      "label": "생각"
     },
     "suggestions": {
       "loading": "불러오는 중…",

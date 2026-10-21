@@ -299,8 +299,7 @@
     "thinking": {
       "active": "Denke seit {seconds}s…",
       "completed": "{seconds}s nachgedacht",
-      "label": "Gedanken",
-      "interruptHint": "{duration} · Esc zum Unterbrechen"
+      "label": "Gedanken"
     },
     "suggestions": {
       "loading": "Wird geladen…",

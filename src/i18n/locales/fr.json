@@ -299,8 +299,7 @@
     "thinking": {
       "active": "Réflexion depuis {seconds}s…",
       "completed": "Réflexion pendant {seconds}s",
-      "label": "Réflexion",
-      "interruptHint": "{duration} · Échap pour interrompre"
+      "label": "Réflexion"
     },
     "suggestions": {
       "loading": "Chargement…",

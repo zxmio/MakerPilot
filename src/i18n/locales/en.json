@@ -299,8 +299,7 @@
     "thinking": {
       "active": "Thinking {seconds}s...",
       "completed": "Thought for {seconds}s",
-      "label": "Thought",
-      "interruptHint": "{duration} · esc to interrupt"
+      "label": "Thought"
     },
     "suggestions": {
       "loading": "Loading…",

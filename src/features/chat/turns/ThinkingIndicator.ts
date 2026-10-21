@@ -162,8 +162,8 @@ export class ThinkingIndicator {
         const elapsedSeconds = Math.floor((performance.now() - state.responseStartTime) / 1000);
         // The response's step count leads the timer, so its header can show only the model and dots.
         const steps = countLiveSteps(state.currentContentEl);
-        const hint = t('chat.thinking.interruptHint', { duration: formatDurationMmSs(elapsedSeconds) });
-        timerSpan.setText(steps > 0 ? `${formatStepCount(steps)} · ${hint}` : hint);
+        const duration = formatDurationMmSs(elapsedSeconds);
+        timerSpan.setText(steps > 0 ? `${formatStepCount(steps)} · ${duration}` : duration);
         // While a tool runs, the line names it; an explicit status (such as compacting) keeps its own text.
         const running = state.activity?.kind === 'tool' && state.activity.tool.status === 'running'
           ? state.activity.tool : null;

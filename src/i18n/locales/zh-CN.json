@@ -299,8 +299,7 @@
     "thinking": {
       "active": "思考中，已用时 {seconds} 秒…",
       "completed": "思考了 {seconds} 秒",
-      "label": "思考过程",
-      "interruptHint": "{duration} · Esc 中断"
+      "label": "思考过程"
     },
     "suggestions": {
       "loading": "正在加载…",

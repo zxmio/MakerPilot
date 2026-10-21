@@ -299,8 +299,7 @@
     "thinking": {
       "active": "Размышление: {seconds}с…",
       "completed": "Размышлял {seconds}с",
-      "label": "Размышления",
-      "interruptHint": "{duration} · Esc — прервать"
+      "label": "Размышления"
     },
     "suggestions": {
       "loading": "Загрузка…",

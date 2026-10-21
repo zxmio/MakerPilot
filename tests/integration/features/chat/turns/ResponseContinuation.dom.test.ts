@@ -546,7 +546,7 @@ it('keeps one running indicator as the response\'s last line, below its live ste
     // The header shows the answering model's logo; the last line carries the working state and step count.
     const header = within(messagesEl).getByRole('button', { name: '1 step' });
     expect(header.querySelector('.claudian-work-header-icon .claudian-provider-icon')).not.toBeNull();
-    expect(indicators[0].querySelector('.claudian-thinking-hint')?.textContent).toMatch(/^1 step · \S+ · esc to interrupt$/);
+    expect(indicators[0].querySelector('.claudian-thinking-hint')?.textContent).toMatch(/^1 step · \d+s$/);
   } finally {
     stream.dispose(); subagents.clear(); renderer.dispose();
   }

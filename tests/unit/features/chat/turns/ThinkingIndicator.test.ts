@@ -319,7 +319,8 @@ describe('ThinkingIndicator', () => {
 
     jest.advanceTimersByTime(1000);
     expect(state.flavorTimerInterval).not.toBeNull();
-    expect((timerSpan as any).textContent).toContain('esc to interrupt');
+    // The line shows the elapsed time alone, without an interrupt hint.
+    expect((timerSpan as any).textContent).toMatch(/^\d+s$/);
 
     (timerSpan as any).isConnected = false;
     jest.advanceTimersByTime(1000);
@@ -327,7 +328,7 @@ describe('ThinkingIndicator', () => {
     expect(state.flavorTimerInterval).toBeNull();
   });
 
-  it('shows a plain working label and a localized interrupt hint outside English', () => {
+  it('shows a plain working label and the elapsed time outside English', () => {
     setLocale('zh-CN');
     try {
       jest.advanceTimersByTime(1);
@@ -340,7 +341,7 @@ describe('ThinkingIndicator', () => {
       // Mock elements report disconnected until told otherwise; the next tick renders the hint.
       Object.defineProperty(thinkingEl.children[1], 'isConnected', { value: true, configurable: true });
       jest.advanceTimersByTime(1000);
-      expect(thinkingEl.children[1].textContent).toMatch(/^\S+ · Esc 中断$/);
+      expect(thinkingEl.children[1].textContent).toMatch(/^\d+s$/);
     } finally {
       setLocale('en');
     }
