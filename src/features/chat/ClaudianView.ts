@@ -423,10 +423,8 @@ export class ClaudianView extends ItemView implements ZenModeSource {
       onDisplayStateChanged: () => this.tabWorkspace.persist(),
     });
 
-    // Session controls sit in the header beside the active session's title.
-    const navActionsEl = (this.presentation.headerActionsEl ?? wrapper).createDiv({ cls: 'claudian-input-nav-actions' });
-
-    this.newTabButtonEl = navActionsEl.createEl('button', {
+    // New tab ends the numbered tab row, where the tabs it adds appear.
+    this.newTabButtonEl = wrapper.createEl('button', {
       cls: 'claudian-input-nav-btn claudian-new-tab-btn',
       attr: { type: 'button' },
     });
@@ -434,13 +432,8 @@ export class ClaudianView extends ItemView implements ZenModeSource {
     this.newTabButtonEl.setAttribute('aria-label', 'New tab');
     this.newTabButtonEl.addEventListener('click', () => this.requestNewTab());
 
-    const newBtn = navActionsEl.createEl('button', {
-      cls: 'claudian-input-nav-btn claudian-new-conversation-btn',
-      attr: { type: 'button' },
-    });
-    setIcon(newBtn, 'square-pen');
-    newBtn.setAttribute('aria-label', 'New conversation');
-    newBtn.addEventListener('click', () => this.requestNewConversation());
+    // Session controls sit in the header beside the active session's title.
+    const navActionsEl = (this.presentation.headerActionsEl ?? wrapper).createDiv({ cls: 'claudian-input-nav-actions' });
 
     this.sessions.mountHistoryControl(navActionsEl);
 
@@ -455,13 +448,6 @@ export class ClaudianView extends ItemView implements ZenModeSource {
 
   private requestNewTab(): void {
     void this.createNewTab().catch(() => new Notice('Failed to create tab'));
-  }
-
-  private requestNewConversation(): void {
-    void (async () => {
-      await this.tabManager?.createNewConversation();
-      this.sessions.invalidate();
-    })().catch(() => new Notice('Failed to create conversation'));
   }
 
   private requestDualNew(): void {

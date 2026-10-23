@@ -175,28 +175,22 @@ describe('ClaudianView tab controls', () => {
     const { contentEl, manager } = await openView();
 
     const newTabButton = contentEl.querySelector('.claudian-new-tab-btn')!;
-    const newConversationButton = contentEl.querySelector('.claudian-new-conversation-btn')!;
     const historyContainer = contentEl.querySelector('.claudian-history-container')!;
     const historyButton = historyContainer.children[0];
-    const buttons = [newTabButton, newConversationButton, historyButton];
+    const buttons = [newTabButton, historyButton];
+    // One way to start a chat: New tab ends the numbered tab row; the header keeps only History.
+    expect(contentEl.querySelector('.claudian-input-nav-content')!.querySelector('.claudian-new-tab-btn')).toBe(newTabButton);
+    expect(contentEl.querySelector('.claudian-chat-header')!.querySelector('.claudian-new-tab-btn')).toBeNull();
+    expect(contentEl.querySelector('.claudian-new-conversation-btn')).toBeNull();
 
-    expect(buttons.map(button => button.tagName)).toEqual(['BUTTON', 'BUTTON', 'BUTTON']);
-    expect(buttons.map(button => button.getAttribute('type'))).toEqual([
-      'button',
-      'button',
-      'button',
-    ]);
-    expect(buttons.map(button => button.getAttribute('aria-label'))).toEqual([
-      'New tab',
-      'New conversation',
-      'Chat history',
-    ]);
+    expect(buttons.map(button => button.tagName)).toEqual(['BUTTON', 'BUTTON']);
+    expect(buttons.map(button => button.getAttribute('type'))).toEqual(['button', 'button']);
+    expect(buttons.map(button => button.getAttribute('aria-label'))).toEqual(['New tab', 'Chat history']);
 
     buttons.forEach(button => button.click());
     await Promise.resolve();
 
     expect(manager.createTab).toHaveBeenCalledTimes(1);
-    expect(manager.createNewConversation).toHaveBeenCalledTimes(1);
     expect(historyContainer.querySelector('.claudian-history-menu')?.hasClass('visible')).toBe(true);
   });
 
@@ -231,9 +225,7 @@ describe('ClaudianView tab controls', () => {
     expect(chatPanel.children[0]).toBe(header);
     // A tab's own label wins over the conversation title, as in the tab bar.
     expect(header.querySelector('.claudian-chat-header-title')?.textContent).toBe('Roadmap');
-    expect(header.querySelector('.claudian-new-conversation-btn')).toBeTruthy();
     expect(header.querySelector('.claudian-history-container')).toBeTruthy();
-    expect(contentEl.querySelector('.claudian-input-nav-content')?.querySelector('.claudian-new-conversation-btn')).toBeNull();
   });
 
   it('focuses the composer after creating a new tab', async () => {

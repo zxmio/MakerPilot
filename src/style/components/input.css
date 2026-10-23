@@ -127,6 +127,21 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   height: 16.8px;
 }
 
+/* New tab ends the numbered tab row, at its right edge even when the row has a single tab. */
+.claudian-input-nav-content > button.claudian-new-tab-btn,
+.claudian-input-nav-content > button.claudian-new-tab-btn:is(:hover, :focus-visible, :active) {
+  order: 1;
+  flex-basis: 28px;
+  width: 28px;
+  height: 28px;
+  margin-inline-start: auto;
+  border-radius: 6px;
+}
+
+.claudian-input-nav-content > button.claudian-new-tab-btn:is(:hover, :focus-visible) {
+  background: var(--background-modifier-hover);
+}
+
 /* Queued follow-up strip, attached to the top of the input box while a message waits. */
 .claudian-input-queue-strip {
   display: none;
