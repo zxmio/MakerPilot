@@ -932,7 +932,16 @@ body.theme-dark .claudian-nav-dropup-menu {
   border-bottom: none;
 }
 
+/* The bounded menu stacks search, header and list; the list takes what is left, so its end stays inside. */
+.claudian-history-menu.visible {
+  display: flex;
+  flex-direction: column;
+}
+
 .claudian-history-menu .claudian-history-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
   padding: 0 6px 6px;
   scrollbar-width: thin;
   scrollbar-gutter: stable;
@@ -943,16 +952,30 @@ body.theme-dark .claudian-nav-dropup-menu {
   display: none;
 }
 
+/* Switching between active and archived sessions stays pinned to the bottom of the scrolling list. */
 .claudian-history-menu .claudian-history-archive-control {
-  position: relative;
+  position: sticky;
+  bottom: 0;
   padding: 8px 10px;
   margin-top: 4px;
   border-top: 1px solid var(--background-modifier-border);
   border-bottom: none;
   border-radius: 0;
-  background: transparent;
+  /* Covers the rows scrolling beneath it; translucent themes can make the theme color transparent. */
+  background-color: #fff;
+  background-image: linear-gradient(var(--background-secondary), var(--background-secondary));
   font-size: 12px;
   font-weight: 400;
+}
+
+body.theme-dark .claudian-history-menu .claudian-history-archive-control {
+  background-color: #1e1e1e;
+}
+
+.claudian-history-menu .claudian-history-archive-control:hover,
+.claudian-history-menu .claudian-history-archive-control:focus-visible {
+  background-image: linear-gradient(var(--background-modifier-hover), var(--background-modifier-hover)),
+    linear-gradient(var(--background-secondary), var(--background-secondary));
 }
 
 .claudian-history-menu .claudian-history-archive-control .claudian-session-nav-label {
