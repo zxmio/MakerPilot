@@ -294,6 +294,14 @@
         "readOnlyDesc": "Demander avant de modifier ou d’utiliser internet.",
         "normalDesc": "Demander avant tout accès supplémentaire.",
         "yoloDesc": "Accès illimité aux fichiers et à internet."
+      },
+      "antigravity": {
+        "cliRules": "Règles de la CLI",
+        "acceptEdits": "Accepter les modifications",
+        "yolo": "YOLO",
+        "cliRulesDesc": "Suivre les règles d’autorisation de la CLI",
+        "acceptEditsDesc": "Accepter automatiquement toutes les modifications de fichiers",
+        "yoloDesc": "Accorder toutes les autorisations sans demander"
       }
     },
     "thinking": {

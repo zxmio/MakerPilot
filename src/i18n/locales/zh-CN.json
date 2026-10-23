@@ -294,6 +294,14 @@
         "readOnlyDesc": "编辑或联网前询问。",
         "normalDesc": "额外访问前询问。",
         "yoloDesc": "不限制文件和网络访问。"
+      },
+      "antigravity": {
+        "cliRules": "CLI 规则",
+        "acceptEdits": "接受编辑",
+        "yolo": "YOLO",
+        "cliRulesDesc": "沿用 CLI 的权限规则",
+        "acceptEditsDesc": "自动接受所有文件编辑",
+        "yoloDesc": "无需询问，允许所有操作"
       }
     },
     "thinking": {

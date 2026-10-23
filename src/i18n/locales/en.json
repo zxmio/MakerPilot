@@ -294,6 +294,14 @@
         "readOnlyDesc": "Ask before edits or internet.",
         "normalDesc": "Ask before extra access.",
         "yoloDesc": "Unrestricted files and internet."
+      },
+      "antigravity": {
+        "cliRules": "CLI rules",
+        "acceptEdits": "Accept edits",
+        "yolo": "YOLO",
+        "cliRulesDesc": "Follow the CLI permission rules",
+        "acceptEditsDesc": "Automatically accept all file edits",
+        "yoloDesc": "Accept all permissions without asking"
       }
     },
     "thinking": {

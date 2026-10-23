@@ -294,6 +294,14 @@
         "readOnlyDesc": "편집 또는 인터넷 사용 전에 확인.",
         "normalDesc": "추가 액세스 전에 확인.",
         "yoloDesc": "파일 및 인터넷 무제한 액세스."
+      },
+      "antigravity": {
+        "cliRules": "CLI 규칙",
+        "acceptEdits": "편집 허용",
+        "yolo": "YOLO",
+        "cliRulesDesc": "CLI 권한 규칙을 따름",
+        "acceptEditsDesc": "모든 파일 편집 자동 허용",
+        "yoloDesc": "확인 없이 모든 권한 허용"
       }
     },
     "thinking": {

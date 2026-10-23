@@ -6,6 +6,7 @@ import { getRuntimeEnvironmentText } from '../../core/providers/providerEnvironm
 import { createRuntimeInputFingerprint } from '../../core/providers/settings/RuntimeInputFingerprint';
 import type { ProviderChatUIConfig, ProviderModelPolicy, ProviderModule } from '../../core/providers/types';
 import type { Conversation } from '../../core/types';
+import { t } from '../../i18n/i18n';
 import { AntigravityExecutionBackend } from './AntigravityExecutionBackend';
 import { antigravityHistory } from './AntigravityHistory';
 import { createAntigravityWorkspace } from './AntigravityWorkspace';
@@ -47,9 +48,9 @@ const modelPolicy: ProviderModelPolicy = {
 const chatUIConfig: ProviderChatUIConfig = {
   ...modelPolicy,
   getPermissionModeOptions: () => [
-    { value: 'default', label: 'CLI rules', description: 'Uses native permissions. Requests requiring interactive approval are denied in headless mode.' },
-    { value: 'accept-edits', label: 'Accept edits', description: 'Allows edits using the native CLI accept-edits mode.' },
-    { value: 'yolo', label: 'YOLO', bypassesApprovals: true, description: 'Skips native permission prompts.' },
+    { value: 'default', label: t('chat.permissionMode.antigravity.cliRules'), description: t('chat.permissionMode.antigravity.cliRulesDesc') },
+    { value: 'accept-edits', label: t('chat.permissionMode.antigravity.acceptEdits'), description: t('chat.permissionMode.antigravity.acceptEditsDesc') },
+    { value: 'yolo', label: t('chat.permissionMode.antigravity.yolo'), bypassesApprovals: true, description: t('chat.permissionMode.antigravity.yoloDesc') },
   ],
   getModeSelector: () => null,
   getProviderIcon: () => GEMINI_ICON,
