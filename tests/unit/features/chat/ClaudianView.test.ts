@@ -240,6 +240,30 @@ describe('ClaudianView tab controls', () => {
     expect(focus).toHaveBeenCalledTimes(1);
   });
 
+  it.each([
+    ['an unused blank tab', null, [], 0, 1],
+    ['a tab with a conversation', 'conversation-1', [{ id: 'm1', role: 'user', content: 'Hi', timestamp: 1 }], 1, 0],
+  ])('opens a new tab from + only when the active tab is not %s', async (_name, conversationId, messages, created, focused) => {
+    const manager = createFakeTabManager();
+    const { contentEl } = await openView({ manager });
+    const focus = jest.fn();
+    manager.getActiveTab.mockReturnValue({
+      conversationId,
+      state: { messages },
+      composer: { focus },
+      linkedContent: { syncWithWorkspace: jest.fn() },
+      // Placement is outside this behavior; every placement call is accepted.
+      placement: new Proxy({}, { get: () => jest.fn() }),
+    });
+
+    contentEl.querySelector('.claudian-new-tab-btn')!.click();
+    await Promise.resolve();
+
+    // A blank tab is already a new chat: + returns to its composer instead of adding another.
+    expect(manager.createTab).toHaveBeenCalledTimes(created);
+    expect(focus).toHaveBeenCalledTimes(focused);
+  });
+
   it('re-reads the open note for the active tab once the view is ready and when tabs switch', async () => {
     const syncWithWorkspace = jest.fn();
     const manager = createFakeTabManager();

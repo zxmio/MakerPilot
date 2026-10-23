@@ -447,6 +447,12 @@ export class ClaudianView extends ItemView implements ZenModeSource {
   }
 
   private requestNewTab(): void {
+    // An unused blank tab is already a new chat; another would only duplicate it.
+    const active = this.tabManager?.getActiveTab();
+    if (active && active.conversationId === null && active.state.messages.length === 0) {
+      active.composer.focus();
+      return;
+    }
     void this.createNewTab().catch(() => new Notice('Failed to create tab'));
   }
 
