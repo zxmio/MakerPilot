@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.7 — 2026-10-23
+
+- Start a new chat from one "+" button at the end of the numbered tab row; the header keeps only History. In the wide layout, the session sidebar's New does the same.
+- "+" on a tab that has not sent a message yet returns to its composer instead of opening another blank tab.
+- The working status line shows what runs now, the step count and the elapsed time, without the Esc hint.
+
 ## 0.2.6 — 2026-10-20
 
 - Show a response's work as a timeline card: the model's logo and one progress segment per step in the header, each step on a round node whose color shows its state, and expanded commands and results in a quiet panel.

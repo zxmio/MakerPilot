@@ -1,6 +1,6 @@
 {
   "name": "makerpilot",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "MakerPilot - Claude, GPT, and Gemini in your Obsidian workspace",
   "main": "main.js",
   "engines": {
