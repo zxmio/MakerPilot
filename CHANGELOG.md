@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.8 — 2026-10-24
+
+- Refine the history menu: the archive switch is a footer flush with the menu's bottom edge, dates keep their full width, and a row's actions replace its date on hover instead of covering the title.
+- Gemini permission modes follow the interface language with short descriptions, like Claude and Codex.
+- Update body-parser, qs and zod past published security advisories.
+
 ## 0.2.7 — 2026-10-23
 
 - Start a new chat from one "+" button at the end of the numbered tab row; the header keeps only History. In the wide layout, the session sidebar's New does the same.
