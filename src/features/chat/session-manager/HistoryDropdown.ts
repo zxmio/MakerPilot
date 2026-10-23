@@ -175,15 +175,13 @@ export class HistoryDropdown {
   }
 
   private buildArchiveNavigation(container: HTMLElement): void {
-    const list = container.querySelector<HTMLElement>('.claudian-history-list');
-    if (!list) return;
-
     const { shared } = this.deps;
     const isArchiveView = shared.isArchiveView();
     const label = isArchiveView ? t('chat.sessions.status.showActive') : t('chat.sessions.status.archived');
     const archivedCount = isArchiveView ? 0
       : this.deps.plugin.getConversationList().filter(conversation => conversation.isArchived).length;
-    const control = list.createDiv({ cls: 'claudian-history-archive-control' });
+    // The menu's footer, below the scrolling list.
+    const control = container.createDiv({ cls: 'claudian-history-archive-control' });
     control.setAttribute('role', 'button');
     control.setAttribute('tabindex', '0');
     control.setAttribute('aria-label', archivedCount > 0 ? t('chat.sessions.status.archivedCount', { count: archivedCount }) : label);
@@ -202,8 +200,6 @@ export class HistoryDropdown {
       event.stopPropagation();
       toggleArchiveView();
     });
-    // The way out of the list sits after it, below the sessions themselves.
-    list.appendChild(control);
   }
 
   private buildSearchField(container: HTMLElement): void {

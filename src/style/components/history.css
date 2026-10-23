@@ -861,17 +861,24 @@ body.theme-dark .claudian-nav-dropup-menu {
 }
 
 .claudian-history-menu .claudian-history-item-actions .claudian-action-btn {
-  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
   border: none;
+  border-radius: 6px;
+  background: transparent;
   box-shadow: none;
   color: var(--text-muted);
-  transition: color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .claudian-history-menu .claudian-history-item-actions .claudian-action-btn:hover,
 .claudian-history-menu .claudian-history-item-actions .claudian-action-btn:focus-visible {
-  background: transparent;
   border: none;
+  background: rgba(var(--mono-rgb-100), 0.08);
   box-shadow: none;
   color: var(--text-normal);
 }
@@ -921,7 +928,7 @@ body.theme-dark .claudian-nav-dropup-menu {
 /* Compact history menu: quiet rows with a clear title / status hierarchy. */
 .claudian-history-menu {
   border-radius: 12px;
-  box-shadow: var(--shadow-s);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .claudian-history-menu .claudian-history-header {
@@ -942,40 +949,39 @@ body.theme-dark .claudian-nav-dropup-menu {
   flex: 1 1 auto;
   min-height: 0;
   max-height: none;
-  padding: 0 6px 6px;
+  padding: 2px 6px 6px;
   scrollbar-width: thin;
   scrollbar-gutter: stable;
 }
 
-.claudian-history-menu .claudian-history-item-icon,
-.claudian-history-menu .claudian-history-archive-control .claudian-session-nav-icon {
+.claudian-history-menu .claudian-history-item-icon {
   display: none;
 }
 
-/* Switching between active and archived sessions stays pinned to the bottom of the scrolling list. */
+/* The footer switches between active and archived sessions, flush with the menu's bottom edge. */
 .claudian-history-menu .claudian-history-archive-control {
-  position: sticky;
-  bottom: 0;
-  padding: 8px 10px;
-  margin-top: 4px;
+  position: static;
+  flex-shrink: 0;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  margin: 0;
   border-top: 1px solid var(--background-modifier-border);
   border-bottom: none;
-  border-radius: 0;
-  /* Covers the rows scrolling beneath it; translucent themes can make the theme color transparent. */
-  background-color: #fff;
-  background-image: linear-gradient(var(--background-secondary), var(--background-secondary));
-  font-size: 12px;
+  border-radius: 0 0 11px 11px;
+  background: transparent;
+  font-size: 12.5px;
   font-weight: 400;
 }
 
-body.theme-dark .claudian-history-menu .claudian-history-archive-control {
-  background-color: #1e1e1e;
+.claudian-history-menu .claudian-history-archive-control .claudian-session-nav-icon {
+  display: flex;
+  color: var(--text-muted);
 }
 
-.claudian-history-menu .claudian-history-archive-control:hover,
-.claudian-history-menu .claudian-history-archive-control:focus-visible {
-  background-image: linear-gradient(var(--background-modifier-hover), var(--background-modifier-hover)),
-    linear-gradient(var(--background-secondary), var(--background-secondary));
+.claudian-history-menu .claudian-history-archive-control .claudian-session-nav-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .claudian-history-menu .claudian-history-archive-control .claudian-session-nav-label {
@@ -983,8 +989,12 @@ body.theme-dark .claudian-history-menu .claudian-history-archive-control {
 }
 
 .claudian-history-menu .claudian-session-nav-count {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(var(--mono-rgb-100), 0.06);
   color: var(--text-muted);
   font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
 /*
@@ -1039,37 +1049,39 @@ body.theme-dark .claudian-history-menu .claudian-history-archive-control {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  padding: 10px 10px 4px;
+  padding: 12px 10px 4px;
   color: var(--text-muted);
   font-size: 11px;
+  font-weight: 500;
   letter-spacing: 0.04em;
 }
 
 .claudian-history-menu .claudian-session-recency-divider:first-child {
-  padding-top: 4px;
+  padding-top: 6px;
 }
 
 .claudian-history-menu .claudian-history-archive-control:hover,
 .claudian-history-menu .claudian-history-archive-control:focus-visible {
-  background: transparent;
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
 }
 
 .claudian-history-menu .claudian-history-item {
   position: relative;
   box-sizing: border-box;
-  min-height: 32px;
-  padding: 6px 10px;
+  min-height: 34px;
+  padding: 5px 10px;
   margin: 0;
-  gap: 6px;
+  gap: 8px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 /* The shown session takes the active provider's accent as a tint, not a side bar. */
 .claudian-history-menu .claudian-history-item.active,
 .claudian-history-menu .claudian-history-item.open {
   padding-inline-start: 10px;
-  background: rgba(var(--claudian-brand-rgb), 0.12);
+  background: rgba(var(--claudian-brand-rgb), 0.1);
 }
 
 .claudian-history-menu .claudian-history-item.active .claudian-history-item-title,
@@ -1081,6 +1093,7 @@ body.theme-dark .claudian-history-menu .claudian-history-archive-control {
   display: flex;
   align-items: baseline;
   gap: 12px;
+  min-width: 0;
 }
 
 .claudian-history-menu .claudian-history-item-title {
@@ -1090,40 +1103,37 @@ body.theme-dark .claudian-history-menu .claudian-history-archive-control {
   line-height: 1.5;
 }
 
+/* The date keeps its full width; the title truncates instead. */
 .claudian-history-menu .claudian-history-item-date {
-  flex: 0 1 auto;
-  max-width: 45%;
+  flex: 0 0 auto;
   margin-top: 0;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .claudian-history-menu .claudian-history-item.running .claudian-history-item-date {
   color: var(--claudian-brand);
 }
 
+/* A row's actions take the date's place while it is hovered or focused; nothing sits on top of the title. */
 .claudian-history-menu .claudian-history-item-actions {
-  position: absolute;
-  inset-inline-end: 8px;
+  display: none;
+  flex-shrink: 0;
   gap: 2px;
   margin-inline-start: 0;
-  pointer-events: none;
+  opacity: 1;
 }
 
-/* Layers the row's hover overlay on the menu surface so the actions blend into the row. */
 .claudian-history-menu .claudian-history-item:hover .claudian-history-item-actions,
 .claudian-history-menu .claudian-history-item:focus-within .claudian-history-item-actions {
-  pointer-events: auto;
-  background-color: var(--background-secondary);
-  background-image: linear-gradient(var(--background-modifier-hover), var(--background-modifier-hover));
+  display: flex;
 }
 
 .claudian-history-menu .claudian-history-item:has(.claudian-action-btn):hover .claudian-history-item-date,
 .claudian-history-menu .claudian-history-item:has(.claudian-action-btn):focus-within .claudian-history-item-date {
-  visibility: hidden;
+  display: none;
 }
 
 .claudian-history-menu .claudian-history-item:not(.active):not(.open):not(.claudian-history-item--selected):hover {

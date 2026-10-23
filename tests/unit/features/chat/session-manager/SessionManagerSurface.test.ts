@@ -732,8 +732,10 @@ describe('SessionManagerSurface history dropdown', () => {
     h.historyButton.click();
     const list = h.historyMenu.querySelector('.claudian-history-list');
 
-    const archiveControl = list.querySelector('.claudian-history-archive-control');
-    expect(list.children[list.children.length - 1]).toBe(archiveControl);
+    // The archive switch is the menu's footer below the scrolling list, never one of its rows.
+    const archiveControl = h.historyMenu.querySelector('.claudian-history-archive-control');
+    expect(list.querySelector('.claudian-history-archive-control')).toBeNull();
+    expect(h.historyMenu.children[h.historyMenu.children.length - 1]).toBe(archiveControl);
     expect(navLabel(archiveControl)).toBe('Archived');
     expect(archiveControl.querySelector('.claudian-session-nav-count')?.textContent).toBe('1');
     const stopPropagation = jest.fn();
